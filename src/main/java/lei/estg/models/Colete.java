@@ -3,7 +3,7 @@ package lei.estg.models;
 public class Colete extends Item{
 
 
-    public Colete(String nome, Divisao localizacao, int pontos) {
-        super(nome, localizacao, pontos);
+    public Colete(Divisao localizacao, int pontos, String tipo) {
+        super(localizacao, pontos, tipo);
     }
 }

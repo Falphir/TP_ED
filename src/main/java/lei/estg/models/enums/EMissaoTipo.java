@@ -1,13 +1,13 @@
 package lei.estg.models.enums;
 
-public enum EAlvoTipo {
+public enum EMissaoTipo {
     RESGATE("Resgatar Reféns"),
     RECUPERAR("Recuperar Bens Valiosos"),
     NEUTRALIZAR("Neutralizar Armas de Destruição em Massa");
 
     private final String description;
 
-    EAlvoTipo(String description) {
+    EMissaoTipo(String description) {
         this.description = description;
     }
 

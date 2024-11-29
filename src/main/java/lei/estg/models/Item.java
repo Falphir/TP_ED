@@ -1,22 +1,14 @@
 package lei.estg.models;
 
 public abstract class Item {
-    private String nome;
     private Divisao localizacao;
     private int pontos;
+    private String tipo;
 
-    public Item(String nome, Divisao localizacao, int pontos) {
-        this.nome = nome;
+    public Item(Divisao localizacao, int pontos, String tipo) {
         this.localizacao = localizacao;
         this.pontos = pontos;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
+        this.tipo = tipo;
     }
 
     public Divisao getLocalizacao() {
@@ -33,5 +25,13 @@ public abstract class Item {
 
     public void setPontos(int pontos) {
         this.pontos = pontos;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

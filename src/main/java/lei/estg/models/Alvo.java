@@ -1,12 +1,12 @@
 package lei.estg.models;
 
-import lei.estg.models.enums.EAlvoTipo;
+import lei.estg.models.enums.EMissaoTipo;
 
 public class Alvo {
     private Divisao divisao;
-    private EAlvoTipo tipo;
+    private String tipo;
 
-    public Alvo(Divisao divisao, EAlvoTipo tipo) {
+    public Alvo(Divisao divisao, String tipo) {
         this.divisao = divisao;
         this.tipo = tipo;
     }
@@ -19,11 +19,11 @@ public class Alvo {
         this.divisao = divisao;
     }
 
-    public EAlvoTipo getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(EAlvoTipo tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 }
