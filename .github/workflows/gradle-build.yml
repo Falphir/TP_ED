@@ -3,12 +3,12 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - master
       - development
       - feature/*
   pull_request:
     branches:
-      - main
+      - master
       - development
       - feature/*
 
