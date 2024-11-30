@@ -5,7 +5,7 @@ import lei.estg.dataStructures.interfaces.StackADT;
 
 public class ArrayStack<T> implements StackADT<T> {
 
-    private final int DEFAULT_CAPACITY = 100;
+    private final int DEFAULT_CAPACITY = 5;
     private int top;
     private T[] stack;
 

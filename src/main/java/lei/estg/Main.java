@@ -3,6 +3,7 @@ package lei.estg;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
+import lei.estg.models.enums.EItemTipo;
 import lei.estg.utils.JsonUtils;
 
 import java.io.IOException;
@@ -47,10 +48,10 @@ public class Main {
 
                 System.out.println("\nItens:");
                 for (Item item : missao.getItens()) {
-                    if (item instanceof Kit) {
+                    if (item.getTipo().equals(EItemTipo.KIT)) {
                         System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
                                 ", Pontos Recuperados: " + item.getPontos());
-                    } else if (item instanceof Colete) {
+                    } else if (item.getTipo().equals(EItemTipo.COLETE)) {
                         System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
                                 ", Pontos Extra: " + item.getPontos());
                     }
