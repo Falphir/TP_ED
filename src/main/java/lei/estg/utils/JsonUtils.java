@@ -28,12 +28,9 @@ public class JsonUtils {
 
             missao.setEdificio(edificio);
 
-            // Adiciona os vértices ao grafo
             JsonArray divisaoArray = (JsonArray) jsonObject.get("edificio");
             for (Object divisao : divisaoArray) {
-                //String nome = (String) divisao;
                 Divisao instance = new Divisao((String) divisao);
-                System.out.println("instance: " + instance);
 
                 missao.getDivisaoList().addToRear(instance);
                 missao.getEdificio().addVertex(instance);
@@ -45,9 +42,6 @@ public class JsonUtils {
                 String origemNome = ligacao.get(0).toString();
                 String destinoNome = ligacao.get(1).toString();
 
-                System.out.println("origemN:" + origemNome);
-                System.out.println("destinoN:" + destinoNome);
-
                 Divisao origem = new Divisao(origemNome);
                 Divisao destino = new Divisao(destinoNome);
 
@@ -56,14 +50,12 @@ public class JsonUtils {
 
                 if (origemIndex != -1 && destinoIndex != -1) {
                     missao.getEdificio().addEdge(origemIndex, destinoIndex);
-                    System.out.println("Ligação entre: " + origemNome + " e " + destinoNome);
                 } else {
                     System.out.println("Erro: uma das divisões não foi encontrada.");
                 }
             }
 
             JsonArray inimigosArray = (JsonArray) jsonObject.get("inimigos");
-            //.setInimigos(new <Inimigo>());
             for (Object inimigo : inimigosArray) {
                 JsonObject inimigoObj = (JsonObject) inimigo;
                 Inimigo inimigoInstancia = new Inimigo(

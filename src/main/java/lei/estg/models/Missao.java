@@ -111,14 +111,10 @@ public class Missao {
         Iterator<Divisao> iter = divisaoList.iterator();
         while (iter.hasNext()) {
             Divisao divisao = iter.next();
-            System.out.println("DivisaoList: " + divisao);
             if (divisao.getNome().equals(nome)) {
-                System.out.println("Found: " + divisao.getNome());
                 return divisao;
             }
         }
-
-        System.out.println("Not Found: " + nome);
 
         Divisao novaDivisao = new Divisao(nome);
         divisaoList.addToRear(novaDivisao);
