@@ -2,30 +2,37 @@ package lei.estg.models;
 
 import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.enums.EMissaoTipo;
+
+import java.util.Iterator;
 
 public class Missao {
     private String codMissao;
     private int versao;
     private EMissaoTipo tipo;
     private Graph<Divisao> edificio;
-    private UnorderedArrayList<Inimigo> inimigos;
-    private UnorderedArrayList<Divisao> entradasSaidas;
+    private UnorderedListADT<Divisao> divisaoList = new UnorderedArrayList<>();
+    private UnorderedListADT<Inimigo> inimigos;
+    private UnorderedListADT<Divisao> entradasSaidas;
     private Alvo alvo;
-    private UnorderedArrayList<Item> itens;
+    private UnorderedListADT<Item> itens;
 
     public Missao() {
+        this.inimigos = new UnorderedArrayList<>();
+        this.entradasSaidas = new UnorderedArrayList<>();
+        this.itens = new UnorderedArrayList<>();
     }
 
-    public Missao(String codMissao, int versao, EMissaoTipo tipo, Graph edificio, UnorderedArrayList<Inimigo> inimigos, UnorderedArrayList<Divisao> entradasSaidas, Alvo alvo, UnorderedArrayList<Item> itens) {
+    public Missao(String codMissao, int versao, EMissaoTipo tipo, Graph edificio, Alvo alvo) {
         this.codMissao = codMissao;
         this.versao = versao;
         this.tipo = tipo;
         this.edificio = edificio;
-        this.inimigos = inimigos;
-        this.entradasSaidas = entradasSaidas;
+        this.inimigos = new UnorderedArrayList<>();
+        this.entradasSaidas = new UnorderedArrayList<>();
         this.alvo = alvo;
-        this.itens = itens;
+        this.itens = new UnorderedArrayList<>();
     }
 
     public String getCodMissao() {
@@ -68,27 +75,67 @@ public class Missao {
         this.edificio = edificio;
     }
 
-    public UnorderedArrayList<Inimigo> getInimigos() {
+    public UnorderedListADT<Inimigo> getInimigos() {
         return inimigos;
     }
 
-    public void setInimigos(UnorderedArrayList<Inimigo> inimigos) {
+    public void setInimigos(UnorderedListADT<Inimigo> inimigos) {
         this.inimigos = inimigos;
     }
 
-    public UnorderedArrayList<Divisao> getEntradasSaidas() {
+    public UnorderedListADT<Divisao> getEntradasSaidas() {
         return entradasSaidas;
     }
 
-    public void setEntradasSaidas(UnorderedArrayList<Divisao> entradasSaidas) {
+    public void setEntradasSaidas(UnorderedListADT<Divisao> entradasSaidas) {
         this.entradasSaidas = entradasSaidas;
     }
 
-    public UnorderedArrayList<Item> getItens() {
+    public UnorderedListADT<Item> getItens() {
         return itens;
     }
 
-    public void setItens(UnorderedArrayList<Item> itens) {
+    public void setItens(UnorderedListADT<Item> itens) {
         this.itens = itens;
+    }
+
+    public UnorderedListADT<Divisao> getDivisaoList() {
+        return divisaoList;
+    }
+
+    public void setDivisaoList(UnorderedListADT<Divisao> divisaoList) {
+        this.divisaoList = divisaoList;
+    }
+
+    public Divisao findorAddDivisao(String nome) {
+        Iterator<Divisao> iter = divisaoList.iterator();
+        while (iter.hasNext()) {
+            Divisao divisao = iter.next();
+            System.out.println("DivisaoList: " + divisao);
+            if (divisao.getNome().equals(nome)) {
+                System.out.println("Found: " + divisao.getNome());
+                return divisao;
+            }
+        }
+
+        System.out.println("Not Found: " + nome);
+
+        Divisao novaDivisao = new Divisao(nome);
+        divisaoList.addToRear(novaDivisao);
+        return novaDivisao;
+    }
+
+    @Override
+    public String toString() {
+        return "Missao{" +
+                "codMissao='" + codMissao + '\'' +
+                ", versao=" + versao +
+                ", tipo=" + tipo +
+                ", edificio=" + edificio +
+                ", inimigos=" + inimigos +
+                ", entradasSaidas=" + entradasSaidas +
+                ", alvo=" + alvo +
+                ", itens=" + itens +
+                '}';
     }
 }

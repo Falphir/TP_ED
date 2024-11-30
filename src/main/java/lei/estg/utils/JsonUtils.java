@@ -31,20 +31,39 @@ public class JsonUtils {
             // Adiciona os vértices ao grafo
             JsonArray divisaoArray = (JsonArray) jsonObject.get("edificio");
             for (Object divisao : divisaoArray) {
-                missao.getEdificio().addVertex(new Divisao((String) divisao));
+                //String nome = (String) divisao;
+                Divisao instance = new Divisao((String) divisao);
+                System.out.println("instance: " + instance);
+
+                missao.getDivisaoList().addToRear(instance);
+                missao.getEdificio().addVertex(instance);
             }
 
             JsonArray ligacoesArray = (JsonArray) jsonObject.get("ligacoes");
             for (Object conexao : ligacoesArray) {
                 JsonArray ligacao = (JsonArray) conexao;
-                Divisao origem = new Divisao(ligacao.get(0).toString());
-                Divisao destino = new Divisao(ligacao.get(1).toString());
-                ;
-                missao.getEdificio().addEdge(origem, destino);
+                String origemNome = ligacao.get(0).toString();
+                String destinoNome = ligacao.get(1).toString();
+
+                System.out.println("origemN:" + origemNome);
+                System.out.println("destinoN:" + destinoNome);
+
+                Divisao origem = new Divisao(origemNome);
+                Divisao destino = new Divisao(destinoNome);
+
+                int origemIndex = missao.getEdificio().getIndex(missao.findorAddDivisao(origemNome));
+                int destinoIndex = missao.getEdificio().getIndex(missao.findorAddDivisao(destinoNome));
+
+                if (origemIndex != -1 && destinoIndex != -1) {
+                    missao.getEdificio().addEdge(origemIndex, destinoIndex);
+                    System.out.println("Ligação entre: " + origemNome + " e " + destinoNome);
+                } else {
+                    System.out.println("Erro: uma das divisões não foi encontrada.");
+                }
             }
 
             JsonArray inimigosArray = (JsonArray) jsonObject.get("inimigos");
-            missao.setInimigos(new UnorderedArrayList<Inimigo>());
+            //.setInimigos(new <Inimigo>());
             for (Object inimigo : inimigosArray) {
                 JsonObject inimigoObj = (JsonObject) inimigo;
                 Inimigo inimigoInstancia = new Inimigo(
@@ -75,14 +94,14 @@ public class JsonUtils {
                 if ("kit de vida".equals(tipoItem)) {
                     itemInstancia = new Kit(
                             new Divisao((String) itemObj.get("divisao")),
-                            ((Long) itemObj.get("pontos-recuperados")).intValue(),
+                            (((Number) itemObj.get("pontos-recuperados")).intValue()),
                             (String) itemObj.get("tipo")
                     );
                     missao.getItens().addToRear(itemInstancia);
                 } else if ("colete".equals(tipoItem)) {
                     itemInstancia = new Colete(
                             new Divisao((String) itemObj.get("divisao")),
-                            ((Long) itemObj.get("pontos-extra")).intValue(),
+                            (((Number) itemObj.get("pontos-extra")).intValue()),
                             (String) itemObj.get("tipo")
                     );
                     missao.getItens().addToRear(itemInstancia);

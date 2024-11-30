@@ -332,7 +332,7 @@ public class Graph<T> implements GraphADT<T> {
         return numVertices;
     }
 
-    private int getIndex(T vertex) {
+    public int getIndex(T vertex) {
         for (int i = 0; i < numVertices; i++) {
             if (vertices[i].equals(vertex)) {
                 return i;

@@ -1,11 +1,14 @@
 package lei.estg.dataStructures;
 
+import lei.estg.dataStructures.exceptions.ElementNotFoundException;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
+import lei.estg.dataStructures.exceptions.ModificationException;
 import lei.estg.dataStructures.exceptions.ValueNotFoundException;
 import lei.estg.dataStructures.interfaces.ListADT;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public abstract class ArrayList<T> implements ListADT<T>, Iterable<T> {
 
@@ -18,52 +21,69 @@ public abstract class ArrayList<T> implements ListADT<T>, Iterable<T> {
     protected int modCount;
 
     public ArrayList() {
-        arrayList = (T[])(new Comparable[DEFAULT_CAPACITY]);
+        arrayList = (T[])(new Object[DEFAULT_CAPACITY]);
         front = rear = 0;
         size = 0;
     }
 
-    private class ArrayListIterator<T> implements Iterator<T> {
-
-        private int cursor;
+    private class ArrayListIterator implements Iterator<T> {
+        private int current;
         private int expectedModCount;
-        private int modCount;
+        private boolean okToRemove;
 
-        public ArrayListIterator(int modCount) {
-            cursor = front;
-            this.expectedModCount = modCount;
+        public ArrayListIterator() {
+            current = 0;
+            expectedModCount = modCount;
+            okToRemove = false;
         }
 
         @Override
         public boolean hasNext() {
-            return cursor != size;
+            return current < rear;
         }
 
         @Override
         public T next() {
-            T element = (T) arrayList[cursor];
-
             if (!hasNext()) {
-                throw new ValueNotFoundException("No more values in ArrayList");
+                throw new NoSuchElementException();
             }
-            cursor++;
-            return element;
+            if (expectedModCount != modCount) {
+                try {
+                    throw new ModificationException("A lista foi modificada.");
+                } catch (ModificationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            okToRemove = true;
+            return arrayList[current++];
         }
 
         @Override
-        public void remove() throws UnsupportedOperationException{
-            if (!hasNext()) {
-                throw new UnsupportedOperationException("Cannot remove values from ArrayList");
+        public void remove() {
+            if (expectedModCount != modCount) {
+                try {
+                    throw new ModificationException("A lista foi modificada.");
+                } catch (ModificationException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            if (modCount!= expectedModCount) {
-                throw new ConcurrentModificationException("ArrayList has been modified");
+            if (!okToRemove) {
+                throw new IllegalStateException("Chamada inválida a remove().");
             }
 
-            arrayList[cursor - 1] = null;
-            size--;
+            try {
+                ArrayList.this.remove(arrayList[current - 1]);
 
-            modCount++;
+                rear--;
 
+                expectedModCount = modCount;
+
+                okToRemove = false;
+
+            } catch (EmptyStackException e) {
+                System.out.println("Elemento não encontrado: " + e.getMessage());
+            }
         }
     }
 
@@ -190,6 +210,6 @@ public abstract class ArrayList<T> implements ListADT<T>, Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new ArrayListIterator<T>(modCount);
+        return new ArrayListIterator();
     }
 }

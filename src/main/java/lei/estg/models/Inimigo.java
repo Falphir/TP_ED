@@ -34,4 +34,13 @@ public class Inimigo {
     public void setDivisao(Divisao divisao) {
         this.divisao = divisao;
     }
+
+    @Override
+    public String toString() {
+        return "Inimigo{" +
+                "nome='" + nome + '\'' +
+                ", poder=" + poder +
+                ", divisao=" + divisao.getNome() +
+                '}';
+    }
 }

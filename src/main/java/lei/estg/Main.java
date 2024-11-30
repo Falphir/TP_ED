@@ -1,5 +1,7 @@
 package lei.estg;
 
+import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
 import lei.estg.utils.JsonUtils;
 
@@ -28,6 +30,8 @@ public class Main {
                 // Exibir os edifícios
                 System.out.println("\nEdifícios: " + missao.getEdificio().toString());
 
+                System.out.println("\nDivisoes: " + missao.getDivisaoList().toString());
+
 
                 // Exibir inimigos
                 System.out.println("\nInimigos:");
@@ -48,13 +52,12 @@ public class Main {
                 // Exibir itens
                 System.out.println("\nItens:");
                 for (Item item : missao.getItens()) {
-                    System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
-                            ", Pontos Recuperados: " + item.getPontos());
-
                     if (item instanceof Kit) {
-                        System.out.println("  [Kit de Vida]");
+                        System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
+                                ", Pontos Recuperados: " + item.getPontos());
                     } else if (item instanceof Colete) {
-                        System.out.println("  [Colete]");
+                        System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
+                                ", Pontos Extra: " + item.getPontos());
                     }
                 }
 
@@ -63,5 +66,19 @@ public class Main {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+/*
+            Missao missao = new Missao();
+
+            Inimigo inimigo = new Inimigo(
+                    "Loki",
+                    1000,
+                    new Divisao("divisao1")
+            );
+
+            // Já inicializado no construtor de Missao
+            missao.getInimigos().addToRear(inimigo);
+
+            System.out.println(inimigo.toString());
+            System.out.println(missao.getInimigos().toString());*/
         }
     }
