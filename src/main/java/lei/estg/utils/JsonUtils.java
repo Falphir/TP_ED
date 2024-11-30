@@ -7,6 +7,7 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.models.*;
+import lei.estg.models.enums.EItemTipo;
 import lei.estg.models.enums.EMissaoTipo;
 
 
@@ -19,6 +20,8 @@ public class JsonUtils {
         try (FileReader reader = new FileReader(caminhoArquivo)) {
             JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
 
+            EItemTipoConverter itemTipoConverter = new EItemTipoConverter();
+            
             Missao missao = new Missao();
 
             missao.setCodMissao((String) jsonObject.get("cod-missao"));
@@ -84,17 +87,17 @@ public class JsonUtils {
                 Item itemInstancia;
 
                 if ("kit de vida".equals(tipoItem)) {
-                    itemInstancia = new Kit(
+                    itemInstancia = new Item(
                             new Divisao((String) itemObj.get("divisao")),
                             (((Number) itemObj.get("pontos-recuperados")).intValue()),
-                            (String) itemObj.get("tipo")
+                            itemTipoConverter.convertStringToEItemTipo(tipoItem)
                     );
                     missao.getItens().addToRear(itemInstancia);
                 } else if ("colete".equals(tipoItem)) {
-                    itemInstancia = new Colete(
+                    itemInstancia = new Item(
                             new Divisao((String) itemObj.get("divisao")),
                             (((Number) itemObj.get("pontos-extra")).intValue()),
-                            (String) itemObj.get("tipo")
+                            itemTipoConverter.convertStringToEItemTipo(tipoItem)
                     );
                     missao.getItens().addToRear(itemInstancia);
                 }

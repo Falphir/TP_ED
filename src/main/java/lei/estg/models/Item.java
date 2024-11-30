@@ -1,11 +1,13 @@
 package lei.estg.models;
 
-public abstract class Item {
+import lei.estg.models.enums.EItemTipo;
+
+public class Item {
     private Divisao localizacao;
     private int pontos;
-    private String tipo;
+    private EItemTipo tipo;
 
-    public Item(Divisao localizacao, int pontos, String tipo) {
+    public Item(Divisao localizacao, int pontos, EItemTipo tipo) {
         this.localizacao = localizacao;
         this.pontos = pontos;
         this.tipo = tipo;
@@ -27,11 +29,11 @@ public abstract class Item {
         this.pontos = pontos;
     }
 
-    public String getTipo() {
+    public EItemTipo getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(EItemTipo tipo) {
         this.tipo = tipo;
     }
 }
