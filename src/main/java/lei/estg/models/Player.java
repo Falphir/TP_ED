@@ -21,7 +21,7 @@ public class Player {
         this.mochila = mochila;
     }
 
-    public void levarDano(int dano) {
+    public void receberDano(int dano) {
         if (vidaColete > 0) {
             // Primeiro subtrai o dano do colete
             if (dano <= vidaColete) {
@@ -45,19 +45,13 @@ public class Player {
     }
     
 
-    public void darDano(Inimigo inimigo) {
-        int poderInimigo = inimigo.getPoder();
-        poderInimigo -= poder;
-        if (poderInimigo < 0) {
-            poderInimigo = 0;
-        }
-        inimigo.setPoder(poderInimigo);
-        if (poderInimigo == 0) {
+    public void atacar(Inimigo inimigo) {
+        inimigo.receberDano(poder);
+        if (inimigo.getPoder() == 0) {
             System.out.println(nome + " derrotou " + inimigo.getNome());
-        } else {
-            System.out.println(inimigo.getNome() + " ainda está vivo com " + poderInimigo);
-        }
+        } 
         System.out.println(nome + " atacou " + inimigo.getNome() + " causando " + poder + " de dano.");
+        System.out.println("Poder atual de " + inimigo.getNome() + ": " + inimigo.getPoder());
     }
 
     public void movimentar(Divisao destino) {
