@@ -17,14 +17,12 @@ public class PlayerTest {
 
         // Teste de dano recebido
         System.out.println("\n--- Teste de levar dano ---");
-        player.levarDano(30); // O dano será absorvido pelo colete, se possível
+        inimigo.atacar(player); // O dano será absorvido pelo colete, se possível
 
-        // Teste de dano após o colete ser destruído
-        player.levarDano(40); // O dano excede o colete
 
         // Teste de dar dano ao inimigo
         System.out.println("\n--- Teste de dar dano ---");
-        player.darDano(inimigo); // O inimigo deve ter seu poder reduzido
+        player.atacar(inimigo); // O inimigo deve ter seu poder reduzido
 
         // Teste de pegar um item do tipo KIT
         Item kit = new Item(new Divisao("Divisão B"), 20, EItemTipo.KIT);
