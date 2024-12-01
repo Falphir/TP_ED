@@ -1,6 +1,7 @@
 package lei.estg;
 
 import lei.estg.dataStructures.ArrayStack;
+import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.models.Divisao;
 import lei.estg.models.Inimigo;
 import lei.estg.models.Item;
@@ -45,8 +46,13 @@ public class PlayerTest {
 
         // Teste de curar o jogador com um kit
         System.out.println("\n--- Teste de cura com kit ---");
-        player.curar(kit); // O jogador deve ter sua vida restaurada
+        try {
+            player.usarKit();
+        } catch (EmptyStackException e) {
+            e.printStackTrace();
+        } // O jogador deve ter sua vida restaurada
         System.out.println("Vida do jogador após cura: " + player.getVida());
+        player.apanharItem(kit); 
 
         // Exibição final do estado do jogador
         System.out.println("\n--- Estado final do jogador ---");
