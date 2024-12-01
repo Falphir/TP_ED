@@ -1,0 +1,68 @@
+{
+  "cod-missao": "Missao X Y Z",
+  "itens": [
+    {
+      "tipo": "Kit de vida",
+      "divisao": "Segurança",
+      "pontos-recuperados": 25,
+      "nome": "Kit Avançado"
+    },
+    {
+      "tipo": "Kit de vida",
+      "divisao": "Escada 1",
+      "pontos-recuperados": 15,
+      "nome": "Kit Básico"
+    },
+    {
+      "tipo": "Kit de vida",
+      "divisao": "Escada 5",
+      "pontos-recuperados": 15,
+      "nome": "Kit Básico"
+    }
+  ],
+  "dificuldade": "dificil",
+  "alvo": {
+    "tipo": "Little Boy",
+    "divisao": "Escada 3"
+  },
+  "inimigos": [
+    {
+      "divisao": "Heliporto",
+      "nome": "Agente de Patrulha",
+      "poder": 15
+    },
+    {
+      "divisao": "Hall",
+      "nome": "Agente de Patrulha",
+      "poder": 15
+    },
+    {
+      "divisao": "Escada 2",
+      "nome": "Guarda",
+      "poder": 5
+    },
+    {
+      "divisao": "Garagem",
+      "nome": "Chefe de Segurança",
+      "poder": 25
+    },
+    {
+      "divisao": "Escada 5",
+      "nome": "Chefe de Segurança",
+      "poder": 25
+    },
+    {
+      "divisao": "Heliporto",
+      "nome": "Agente de Patrulha",
+      "poder": 15
+    },
+    {
+      "divisao": "Escada de Emergência",
+      "nome": "Guarda",
+      "poder": 5
+    }
+  ],
+  "edificio": "[Heliporto, Escada 6, Camaratas, Armazém, Escada 5, Laboratório, Escritório 3, Escada 4, WC, Corredor 2, Segurança, Hall, Escada 3, Escritório 1, Escritório 2, Escada de Emergência, Corredor 1, Escada 2, Porteiro, Escada 1, Garagem]",
+  "versao": 2,
+  "entradas-saidas": "[Escada de Emergência, Garagem, Heliporto, Porteiro]"
+}

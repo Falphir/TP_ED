@@ -2,7 +2,7 @@
   "player" : {
     "name" : "Tó Cruz",
     "MochilaLimit": 5,
-    "VidaMáxima": 100,
+    "VidaMaxima": 100,
     "Poder": 15
   },
   "missao": {

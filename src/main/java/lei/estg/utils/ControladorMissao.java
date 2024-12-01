@@ -5,17 +5,18 @@ import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import lei.estg.Main;
-import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
 import lei.estg.models.enums.EDificuldadeMissao;
+import lei.estg.models.enums.EItemTipo;
 import lei.estg.models.enums.EMissaoTipo;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,32 +26,58 @@ import java.util.Scanner;
 
 public class ControladorMissao {
 
-    public static void exportarMissaoParaJSON(String caminhoFicheiro, Missao missao) {
-        // Criação do objeto JSON para a missão
+    public static String exportarMissaoParaJSON(String caminhoFicheiro, Missao missao) {
         JsonObject missaoObject = new JsonObject();
 
         // Adicionar as informações da missão
         missaoObject.put("cod-missao", missao.getCodMissao());
         missaoObject.put("versao", missao.getVersao());
         missaoObject.put("dificuldade", missao.getDificuldade().toString().toLowerCase());
+        missaoObject.put("edificio", missao.getDivisaoList().toString());
 
+        System.out.println("Inimigos: " + missao.getInimigos());
         // Adicionar inimigos da missão como um array
         JsonArray inimigosArray = new JsonArray();
         for (Inimigo inimigo : missao.getInimigos()) {
             JsonObject inimigoObject = new JsonObject();
             inimigoObject.put("nome", inimigo.getNome());
             inimigoObject.put("poder", inimigo.getPoder());
+            inimigoObject.put("divisao", inimigo.getDivisao().getNome());
             inimigosArray.add(inimigoObject);
         }
         missaoObject.put("inimigos", inimigosArray);
 
-        // Exportar para arquivo JSON
+        System.out.println("Inimigos: " + missao.getInimigos());
+        // Adicionar inimigos da missão como um array
+        JsonArray itensArray = new JsonArray();
+        for (Item item : missao.getItens()) {
+            JsonObject itemObject = new JsonObject();
+            itemObject.put("nome", item.getNome());
+            itemObject.put("divisao", item.getLocalizacao().getNome());
+            if (item.getTipo() == EItemTipo.KIT) {
+                itemObject.put("pontos-recuperados", item.getPontos());
+            } else {
+                itemObject.put("pontos-extra", item.getPontos());
+            }
+            itemObject.put("tipo", item.getTipo().getDescription());
+            itensArray.add(itemObject);
+        }
+        missaoObject.put("itens", itensArray);
+
+        missaoObject.put("entradas-saidas", missao.getEntradasSaidas().toString());
+        JsonObject alvoObject = new JsonObject();
+        alvoObject.put("divisao", missao.getAlvo().getDivisao().getNome());
+        alvoObject.put("tipo", missao.getAlvo().getTipo());
+        missaoObject.put("alvo", alvoObject);
+
         try (FileWriter file = new FileWriter(caminhoFicheiro)) {
             file.write(missaoObject.toJson());
-            System.out.println("Missão exportada com sucesso para: " + caminhoFicheiro);
+            file.flush();
+            return "Missão exportada com sucesso para o arquivo " + caminhoFicheiro;
         } catch (IOException e) {
-            e.printStackTrace();
+            return "Erro ao exportar a missão para o arquivo " + caminhoFicheiro + ": " + e.getMessage();
         }
+
     }
 
     public static Missao criarMissao() {
@@ -197,12 +224,17 @@ public class ControladorMissao {
         }
     }
 
+
     private static void carregarDadosConfig(String caminhoFicheiro, Missao missao) {
         try (FileReader reader = new FileReader(caminhoFicheiro)) {
             JsonObject configObject = (JsonObject) Jsoner.deserialize(reader);
 
-            // Ler dados da dificuldade
-            JsonObject missaoObject = (JsonObject) configObject.get("Missao");
+            JsonObject missaoObject = (JsonObject) configObject.get("missao");
+            if (missaoObject == null) {
+                throw new IllegalArgumentException("A chave 'missao' não existe no arquivo JSON.");
+            }
+
+            // Gerar Inimigos e itens baseado na dificuldade
             JsonArray dificuldadeArray = (JsonArray) missaoObject.get("dificuldade");
             String dificuldadeAtual = missao.getDificuldade().toString().toLowerCase();
 
@@ -258,10 +290,11 @@ public class ControladorMissao {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (JsonException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return null;
     }
 
     private static Item gerarItem(Missao missao, String tipo) {

@@ -5,8 +5,21 @@ import lei.estg.models.Item;
 import lei.estg.models.Missao;
 import lei.estg.utils.ControladorMissao;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
+
 public class criacaoMapaTest {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new InternalError("VM does not support mandatory encoding UTF-8");
+        }
+
         // Teste de criação de missão
         System.out.println("Iniciando o processo de criação de missão...");
         Missao missao = ControladorMissao.criarMissao();
@@ -20,7 +33,11 @@ public class criacaoMapaTest {
         System.out.println("Alvo da Missão: " + missao.getAlvo());
 
         // Teste de exportação para JSON
-        String caminhoFicheiro = "missao_exportada.json";
+
+
+        System.out.println("\nInsira o nome do ficheiro a exportar: ");
+        String nomeFicheiro = scanner.nextLine();
+        String caminhoFicheiro = "src/main/resources/" + nomeFicheiro + ".json";
         ControladorMissao.exportarMissaoParaJSON(caminhoFicheiro, missao);
 
         // Teste de geração de inimigos e itens
