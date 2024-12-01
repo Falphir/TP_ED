@@ -37,7 +37,7 @@ public class criacaoMapaTest {
 
         System.out.println("\nInsira o nome do ficheiro a exportar: ");
         String nomeFicheiro = scanner.nextLine();
-        String caminhoFicheiro = "src/main/resources/" + nomeFicheiro + ".json";
+        String caminhoFicheiro = "src/main/resources/missoes/" + nomeFicheiro + ".json";
         ControladorMissao.exportarMissaoParaJSON(caminhoFicheiro, missao);
 
         // Teste de geração de inimigos e itens
