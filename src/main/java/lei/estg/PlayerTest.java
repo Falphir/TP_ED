@@ -11,8 +11,7 @@ import lei.estg.models.enums.EItemTipo;
 public class PlayerTest {
     public static void main(String[] args) {
         // Criação de um jogador e um inimigo para testar interações
-        ArrayStack<Item> mochila = new ArrayStack<>(5);
-        Player player = new Player("Jogador 1", 20, mochila);
+        Player player = new Player("Jogador 1", 20, 100, 5);
         Inimigo inimigo = new Inimigo("Inimigo 1", 50, new Divisao("Divisão A"));
 
         // Teste de dano recebido
@@ -27,7 +26,7 @@ public class PlayerTest {
         player.darDano(inimigo); // O inimigo deve ter seu poder reduzido
 
         // Teste de pegar um item do tipo KIT
-        Item kit = new Item(new Divisao("Divisão B"), 20, EItemTipo.KIT);
+        Item kit = new Item("Kit Básico", new Divisao("Divisão B"), 20, EItemTipo.KIT);
         System.out.println("\n--- Teste de apanhar item (KIT) ---");
         player.apanharItem(kit);
         player.apanharItem(kit);
@@ -37,10 +36,10 @@ public class PlayerTest {
         player.apanharItem(kit); // O kit deve ser guardado na mochila
 
         // Teste de pegar um item do tipo COLETE
-        Item colete = new Item(new Divisao("Divisão C"), 30, EItemTipo.COLETE);
+        Item colete = new Item("Colete Básico", new Divisao("Divisão C"), 30, EItemTipo.COLETE);
         System.out.println("\n--- Teste de apanhar item (COLETE) ---");
         player.apanharItem(colete); // O colete deve ser equipado
-        Item colete2 = new Item(new Divisao("Divisão C"), 30, EItemTipo.COLETE);
+        Item colete2 = new Item("Colete Básico", new Divisao("Divisão C"), 30, EItemTipo.COLETE);
         System.out.println("\n--- Teste de apanhar item (COLETE) ---");
         player.apanharItem(colete2); // O colete deve ser equipado
 

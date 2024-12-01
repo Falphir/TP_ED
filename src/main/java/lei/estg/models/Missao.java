@@ -3,6 +3,7 @@ package lei.estg.models;
 import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
+import lei.estg.models.enums.EDificuldadeMissao;
 import lei.estg.models.enums.EMissaoTipo;
 
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 public class Missao {
     private String codMissao;
     private int versao;
+    private EDificuldadeMissao dificuldade;
     private EMissaoTipo tipo;
     private Graph<Divisao> edificio;
     private UnorderedListADT<Divisao> divisaoList = new UnorderedArrayList<>();
@@ -19,14 +21,16 @@ public class Missao {
     private UnorderedListADT<Item> itens;
 
     public Missao() {
+        this.edificio = new Graph<>();
         this.inimigos = new UnorderedArrayList<>();
         this.entradasSaidas = new UnorderedArrayList<>();
         this.itens = new UnorderedArrayList<>();
     }
 
-    public Missao(String codMissao, int versao, EMissaoTipo tipo, Graph edificio, Alvo alvo) {
+    public Missao(String codMissao, int versao, EDificuldadeMissao dificuldade, EMissaoTipo tipo, Graph edificio, Alvo alvo) {
         this.codMissao = codMissao;
         this.versao = versao;
+        this.dificuldade = dificuldade;
         this.tipo = tipo;
         this.edificio = edificio;
         this.inimigos = new UnorderedArrayList<>();
@@ -49,6 +53,14 @@ public class Missao {
 
     public void setAlvo(Alvo alvo) {
         this.alvo = alvo;
+    }
+
+    public EDificuldadeMissao getDificuldade() {
+        return dificuldade;
+    }
+
+    public void setDificuldade(EDificuldadeMissao dificuldade) {
+        this.dificuldade = dificuldade;
     }
 
     public EMissaoTipo getTipo() {
