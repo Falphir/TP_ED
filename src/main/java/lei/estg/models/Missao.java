@@ -15,7 +15,7 @@ public class Missao {
     private int versao;
     private EDificuldadeMissao dificuldade;
     private EMissaoTipo tipo;
-    private NetworkADT<Divisao> edificio;
+    private Network<Divisao> edificio;
     private UnorderedListADT<Divisao> divisaoList = new UnorderedArrayList<>();
     private UnorderedListADT<Inimigo> inimigos;
     private UnorderedListADT<Divisao> entradasSaidas;
@@ -81,7 +81,7 @@ public class Missao {
         this.versao = versao;
     }
 
-    public NetworkADT<Divisao> getEdificio() {
+    public Network<Divisao> getEdificio() {
         return edificio;
     }
 
