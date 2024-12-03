@@ -24,6 +24,7 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
         }
 
         arrayList[0] = element;
+        size++;
         rear++;
     }
 
@@ -35,6 +36,7 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
             expandCapacity();
         }
         arrayList[rear] = element;
+        size++;
         rear++;
     }
 
@@ -64,6 +66,7 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
         }
 
         arrayList[index + 1] = element;
+        size++;
         rear++;
 
     }

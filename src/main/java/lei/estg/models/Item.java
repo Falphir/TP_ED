@@ -3,14 +3,24 @@ package lei.estg.models;
 import lei.estg.models.enums.EItemTipo;
 
 public class Item {
+    private String nome;
     private Divisao localizacao;
     private int pontos;
     private EItemTipo tipo;
 
-    public Item(Divisao localizacao, int pontos, EItemTipo tipo) {
+    public Item(String nome, Divisao localizacao, int pontos, EItemTipo tipo) {
+        this.nome = nome;
         this.localizacao = localizacao;
         this.pontos = pontos;
         this.tipo = tipo;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public Divisao getLocalizacao() {

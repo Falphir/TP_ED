@@ -88,6 +88,7 @@ public class JsonUtils {
 
                 if ("kit de vida".equals(tipoItem)) {
                     itemInstancia = new Item(
+                            (String) itemObj.get("nome"),
                             new Divisao((String) itemObj.get("divisao")),
                             (((Number) itemObj.get("pontos-recuperados")).intValue()),
                             itemTipoConverter.convertStringToEItemTipo(tipoItem)
@@ -95,6 +96,7 @@ public class JsonUtils {
                     missao.getItens().addToRear(itemInstancia);
                 } else if ("colete".equals(tipoItem)) {
                     itemInstancia = new Item(
+                            (String) itemObj.get("nome"),
                             new Divisao((String) itemObj.get("divisao")),
                             (((Number) itemObj.get("pontos-extra")).intValue()),
                             itemTipoConverter.convertStringToEItemTipo(tipoItem)

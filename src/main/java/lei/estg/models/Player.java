@@ -11,14 +11,16 @@ public class Player {
     private int vidaColete;
     private int poder;
     private ArrayStack<Item> mochila;
+    private int mochilaLimite;
 
-    public Player(String nome, int poder, ArrayStack<Item> mochila) {
+    public Player(String nome, int poder, int vidaMaxima, int mochilaLimite) {
         this.nome = nome;
         this.vida = 100;
-        this.vidaMaxima = 100;
+        this.vidaMaxima = vidaMaxima;
         this.vidaColete = 0;
         this.poder = 15;
-        this.mochila = mochila;
+        this.mochilaLimite = mochilaLimite;
+        this.mochila = new ArrayStack<>(mochilaLimite);
     }
 
     public void receberDano(int dano) {
@@ -68,7 +70,7 @@ public class Player {
     }
 
     public void guardarKitMochila(Item kit) {
-        if (mochila.size() < 5) {
+        if (mochila.size() < mochilaLimite) {
             mochila.push(kit);
             kit.setLocalizacao(null);
             System.out.println("Kit guardado na mochila com sucesso.");
