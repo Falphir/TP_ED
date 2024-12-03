@@ -10,6 +10,7 @@ public class Player {
     private int vidaMaxima;
     private int vidaColete;
     private int poder;
+    private Divisao divisao;
     private ArrayStack<Item> mochila;
     private int mochilaLimite;
 
@@ -56,7 +57,7 @@ public class Player {
         System.out.println("Poder atual de " + inimigo.getNome() + ": " + inimigo.getPoder());
     }
 
-    public void movimentar(Divisao destino) {
+    public void moverPlayer(Divisao destino) {
 
     }
 
@@ -140,6 +141,14 @@ public class Player {
 
     public void setPoder(int poder) {
         this.poder = poder;
+    }
+
+    public Divisao getDivisao() {
+        return divisao;
+    }
+
+    public void setDivisao(Divisao divisao) {
+        this.divisao = divisao;
     }
 
     public ArrayStack<Item> getMochila() {

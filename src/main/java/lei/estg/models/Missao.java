@@ -1,7 +1,9 @@
 package lei.estg.models;
 
 import lei.estg.dataStructures.Graph;
+import lei.estg.dataStructures.Network;
 import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.dataStructures.interfaces.NetworkADT;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.enums.EDificuldadeMissao;
 import lei.estg.models.enums.EMissaoTipo;
@@ -13,7 +15,7 @@ public class Missao {
     private int versao;
     private EDificuldadeMissao dificuldade;
     private EMissaoTipo tipo;
-    private Graph<Divisao> edificio;
+    private NetworkADT<Divisao> edificio;
     private UnorderedListADT<Divisao> divisaoList = new UnorderedArrayList<>();
     private UnorderedListADT<Inimigo> inimigos;
     private UnorderedListADT<Divisao> entradasSaidas;
@@ -21,13 +23,13 @@ public class Missao {
     private UnorderedListADT<Item> itens;
 
     public Missao() {
-        this.edificio = new Graph<>();
+        this.edificio = new Network<>();
         this.inimigos = new UnorderedArrayList<>();
         this.entradasSaidas = new UnorderedArrayList<>();
         this.itens = new UnorderedArrayList<>();
     }
 
-    public Missao(String codMissao, int versao, EDificuldadeMissao dificuldade, EMissaoTipo tipo, Graph edificio, Alvo alvo) {
+    public Missao(String codMissao, int versao, EDificuldadeMissao dificuldade, EMissaoTipo tipo, Network edificio, Alvo alvo) {
         this.codMissao = codMissao;
         this.versao = versao;
         this.dificuldade = dificuldade;
@@ -79,11 +81,11 @@ public class Missao {
         this.versao = versao;
     }
 
-    public Graph<Divisao> getEdificio() {
+    public NetworkADT<Divisao> getEdificio() {
         return edificio;
     }
 
-    public void setEdificio(Graph<Divisao> edificio) {
+    public void setEdificio(Network<Divisao> edificio) {
         this.edificio = edificio;
     }
 
