@@ -11,11 +11,9 @@ public class InimigoTest {
         // Criando um inimigo
         Inimigo inimigo = new Inimigo("Goblin", 40, divisao);
 
-        // Criando a mochila do jogador (assumindo que a classe ArrayStack e Item existem)
-        ArrayStack<Item> mochila = new ArrayStack<>();
         
         // Criando o jogador com 30 pontos de vida e poder 20
-        Player player = new Player("Herói", 20, mochila);
+        Player player = new Player("Herói", 20, 100, 5);
 
         // Mostrando informações iniciais
         System.out.println("Início do combate:");
