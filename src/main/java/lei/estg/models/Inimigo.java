@@ -31,8 +31,9 @@ public class Inimigo {
         }
     }
 
-    public void movimentar(Divisao destino) {
-
+    public void moverInimigo(Divisao destino) {
+        this.divisao = destino;
+        System.out.println(nome + " movido para a divisão " + destino.getNome());
     }
     
     public String getNome() {

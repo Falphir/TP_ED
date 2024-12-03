@@ -4,7 +4,6 @@ import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
-import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.Network;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.interfaces.NetworkADT;

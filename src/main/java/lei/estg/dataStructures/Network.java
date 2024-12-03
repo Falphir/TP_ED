@@ -274,4 +274,30 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
         }
         return minIndex;
     }
+
+    public UnorderedArrayList<T> getAdjVertex(T vertex) {
+        int index = getIndex(vertex);
+        UnorderedArrayList<T> adjVertices = new UnorderedArrayList<>();
+        for (int i = 0; i < numVertices; i++) {
+            if (adjMatrix[index][i]) {
+                adjVertices.addToRear(vertices[i]);
+            }
+        }
+        return adjVertices;
+    }
+
+    public void updateEdgeWeight(T vertex1, T vertex2, double newWeight) {
+        int index1 = getIndex(vertex1);
+        int index2 = getIndex(vertex2);
+    
+        if (indexIsValid(index1) && indexIsValid(index2)) {
+            weightMatrix[index1][index2] = newWeight;
+    
+            if (isBidirectional) {
+                weightMatrix[index2][index1] = newWeight;
+            }
+        } else {
+            throw new IllegalArgumentException("Um ou ambos os vértices não foram encontrados na rede.");
+        }
+    }
 }

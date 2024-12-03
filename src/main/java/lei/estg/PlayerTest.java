@@ -1,6 +1,5 @@
 package lei.estg;
 
-import lei.estg.dataStructures.ArrayStack;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.models.Divisao;
 import lei.estg.models.Inimigo;

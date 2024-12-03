@@ -58,7 +58,8 @@ public class Player {
     }
 
     public void moverPlayer(Divisao destino) {
-
+        this.divisao = destino;
+        System.out.println(nome + " movido para a divisão " + destino.getNome());
     }
 
     public void apanharItem(Item item) {
