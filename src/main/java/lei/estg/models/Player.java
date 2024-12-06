@@ -10,7 +10,6 @@ public class Player {
     private int vidaMaxima;
     private int vidaColete;
     private int poder;
-    private Divisao divisao;
     private ArrayStack<Item> mochila;
     private int mochilaLimite;
 
@@ -73,7 +72,7 @@ public class Player {
     public void guardarKitMochila(Item kit) {
         if (mochila.size() < mochilaLimite) {
             mochila.push(kit);
-            kit.setLocalizacao(null);
+            //kit.setLocalizacao(null);
             System.out.println("Kit guardado na mochila com sucesso.");
         } else {
             System.out.println("Mochila cheia. Não é possível guardar mais kits.");
@@ -103,7 +102,7 @@ public class Player {
             return;
         }
         this.vidaColete = colete.getPontos(); // Define a proteção do colete
-        colete.setLocalizacao(null); 
+        //colete.setLocalizacao(null);
         System.out.println(nome + " equipou um colete com " + vidaColete + " pontos de proteção.");
     }
 
@@ -141,14 +140,6 @@ public class Player {
 
     public void setPoder(int poder) {
         this.poder = poder;
-    }
-
-    public Divisao getDivisao() {
-        return divisao;
-    }
-
-    public void setDivisao(Divisao divisao) {
-        this.divisao = divisao;
     }
 
     public ArrayStack<Item> getMochila() {

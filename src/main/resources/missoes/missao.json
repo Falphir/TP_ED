@@ -2,6 +2,7 @@
   "cod-missao": "pata de coelho",
   "versao": 1,
   "dificuldade": "facil",
+  "tipo": "resgate",
   "edificio": ["Heliporto", "Escada 6", "Camaratas", "Armazém", "Escada 5",
     "Laboratório", "Escritório 3", "Escada 4", "WC", "Corredor 2",
     "Segurança", "Hall", "Escada 3", "Escritório 1", "Escritório 2",
@@ -40,8 +41,8 @@
   "entradas-saidas": ["Escada de Emergência", "Garagem", "Heliporto", "Porteiro"],
   "alvo": {"divisao": "Laboratório", "tipo": "quimico"},
   "itens": [
-    {"divisao": "WC", "pontos-recuperados": 20, "tipo":"kit de vida"},
-    {"divisao": "Escritório 1", "pontos-recuperados": 15, "tipo":"kit de vida"},
-    {"divisao": "Escada 2", "pontos-extra": 25, "tipo":"colete"}
+    {"nome": "Kit Básico","divisao": "WC", "pontos-recuperados": 20, "tipo":"kit de vida"},
+    {"nome": "Kit Básico","divisao": "Escritório 1", "pontos-recuperados": 15, "tipo":"kit de vida"},
+    {"nome": "Colete Básico", "divisao": "Escada 2", "pontos-extra": 25, "tipo":"colete"}
   ]
 }

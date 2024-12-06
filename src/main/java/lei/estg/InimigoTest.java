@@ -9,7 +9,7 @@ public class InimigoTest {
         Divisao divisao = new Divisao("Floresta Sombria");
         
         // Criando um inimigo
-        Inimigo inimigo = new Inimigo("Goblin", 40, divisao);
+        Inimigo inimigo = new Inimigo("Goblin", 40);
 
         
         // Criando o jogador com 30 pontos de vida e poder 20

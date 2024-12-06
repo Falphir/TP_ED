@@ -3,12 +3,10 @@ package lei.estg.models;
 public class Inimigo {
     private String nome;
     private int poder;
-    private Divisao divisao;
 
-    public Inimigo(String nome, int poder, Divisao divisao) {
+    public Inimigo(String nome, int poder) {
         this.nome = nome;
         this.poder = poder;
-        this.divisao = divisao;
     }
 
     public void receberDano(int dano) {
@@ -51,20 +49,12 @@ public class Inimigo {
         this.poder = poder;
     }
 
-    public Divisao getDivisao() {
-        return divisao;
-    }
-
-    public void setDivisao(Divisao divisao) {
-        this.divisao = divisao;
-    }
 
     @Override
     public String toString() {
         return "Inimigo{" +
                 "nome='" + nome + '\'' +
                 ", poder=" + poder +
-                ", divisao=" + divisao.getNome() +
                 '}';
     }
 }

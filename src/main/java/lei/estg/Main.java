@@ -29,8 +29,8 @@ public class Main {
                 System.out.println("Versão: " + missao.getVersao());
 
                 System.out.println("\nEdifícios: " + missao.getEdificio().toString());
-
-                System.out.println("\nDivisoes: " + missao.getDivisaoList().toString());
+/*
+                //System.out.println("\nDivisoes: " + missao.getDivisaoList().toString());
 
 
                 System.out.println("\nInimigos:");
@@ -55,7 +55,7 @@ public class Main {
                         System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
                                 ", Pontos Extra: " + item.getPontos());
                     }
-                }
+                }*/
 
             } catch (IOException e) {
                 e.printStackTrace();

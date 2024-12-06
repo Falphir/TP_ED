@@ -25,7 +25,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class ControladorMissao {
-
+/*
     public static String exportarMissaoParaJSON(String caminhoFicheiro, Missao missao) {
         JsonObject missaoObject = new JsonObject();
 
@@ -367,5 +367,5 @@ public class ControladorMissao {
         return null;
     }
 
-
+*/
 }

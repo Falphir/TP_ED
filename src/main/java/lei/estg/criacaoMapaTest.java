@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 
 public class criacaoMapaTest {
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         try {
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "UTF-8"));
@@ -30,7 +30,7 @@ public class criacaoMapaTest {
         System.out.println("Versão da Missão: " + missao.getVersao());
         System.out.println("Dificuldade da Missão: " + missao.getDificuldade());
         System.out.println("Tipo da Missão: " + missao.getTipo());
-        System.out.println("Alvo da Missão: " + missao.getAlvo());
+      //  System.out.println("Alvo da Missão: " + missao.getAlvo());
 
         // Teste de exportação para JSON
 
@@ -39,7 +39,7 @@ public class criacaoMapaTest {
         String nomeFicheiro = scanner.nextLine();
         String caminhoFicheiro = "src/main/resources/missoes/" + nomeFicheiro + ".json";
         ControladorMissao.exportarMissaoParaJSON(caminhoFicheiro, missao);
-
+/*
         // Teste de geração de inimigos e itens
         System.out.println("\nGerando inimigos e itens para a missão...");
         for (Inimigo inimigo : missao.getInimigos()) {
@@ -60,5 +60,15 @@ public class criacaoMapaTest {
         System.out.println("\nFinalizando o teste de mapa...");
         // O mapa será selecionado automaticamente no processo de criação da missão
         // Nenhuma ação extra necessária, já que isso ocorre na função 'selecionarMapa'
-    }
+    }*/
+
+
+
+
+
+
+
+
+
+
 }

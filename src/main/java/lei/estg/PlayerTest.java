@@ -10,7 +10,7 @@ import lei.estg.models.enums.EItemTipo;
 
 public class PlayerTest {
     public static void main(String[] args) {
-        // Criação de um jogador e um inimigo para testar interações
+       /* // Criação de um jogador e um inimigo para testar interações
         Player player = new Player("Jogador 1", 20, 100, 5);
         Inimigo inimigo = new Inimigo("Inimigo 1", 50, new Divisao("Divisão A"));
 
@@ -54,6 +54,6 @@ public class PlayerTest {
         // Exibição final do estado do jogador
         System.out.println("\n--- Estado final do jogador ---");
         System.out.println("Vida do jogador: " + player.getVida());
-        System.out.println("Vida do colete: " + player.getVidaColete());
+        System.out.println("Vida do colete: " + player.getVidaColete());*/
     }
 }
