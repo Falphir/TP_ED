@@ -4,10 +4,13 @@ import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
+import lei.estg.dataStructures.Edificio;
 import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.Network;
 import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.dataStructures.interfaces.EdificioADT;
 import lei.estg.dataStructures.interfaces.NetworkADT;
+import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
 import lei.estg.models.enums.EItemTipo;
 import lei.estg.models.enums.EMissaoTipo;
@@ -15,6 +18,7 @@ import lei.estg.models.enums.EMissaoTipo;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 
 public class JsonUtils {
     public static Missao carregarMissao(String caminhoArquivo) throws IOException {
@@ -29,7 +33,7 @@ public class JsonUtils {
             missao.setCodMissao((String) jsonObject.get("cod-missao"));
             missao.setVersao(((Number) jsonObject.get("versao")).intValue());
 
-            Network<Divisao> edificio = new Network<>();
+            EdificioADT<Divisao> edificio = new Edificio<>();
 
             missao.setEdificio(edificio);
 
@@ -37,7 +41,7 @@ public class JsonUtils {
             for (Object divisao : divisaoArray) {
                 Divisao instance = new Divisao((String) divisao);
 
-                missao.getDivisaoList().addToRear(instance);
+                //missao.getDivisaoList().addToRear(instance);
                 missao.getEdificio().addVertex(instance);
             }
 
@@ -50,7 +54,7 @@ public class JsonUtils {
                 Divisao origem = new Divisao(origemNome);
                 Divisao destino = new Divisao(destinoNome);
 
-                int origemIndex = missao.getEdificio().getIndex(missao.findorAddDivisao(origemNome));
+                int origemIndex = missao.getEdificio().get;
                 int destinoIndex = missao.getEdificio().getIndex(missao.findorAddDivisao(destinoNome));
 
                 if (origemIndex != -1 && destinoIndex != -1) {
@@ -63,11 +67,29 @@ public class JsonUtils {
             JsonArray inimigosArray = (JsonArray) jsonObject.get("inimigos");
             for (Object inimigo : inimigosArray) {
                 JsonObject inimigoObj = (JsonObject) inimigo;
+
+                String nomeDivisao = (String) inimigoObj.get("divisao");
+
+                Divisao divisaoInimigo = getDivisao(nomeDivisao, missao.getDivisaoList());
+
                 Inimigo inimigoInstancia = new Inimigo(
                         (String) inimigoObj.get("nome"),
                         (((Number) inimigoObj.get("poder")).intValue()),
-                        new Divisao((String) inimigoObj.get("divisao"))
+                        divisaoInimigo
                 );
+
+                UnorderedListADT<Divisao> divisoesAdj = missao.getEdificio().getAdjVertex(edificio.getIndex(inimigoInstancia.getDivisao()));
+
+                int divisaoAtualIndex = edificio.getIndex(inimigoInstancia.getDivisao());
+
+                Iterator<Divisao> iter = divisoesAdj.iterator();
+                while (iter.hasNext()) {
+                    Divisao divisao = iter.next();
+                    int divisaoAdjIndex = edificio.getIndex(divisao);
+                    int pesoAtual = missao.getEdificio().getWeight(divisaoAtualIndex, divisaoAdjIndex);
+                    int novoPeso = pesoAtual + inimigoInstancia.getPoder();
+                    missao.getEdificio().updateEdge(divisaoAtualIndex, divisaoAdjIndex, novoPeso);
+                }
                 missao.getInimigos().addToRear(inimigoInstancia);
             }
 
@@ -113,6 +135,17 @@ public class JsonUtils {
             System.err.println("Erro ao carregar o JSON: " + e.getMessage());
         }
 
+        return null;
+    }
+
+        public static Divisao getDivisao(String nomeDivisao, UnorderedListADT<Divisao> divisoes) {
+        Iterator iter = divisoes.iterator();
+        while (iter.hasNext()) {
+            Divisao divisao = (Divisao) iter.next();
+            if (divisao.getNome().equals(nomeDivisao)) {
+                return divisao;
+            }
+        }
         return null;
     }
 }

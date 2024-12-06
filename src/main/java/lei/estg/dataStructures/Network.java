@@ -17,12 +17,12 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
     /**
      * Matrix to store the weights of the edges.
      */
-    private double[][] weightMatrix;
+    protected double[][] weightMatrix;
 
     /**
      * Indicates whether the network is bidirectional.
      */
-    private boolean isBidirectional;
+    protected boolean isBidirectional;
 
     /**
      * Default constructor that initializes the network with a default capacity.
@@ -274,4 +274,31 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
         }
         return minIndex;
     }
+
+
+    @Override
+    public String toString() {
+        String result = "Network:\n";
+        result += "Bidirectional: " + isBidirectional + "\n";
+        result += "Vertices: " + numVertices + "\n";
+
+        result += "Vertices List:\n";
+        for (int i = 0; i < numVertices; i++) {
+            result += "[" + i + "] " + vertices[i] + "\n";
+        }
+
+        result += "\nEdges and Weights:\n";
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
+                if (adjMatrix[i][j]) {
+                    result += "Edge: " + vertices[i] + " -> " + vertices[j];
+                    result += ", Weight: " + weightMatrix[i][j] + "\n";
+                }
+            }
+        }
+
+        return result;
+    }
+
+
 }

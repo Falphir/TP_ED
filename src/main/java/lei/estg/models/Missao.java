@@ -1,8 +1,10 @@
 package lei.estg.models;
 
+import lei.estg.dataStructures.Edificio;
 import lei.estg.dataStructures.Graph;
 import lei.estg.dataStructures.Network;
 import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.dataStructures.interfaces.EdificioADT;
 import lei.estg.dataStructures.interfaces.NetworkADT;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.enums.EDificuldadeMissao;
@@ -15,21 +17,21 @@ public class Missao {
     private int versao;
     private EDificuldadeMissao dificuldade;
     private EMissaoTipo tipo;
-    private Network<Divisao> edificio;
-    private UnorderedListADT<Divisao> divisaoList = new UnorderedArrayList<>();
+    private EdificioADT<Divisao> edificio;
+    //private UnorderedListADT<Divisao> divisaoList = new UnorderedArrayList<>();
     private UnorderedListADT<Inimigo> inimigos;
     private UnorderedListADT<Divisao> entradasSaidas;
     private Alvo alvo;
     private UnorderedListADT<Item> itens;
 
     public Missao() {
-        this.edificio = new Network<>();
+        this.edificio = new Edificio<>();
         this.inimigos = new UnorderedArrayList<>();
         this.entradasSaidas = new UnorderedArrayList<>();
         this.itens = new UnorderedArrayList<>();
     }
 
-    public Missao(String codMissao, int versao, EDificuldadeMissao dificuldade, EMissaoTipo tipo, Network edificio, Alvo alvo) {
+    public Missao(String codMissao, int versao, EDificuldadeMissao dificuldade, EMissaoTipo tipo, Edificio edificio, Alvo alvo) {
         this.codMissao = codMissao;
         this.versao = versao;
         this.dificuldade = dificuldade;
@@ -81,11 +83,11 @@ public class Missao {
         this.versao = versao;
     }
 
-    public Network<Divisao> getEdificio() {
+    public EdificioADT<Divisao> getEdificio() {
         return edificio;
     }
 
-    public void setEdificio(Network<Divisao> edificio) {
+    public void setEdificio(EdificioADT<Divisao> edificio) {
         this.edificio = edificio;
     }
 
@@ -113,14 +115,14 @@ public class Missao {
         this.itens = itens;
     }
 
-    public UnorderedListADT<Divisao> getDivisaoList() {
+    /*public UnorderedListADT<Divisao> getDivisaoList() {
         return divisaoList;
-    }
+    }*/
 
-    public void setDivisaoList(UnorderedListADT<Divisao> divisaoList) {
+    /*public void setDivisaoList(UnorderedListADT<Divisao> divisaoList) {
         this.divisaoList = divisaoList;
-    }
-
+    }*/
+/*
     public Divisao findorAddDivisao(String nome) {
         Iterator<Divisao> iter = divisaoList.iterator();
         while (iter.hasNext()) {
@@ -133,7 +135,7 @@ public class Missao {
         Divisao novaDivisao = new Divisao(nome);
         divisaoList.addToRear(novaDivisao);
         return novaDivisao;
-    }
+    }*/
 
     @Override
     public String toString() {
