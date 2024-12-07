@@ -25,7 +25,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class ControladorMissao {
-/*
+    /*
     public static String exportarMissaoParaJSON(String caminhoFicheiro, Missao missao) {
         JsonObject missaoObject = new JsonObject();
 
@@ -33,42 +33,74 @@ public class ControladorMissao {
         missaoObject.put("cod-missao", missao.getCodMissao());
         missaoObject.put("versao", missao.getVersao());
         missaoObject.put("dificuldade", missao.getDificuldade().toString().toLowerCase());
-        missaoObject.put("edificio", missao.getDivisaoList().toString());
 
-        System.out.println("Inimigos: " + missao.getInimigos());
+
+        JsonArray edificioArray = new JsonArray();
+        Iterator it = missao.getEdificio().getVertex();
+        while (it.hasNext()) {
+            Divisao divisao = (Divisao) it.next();
+            edificioArray.add(divisao.getNome());
+        }
+        missaoObject.put("edificio", edificioArray);
+
+        //System.out.println("Inimigos: " + missao.getInimigos());
         // Adicionar inimigos da missão como um array
         JsonArray inimigosArray = new JsonArray();
-        for (Inimigo inimigo : missao.getInimigos()) {
-            JsonObject inimigoObject = new JsonObject();
-            inimigoObject.put("nome", inimigo.getNome());
-            inimigoObject.put("poder", inimigo.getPoder());
-            inimigoObject.put("divisao", inimigo.getDivisao().getNome());
-            inimigosArray.add(inimigoObject);
-        }
-        missaoObject.put("inimigos", inimigosArray);
 
-        System.out.println("Inimigos: " + missao.getInimigos());
-        // Adicionar inimigos da missão como um array
-        JsonArray itensArray = new JsonArray();
-        for (Item item : missao.getItens()) {
-            JsonObject itemObject = new JsonObject();
-            itemObject.put("nome", item.getNome());
-            itemObject.put("divisao", item.getLocalizacao().getNome());
-            if (item.getTipo() == EItemTipo.KIT) {
-                itemObject.put("pontos-recuperados", item.getPontos());
-            } else {
-                itemObject.put("pontos-extra", item.getPontos());
+        Iterator itInimigo = missao.getEdificio().getVertex();
+        while (itInimigo.hasNext()) {
+            Divisao divisao = (Divisao) itInimigo.next();
+            if(divisao.getInimigos() != null) {
+                for (Inimigo inimigo : divisao.getInimigos()) {
+                    JsonObject inimigoObject = new JsonObject();
+                    inimigoObject.put("nome", inimigo.getNome());
+                    inimigoObject.put("poder", inimigo.getPoder());
+                    inimigoObject.put("divisao", divisao.getNome());
+                    inimigosArray.add(inimigoObject);
+                }
             }
-            itemObject.put("tipo", item.getTipo().getDescription());
-            itensArray.add(itemObject);
         }
-        missaoObject.put("itens", itensArray);
 
-        missaoObject.put("entradas-saidas", missao.getEntradasSaidas().toString());
+        JsonArray itensArray = new JsonArray();
+
+        Iterator itItem = missao.getEdificio().getVertex();
+        while (itItem.hasNext()) {
+            Divisao divisao = (Divisao) itItem.next();
+            if(divisao.getItems() != null) {
+                for (Item item : divisao.getItems()) {
+                    JsonObject itemObject = new JsonObject();
+                    itemObject.put("nome", item.getNome());
+                    itemObject.put("divisao", divisao.getNome());
+                    if (item.getTipo() == EItemTipo.KIT) {
+                        itemObject.put("pontos-recuperados", item.getPontos());
+                    } else {
+                        itemObject.put("pontos-extra", item.getPontos());
+                    }
+                    itemObject.put("tipo", item.getTipo().getDescription());
+                    itensArray.add(itemObject);
+                }
+            }
+        }
+
+        JsonArray entradasSaidasArray = new JsonArray();
+
+        Iterator itEntradaSaida = missao.getEdificio().getVertex();
+        while (itEntradaSaida.hasNext()) {
+            Divisao divisao = (Divisao) itEntradaSaida.next();
+            if(divisao.isEntradaSaida()) {
+                entradasSaidasArray.add(divisao.getNome());
+            }
+        }
+
         JsonObject alvoObject = new JsonObject();
-        alvoObject.put("divisao", missao.getAlvo().getDivisao().getNome());
-        alvoObject.put("tipo", missao.getAlvo().getTipo());
-        missaoObject.put("alvo", alvoObject);
+        Iterator itAlvo = missao.getEdificio().getVertex();
+        while (itAlvo.hasNext()) {
+            Divisao divisao = (Divisao) itAlvo.next();
+            if(divisao.getAlvo() != null) {
+                alvoObject.put("divisao", divisao.getAlvo().getDivisao().getNome());
+                alvoObject.put("tipo", divisao.getAlvo().getTipo());
+            }
+        }
 
         try (FileWriter file = new FileWriter(caminhoFicheiro)) {
             file.write(missaoObject.toJson());
@@ -125,8 +157,8 @@ public class ControladorMissao {
             selecionarMapa(missao);
 
             System.out.println("Insira o tipo de Alvo:");
-            System.out.println(missao.getDivisaoList());
-            missao.setAlvo(new Alvo(obterDivisaoAleatoria(missao.getDivisaoList()), scanner.nextLine()));
+
+            adicionarAlvo(missao.getEdificio(), scanner.nextLine());
 
             carregarDadosConfig(String.valueOf(caminhoArquivo), missao);
 
@@ -346,15 +378,18 @@ public class ControladorMissao {
         }
     }
 
-
-    private static Divisao obterDivisaoAleatoria(UnorderedListADT<Divisao> divisaoList) {
-        if (divisaoList.isEmpty()) {
-            throw new IllegalArgumentException("A lista de divisões está vazia ou é nula.");
+    private static void adicionarAlvo(Edificio edificio, String tipo ) {
+        Divisao alvo = obterDivisaoAleatoria(edificio);
+        if (alvo != null) {
+            alvo.setAlvo(new Alvo(alvo, tipo));
         }
-        Random random = new Random();
-        int indexAleatorio = random.nextInt(divisaoList.size()); // Gera um índice entre 0 e tamanho-1
+    }
 
-        Iterator<Divisao> iterator = divisaoList.iterator();
+    private static Divisao obterDivisaoAleatoria(Edificio edificio) {
+        Random random = new Random();
+        int indexAleatorio = random.nextInt(edificio.size()); // Gera um índice entre 0 e tamanho-1
+
+        Iterator<Divisao> iterator = edificio.getVertex();
         int contador = 0;
 
         while (iterator.hasNext()) {

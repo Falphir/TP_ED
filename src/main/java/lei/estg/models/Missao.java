@@ -1,6 +1,6 @@
 package lei.estg.models;
 
-import lei.estg.dataStructures.interfaces.EdificioADT;
+import lei.estg.models.Interfaces.EdificioADT;
 import lei.estg.models.enums.EDificuldadeMissao;
 import lei.estg.models.enums.EMissaoTipo;
 
@@ -56,7 +56,7 @@ public class Missao {
         this.versao = versao;
     }
 
-    public EdificioADT<Divisao> getEdificio() {
+    public Edificio getEdificio() {
         return edificio;
     }
 

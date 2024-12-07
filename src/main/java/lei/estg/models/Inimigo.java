@@ -1,6 +1,8 @@
 package lei.estg.models;
 
-public class Inimigo {
+import lei.estg.models.Interfaces.EntidadeADT;
+
+public class Inimigo<T extends EntidadeADT<T>> implements EntidadeADT<T> {
     private String nome;
     private int poder;
 
@@ -9,27 +11,21 @@ public class Inimigo {
         this.poder = poder;
     }
 
+    @Override
     public void receberDano(int dano) {
         this.poder -= dano;
-        if (this.poder < 0) {
-            this.poder = 0;
-        }
-        System.out.println(nome + " levou " + dano + " de dano. Poder Atual: " + poder);
-        if (this.poder == 0) {
-            System.out.println(nome + " foi derrotado!");
-        }
+        if (this.poder < 0) this.poder = 0;
+        System.out.println(nome + " recebeu " + dano + " de dano. Poder restante: " + poder);
     }
 
-    public void atacar(Player player) {
-        player.receberDano(poder);
-        if (player.getVida() == 0) {
-            System.out.println(nome + " atacou o player e morreu!");
-        } else {
-            System.out.println(nome + " atacou o player causando " + poder + " de dano.");
-        }
+
+    @Override
+    public void atacar(T alvo) {
+        alvo.receberDano(poder);
     }
 
-    public void movimentar(Divisao destino) {
+    @Override
+    public void mover(Divisao destino) {
 
     }
     

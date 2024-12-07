@@ -5,10 +5,9 @@ import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import lei.estg.models.Edificio;
-import lei.estg.dataStructures.interfaces.EdificioADT;
+import lei.estg.models.Interfaces.EdificioADT;
 import lei.estg.models.*;
 import lei.estg.models.enums.EDificuldadeMissao;
-import lei.estg.models.enums.EItemTipo;
 import lei.estg.models.enums.EMissaoTipo;
 
 
@@ -107,9 +106,9 @@ public class JsonUtils {
     }
 
     public static Divisao getDivisao(String nomeDivisao, Edificio edificio) {
-        Iterator<Divisao> divisoes = edificio.getDivisoes();
+        Iterator divisoes = edificio.getVertex();
         while (divisoes.hasNext()) {
-            Divisao divisao = divisoes.next();
+            Divisao divisao = (Divisao) divisoes.next();
             if (divisao.getNome().equals(nomeDivisao)) {
                 return divisao;
             }
