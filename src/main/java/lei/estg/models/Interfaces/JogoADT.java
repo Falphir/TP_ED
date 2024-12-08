@@ -11,7 +11,7 @@ public interface JogoADT {
     public void iniciarJogo();
     public void terminarJogo();
 
-    public void selecionarEntrada(Player player, Edificio<Divisao> edificio);
+    public Divisao selecionarEntrada(Player player, Edificio<Divisao> edificio);
     public void moverPlayer(Player player, Edificio<Divisao> edificio);
     public void moverInimigo(Inimigo inimigo, Edificio<Divisao> edificio) throws EmptyStackException;
 

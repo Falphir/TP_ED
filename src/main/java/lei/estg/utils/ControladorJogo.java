@@ -25,7 +25,7 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public void selecionarEntrada(Player player, Edificio<Divisao> edificio) {
+    public Divisao selecionarEntrada(Player player, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
         UnorderedListADT<Divisao> entradas = new UnorderedArrayList<>();
         int index = 1;
@@ -63,7 +63,8 @@ public class ControladorJogo implements JogoADT {
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
             System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
-    }
+        }
+        return divisaoEscolhida;
     }
 
     @Override
@@ -111,7 +112,7 @@ public class ControladorJogo implements JogoADT {
                 divisaoAtual.getNome() + " para " + novaDivisao.getNome());
     }
 
-    private Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio) {
+    public Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
         while (divisoes.hasNext()) {
             Divisao divisao = divisoes.next();

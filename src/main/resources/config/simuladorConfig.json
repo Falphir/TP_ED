@@ -1,9 +1,9 @@
 {
   "player" : {
-    "name" : "Tó Cruz",
-    "MochilaLimit": 5,
-    "VidaMaxima": 100,
-    "Poder": 15
+    "nome" : "Tó Cruz",
+    "mochila-limite": 5,
+    "vidaMaxima": 100,
+    "poder": 15
   },
   "missao": {
     "dificuldade": [

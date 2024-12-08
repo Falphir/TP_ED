@@ -23,7 +23,7 @@ public class JogoConfig {
         return null;
     }
 
-    private Player carregarPlayerConfig(String caminhoFicheiro) {
+    public Player carregarPlayerConfig(String caminhoFicheiro) {
         if (caminhoFicheiro == null) return null;
 
         JsonObject playerObject = (JsonObject) carregarConfig(caminhoFicheiro).get("player");
