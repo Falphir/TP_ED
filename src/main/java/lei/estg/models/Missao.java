@@ -7,12 +7,12 @@ import lei.estg.models.enums.EMissaoTipo;
 public class Missao {
     private String codMissao;
     private int versao;
-    private EdificioADT<Divisao> edificio;
+    private Edificio<Divisao> edificio;
     private EDificuldadeMissao dificuldade;
     private EMissaoTipo tipo;
 
     public Missao() {
-        this.edificio = new Edificio<>();
+        this.edificio = new Edificio<>(true);
 
     }
 
@@ -60,7 +60,7 @@ public class Missao {
         return edificio;
     }
 
-    public void setEdificio(EdificioADT<Divisao> edificio) {
+    public void setEdificio(Edificio<Divisao> edificio) {
         this.edificio = edificio;
     }
 

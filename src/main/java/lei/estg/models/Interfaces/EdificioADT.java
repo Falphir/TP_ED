@@ -10,5 +10,5 @@ public interface EdificioADT<T> extends NetworkADT<T> {
     public Iterator<T> getVertex();
     public Iterator<T> getAdjacentes(T divisao);
     public Iterator<T> encontrarCaminho(T divisao1, T divisao2) throws EmptyStackException;
-    public void updateEdge(int index1, int index2, int weight);
+    public void updateEdge(int index1, int index2, double weight);
 }

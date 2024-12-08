@@ -18,6 +18,7 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
      * Matrix to store the weights of the edges.
      */
     protected double[][] weightMatrix;
+    protected int capacity = 10;
 
     /**
      * Indicates whether the network is bidirectional.
@@ -46,17 +47,26 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
     }
 
     /**
+     * Constructor that initializes the network as either bidirectional or unidirectional.
+     *
+     * @param isBidirectional true if the network is bidirectional, false otherwise
+     */
+    public Network(boolean isBidirectional, int capacity) {
+        super();
+        this.capacity = capacity;
+        this.isBidirectional = isBidirectional;
+        weightMatrix = new double[capacity][capacity];
+        initializeWeightMatrix();
+    }
+
+    /**
      * Initializes the weight matrix with default values.
      * The weight for an edge from a vertex to itself is set to 0, and to Double.POSITIVE_INFINITY for all other edges.
      */
     private void initializeWeightMatrix() {
-        for (int i = 0; i < DEFAULT_CAPACITY; i++) {
-            for (int j = 0; j < DEFAULT_CAPACITY; j++) {
-                if (i == j) {
-                    weightMatrix[i][j] = 0;
-                } else {
-                    weightMatrix[i][j] = Double.POSITIVE_INFINITY;
-                }
+        for (int i = 0; i < capacity; i++) {
+            for (int j = 0; j < capacity; j++) {
+                weightMatrix[i][j] = Double.POSITIVE_INFINITY;
             }
         }
     }
@@ -68,17 +78,27 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
     protected void expandCapacity() {
         super.expandCapacity();
 
+        // Criar uma matriz maior
         double[][] largerWeightMatrix = new double[vertices.length][vertices.length];
-        for (int i = 0; i < numVertices; i++) {
-            System.arraycopy(weightMatrix[i], 0, largerWeightMatrix[i], 0, numVertices);
-        }
-        weightMatrix = largerWeightMatrix;
 
-        for (int i = numVertices; i < weightMatrix.length; i++) {
-            for (int j = numVertices; j < weightMatrix.length; j++) {
-                weightMatrix[i][j] = Double.POSITIVE_INFINITY;
+        // Copiar os valores da matriz antiga para a nova
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
+                largerWeightMatrix[i][j] = weightMatrix[i][j];
             }
         }
+
+        // Configurar os valores novos para Double.POSITIVE_INFINITY
+        for (int i = 0; i < vertices.length; i++) {
+            for (int j = 0; j < vertices.length; j++) {
+                if (i >= numVertices || j >= numVertices) {
+                    largerWeightMatrix[i][j] = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+
+        // Substituir a matriz antiga pela nova
+        weightMatrix = largerWeightMatrix;
     }
 
     /**

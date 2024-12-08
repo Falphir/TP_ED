@@ -1,12 +1,14 @@
 package lei.estg.models;
 
 import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.models.Interfaces.EntidadeADT;
 
 public class Divisao {
     private String nome;
     private UnorderedArrayList<Inimigo> inimigos;
     private UnorderedArrayList<Item> items;
     private boolean isEntradaSaida;
+    private Player player;
     private Alvo alvo;
 
     public Divisao(String nome) {
@@ -57,8 +59,17 @@ public class Divisao {
         this.alvo = alvo;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     @Override
     public String toString() {
         return "Divisao: " + nome;
     }
+
 }

@@ -10,8 +10,15 @@ import java.util.Iterator;
 
 public class Edificio<T> extends Network<T> implements EdificioADT<T> {
 
-    public Edificio() {
+    public Edificio(boolean isBidirectional) {
         super();
+        this.isBidirectional = isBidirectional;
+    }
+
+    public Edificio(boolean isBidirectional, int initialCapacity) {
+        super();
+        this.isBidirectional = isBidirectional;
+        this.capacity = initialCapacity;
     }
 
     @Override
@@ -29,7 +36,7 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         int index = getIndex(divisao);
         if (indexIsValid(index)) {
             for (int i = 0; i < numVertices; i++) {
-                if (weightMatrix[index][i] != Integer.MAX_VALUE) {
+                if (weightMatrix[index][i] != Double.POSITIVE_INFINITY && index != i) {
                     adjacentes.addToRear(vertices[i]);
                 }
             }
@@ -54,7 +61,7 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
             return true;
         }
         for (int i = 0; i < numVertices; i++) {
-            if (weightMatrix[index1][i] != Integer.MAX_VALUE && !visitado[i]) {
+            if (weightMatrix[index1][i] != Double.POSITIVE_INFINITY && !visitado[i]) {
                 if (dfsCaminho(i, index2, visitado, caminho)) {
                     return true;
                 }
@@ -65,7 +72,7 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
     }
 
     @Override
-    public void updateEdge(int index1, int index2, int weight) {
+    public void updateEdge(int index1, int index2, double weight) {
 
         if (indexIsValid(index1) && indexIsValid(index2)) {
             weightMatrix[index1][index2] = weight;
@@ -76,6 +83,10 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         } else {
             throw new IllegalArgumentException("Um ou ambos os vértices não foram encontrados na rede.");
         }
+    }
+
+    public int getNumVertices() {
+        return numVertices;
     }
 
 }

@@ -29,33 +29,6 @@ public class Main {
                 System.out.println("Versão: " + missao.getVersao());
 
                 System.out.println("\nEdifícios: " + missao.getEdificio().toString());
-/*
-                //System.out.println("\nDivisoes: " + missao.getDivisaoList().toString());
-
-
-                System.out.println("\nInimigos:");
-                for (Inimigo inimigo : missao.getInimigos()) {
-                    System.out.println("Nome: " + inimigo.getNome() + ", Poder: " + inimigo.getPoder() + ", Divisão: " + inimigo.getDivisao());
-                }
-
-                System.out.println("\nEntradas e saídas:");
-                for (Divisao entradaSaida : missao.getEntradasSaidas()) {
-                    System.out.println("- " + entradaSaida);
-                }
-
-                System.out.println("\nAlvo:");
-                System.out.println("Divisão: " + missao.getAlvo().getDivisao() + ", Tipo: " + missao.getAlvo().getTipo());
-
-                System.out.println("\nItens:");
-                for (Item item : missao.getItens()) {
-                    if (item.getTipo().equals(EItemTipo.KIT)) {
-                        System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
-                                ", Pontos Recuperados: " + item.getPontos());
-                    } else if (item.getTipo().equals(EItemTipo.COLETE)) {
-                        System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
-                                ", Pontos Extra: " + item.getPontos());
-                    }
-                }*/
 
             } catch (IOException e) {
                 e.printStackTrace();

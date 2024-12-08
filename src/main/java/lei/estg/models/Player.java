@@ -49,7 +49,7 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
 
     @Override
     public void mover(Divisao destino) {
-
+        destino.setPlayer(this);
     }
 
     public void apanharItem(Item item) {

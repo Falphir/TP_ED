@@ -28,13 +28,17 @@ public class JsonUtils {
             missao.setDificuldade(EDificuldadeMissao.valueOf(((String) jsonObject.get("dificuldade")).toUpperCase()));
             missao.setTipo(EMissaoTipo.valueOf(((String) jsonObject.get("tipo")).toUpperCase()));
 
-            EdificioADT<Divisao> edificio = new Edificio<>();
+            JsonArray divisaoArray = (JsonArray) jsonObject.get("edificio");
+            Edificio<Divisao> edificio = new Edificio<>(true, divisaoArray.size());
             missao.setEdificio(edificio);
 
-            JsonArray divisaoArray = (JsonArray) jsonObject.get("edificio");
+            int index = 0;
+
+            Divisao[] divisaoArrayList = new Divisao[divisaoArray.size()];
             for (Object divisao : divisaoArray) {
                 Divisao instance = new Divisao((String) divisao);
                 edificio.addVertex(instance);
+                divisaoArrayList[index++] = instance;
             }
 
             JsonArray ligacoesArray = (JsonArray) jsonObject.get("ligacoes");
@@ -42,12 +46,24 @@ public class JsonUtils {
                 JsonArray ligacao = (JsonArray) conexao;
                 String origemNome = ligacao.get(0).toString();
                 String destinoNome = ligacao.get(1).toString();
+
+                Divisao origem = null;
+                Divisao destino = null;
+
+                for (Divisao divisao : divisaoArrayList) {
+                    if (divisao.getNome().equals(origemNome)) {
+                        origem = divisao;
+                    }
+                    if (divisao.getNome().equals(destinoNome)) {
+                        destino = divisao;
+                    }
+                }
+
                 int peso = 0;
 
-                Divisao origem = new Divisao(origemNome);
-                Divisao destino = new Divisao(destinoNome);
-
-                edificio.addEdge(origem, destino, peso);
+                if (origem != null && destino != null) {
+                    edificio.addEdge(origem, destino, peso);
+                }
             }
 
             JsonArray inimigosArray = (JsonArray) jsonObject.get("inimigos");
@@ -58,10 +74,11 @@ public class JsonUtils {
                         ((Number) inimigoJson.get("poder")).intValue()
                 );
                 String divisaoNome = (String) inimigoJson.get("divisao");
-               // System.out.println("Here: " + edificio);
+
                 Divisao divisao = getDivisao(divisaoNome, (Edificio) edificio);
                 if (divisao != null) {
                     divisao.getInimigos().addToRear(inimigo);
+                    atualizarEdges(divisao, edificio, inimigo);
                 }
             }
 
@@ -97,6 +114,15 @@ public class JsonUtils {
 
             }
 
+            JsonArray entradaSaidaArray = (JsonArray) jsonObject.get("entradas-saidas");
+            for (Object entradaSaidaObj : entradaSaidaArray) {
+                String divisaoNome = (String) entradaSaidaObj;
+                Divisao divisao = getDivisao(divisaoNome, (Edificio) edificio);
+                if (divisao != null) {
+                    divisao.setEntradaSaida(true);
+                }
+            }
+
             return missao;
         } catch (JsonException e) {
             System.err.println("Erro ao carregar o JSON: " + e.getMessage());
@@ -114,5 +140,16 @@ public class JsonUtils {
             }
         }
         return null;
+    }
+
+    private static void atualizarEdges(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+        Iterator<Divisao> adjacentes = edificio.getAdjacentes(divisao);
+        while (adjacentes.hasNext()) {
+            Divisao adjacente = adjacentes.next();
+            double pesoAtual = edificio.getWeight(divisao, adjacente);
+            double novoPeso = pesoAtual + inimigo.getPoder();
+
+            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
+        }
     }
 }

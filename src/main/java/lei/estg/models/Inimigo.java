@@ -26,7 +26,7 @@ public class Inimigo<T extends EntidadeADT<T>> implements EntidadeADT<T> {
 
     @Override
     public void mover(Divisao destino) {
-
+        destino.getInimigos().addToRear(this);
     }
     
     public String getNome() {

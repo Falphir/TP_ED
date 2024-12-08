@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 
 public class criacaoMapaTest {
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         try {
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "UTF-8"));
@@ -60,7 +60,7 @@ public class criacaoMapaTest {
         System.out.println("\nFinalizando o teste de mapa...");
         // O mapa será selecionado automaticamente no processo de criação da missão
         // Nenhuma ação extra necessária, já que isso ocorre na função 'selecionarMapa'
-    }
+    }*/
 
 
 

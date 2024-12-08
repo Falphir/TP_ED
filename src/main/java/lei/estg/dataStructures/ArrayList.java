@@ -54,7 +54,6 @@ public abstract class ArrayList<T> implements ListADT<T>, Iterable<T> {
                     throw new RuntimeException(e);
                 }
             }
-
             okToRemove = true;
             return arrayList[current++];
         }
