@@ -13,6 +13,14 @@ public interface JogoADT {
     public void moverPlayer(Player player, Edificio<Divisao> edificio);
     public void moverInimigo(Inimigo inimigo, Edificio<Divisao> edificio) throws EmptyStackException;
     public void confronto(Player player, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException;
+    public void mostrarInimigos(Edificio<Divisao> edificio);
+    public void mostrarItens(Edificio<Divisao> edificio);
+    public void mostrarAlvo(Edificio<Divisao> edificio);
+
+    public void caminhoMaisCurtoKit(Player player, Edificio<Divisao> edificio);
+    public void caminhoMaisCurtoColete(Player player, Edificio<Divisao> edificio);
+    public void caminhoMaisCurtoAlvo(Player player, Edificio<Divisao> edificio);
+    public void caminhoMaisCurtoSaida(Player player, Edificio<Divisao> edificio);
 
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu);
     public void verificarVitoria();

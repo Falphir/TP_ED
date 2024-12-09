@@ -78,17 +78,14 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
     protected void expandCapacity() {
         super.expandCapacity();
 
-        // Criar uma matriz maior
         double[][] largerWeightMatrix = new double[vertices.length][vertices.length];
 
-        // Copiar os valores da matriz antiga para a nova
         for (int i = 0; i < numVertices; i++) {
             for (int j = 0; j < numVertices; j++) {
                 largerWeightMatrix[i][j] = weightMatrix[i][j];
             }
         }
 
-        // Configurar os valores novos para Double.POSITIVE_INFINITY
         for (int i = 0; i < vertices.length; i++) {
             for (int j = 0; j < vertices.length; j++) {
                 if (i >= numVertices || j >= numVertices) {
@@ -97,57 +94,7 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
             }
         }
 
-        // Substituir a matriz antiga pela nova
         weightMatrix = largerWeightMatrix;
-    }
-
-    /**
-     * Checks whether the network contains a specific vertex.
-     *
-     * @param vertex the vertex to check for
-     * @return true if the vertex is present in the network, false otherwise
-     */
-    public boolean containsVertex(T vertex) {
-        for (int i = 0; i < numVertices; i++) {
-            if (vertex.equals(vertices[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Retrieves the vertex at a given index.
-     *
-     * @param index the index of the vertex
-     * @return the vertex at the specified index
-     * @throws IndexOutOfBoundsException if the index is out of range
-     */
-    public T getVertex(int index) {
-        if (indexIsValid(index)) {
-            return vertices[index];
-        } else {
-            throw new IndexOutOfBoundsException("Indice fora dos limites: " + index);
-        }
-    }
-
-    /**
-     * Retrieves the weight of the edge between two vertices.
-     *
-     * @param vertex1 the first vertex
-     * @param vertex2 the second vertex
-     * @return the weight of the edge
-     * @throws IllegalArgumentException if either vertex is not found
-     */
-    public double getWeight(T vertex1, T vertex2) {
-        int index1 = getIndex(vertex1);
-        int index2 = getIndex(vertex2);
-
-        if (indexIsValid(index1) && indexIsValid(index2)) {
-            return weightMatrix[index1][index2];
-        } else {
-            throw new IllegalArgumentException("Vértice não encontrado");
-        }
     }
 
     /**
@@ -171,69 +118,6 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
                 weightMatrix[index2][index1] = weight;
             }
         }
-    }
-
-    /**
-     * Finds the shortest path from a start vertex to an end vertex, avoiding certain locations.
-     *
-     * @param startVertex       the index of the start vertex
-     * @param endVertex         the index of the end vertex
-     * @param locationsToAvoid  a list of locations to avoid
-     * @param network           the network in which to find the path
-     * @return an iterator over the indices of the vertices in the shortest path
-     */
-    public Iterator<Integer> findShortestPath(T startVertex, T endVertex, UnorderedArrayList<Integer> locationsToAvoid, Network network) {
-        int numVertices = network.size();
-        double[] distances = new double[numVertices];
-        boolean[] visited = new boolean[numVertices];
-        int[] previous = new int[numVertices];
-
-        for (int i = 0; i < numVertices; i++) {
-            distances[i] = Double.MAX_VALUE;
-            visited[i] = false;
-            previous[i] = -1;
-        }
-
-        distances[getIndex(startVertex)] = 0;
-
-        for (int i = 0; i < numVertices; i++) {
-            int closestVertex = -1;
-            double shortestDistance = Double.MAX_VALUE;
-
-            for (int j = 0; j < numVertices; j++) {
-                if (!visited[j] && distances[j] < shortestDistance) {
-                    closestVertex = j;
-                    shortestDistance = distances[j];
-                }
-            }
-
-            if (closestVertex == -1) {
-                break;
-            }
-            visited[closestVertex] = true;
-
-            for (int j = 0; j < numVertices; j++) {
-                if (!visited[j] && network.containsEdge(closestVertex, j) && (locationsToAvoid == null || !locationsToAvoid.contains(j))) {
-                    double edgeDistance = network.getWeight(closestVertex, j);
-                    if (distances[closestVertex] + edgeDistance < distances[j]) {
-                        distances[j] = distances[closestVertex] + edgeDistance;
-                        previous[j] = closestVertex;
-                    }
-                }
-            }
-        }
-
-        UnorderedArrayList<Integer> path = new UnorderedArrayList<>();
-        if (previous[getIndex(endVertex)] != -1) {
-            for (int vertex = getIndex(endVertex); vertex != getIndex(startVertex); vertex = previous[vertex]) {
-                if (vertex == -1) {
-                    path = new UnorderedArrayList<>();
-                    break;
-                }
-                path.addToFront(vertex);
-            }
-        }
-        return path.iterator();
     }
 
     /**
@@ -282,19 +166,18 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
      * @param visited   an array indicating whether each vertex has been visited
      * @return the index of the vertex with the minimum distance
      */
-    private int minDistance(double[] distances, boolean[] visited) {
+    protected int minDistance(double[] distances, boolean[] visited) {
         double min = Double.POSITIVE_INFINITY;
         int minIndex = -1;
 
-        for (int v = 0; v < numVertices; v++) {
-            if (!visited[v] && distances[v] <= min) {
+        for (int v = 0; v < distances.length; v++) {
+            if (!visited[v] && distances[v] < min) {
                 min = distances[v];
                 minIndex = v;
             }
         }
         return minIndex;
     }
-
 
     @Override
     public String toString() {
@@ -316,7 +199,6 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
                 }
             }
         }
-
         return result;
     }
 

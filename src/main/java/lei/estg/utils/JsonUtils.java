@@ -59,7 +59,7 @@ public class JsonUtils {
                     }
                 }
 
-                int peso = 0;
+                int peso = 1;
 
                 if (origem != null && destino != null) {
                     edificio.addEdge(origem, destino, peso);
@@ -122,6 +122,18 @@ public class JsonUtils {
                     divisao.setEntradaSaida(true);
                 }
             }
+
+            JsonObject alvoObj = (JsonObject) jsonObject.get("alvo");
+            Alvo alvo = new Alvo(
+                    (String) alvoObj.get("tipo")
+            );
+            String divisaoNome = (String) alvoObj.get("divisao");
+            Divisao divisao = getDivisao(divisaoNome, (Edificio) edificio);
+            if (divisao != null) {
+                divisao.setAlvo(alvo);
+            }
+
+
 
             return missao;
         } catch (JsonException e) {

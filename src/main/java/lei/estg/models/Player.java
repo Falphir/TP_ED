@@ -71,6 +71,11 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
 
     @Override
     public void usarKit() throws EmptyStackException {
+        if (vida == vidaMaxima) {
+            System.out.println("Vida já está no máximo. Não é possível usar um kit.");
+            return;
+        }
+
         if (mochila.isEmpty()) {
             System.out.println("Mochila vazia. Não é possível usar um kit.");
         } else {
@@ -138,5 +143,14 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
 
     public void setMochila(ArrayStack<Item> mochila) {
         this.mochila = mochila;
+    }
+
+    @Override
+    public String toString() {
+        return "=== Status "+ nome +" ===" +
+                "\nvida: " + vida +
+                "\nvidaColete: " + vidaColete +
+                "\npoder: " + poder +
+                "\nKits na Mochila: " + mochila.size();
     }
 }

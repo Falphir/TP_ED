@@ -15,7 +15,6 @@ import java.util.Scanner;
 public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
-        // Inicialização
 
         Missao missao;
         Player player;
@@ -39,6 +38,9 @@ public class SimulacaoManual {
 
             while (jogoAtivo) {
                 System.out.println("Turno do jogador " + turno);
+                jogo.mostrarInimigos(edificio);
+                jogo.mostrarItens(edificio);
+                jogo.mostrarAlvo(edificio);
                 turnoPlayer(player, edificio, jogo);
                 System.out.println("Turno do inimigo " + turno);
                 Iterator it = missao.getEdificio().getVertex();
@@ -55,6 +57,8 @@ public class SimulacaoManual {
                 for (Inimigo inimigo : inimigosParaMover) {
                     jogo.moverInimigo(inimigo, missao.getEdificio());
                 }
+
+
                 //jogoAtivo = jogo.verificarFimJogo();
             }
         } catch (Exception e) {
@@ -74,6 +78,7 @@ public class SimulacaoManual {
         System.out.println("2 - Atacar inimigo");
         System.out.println("3 - Usar kit");
         System.out.println("4 - Verificar status");
+        System.out.println("5 - Ver Caminhos Mais proximos");
         System.out.println("Opção: ");
 
         int opcao = scanner.nextInt();
@@ -95,10 +100,15 @@ public class SimulacaoManual {
                 player.usarKit();
                 break;
             case 4:
-                player.toString();
+                System.out.println(player.toString());
+                break;
+            case 5:
+                jogo.caminhoMaisCurtoKit(player, edificio);
                 break;
             default:
                 System.out.println("Opção inválida");
         }
     }
+
+
 }

@@ -5,6 +5,7 @@ import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
 import lei.estg.models.Interfaces.JogoADT;
+import lei.estg.models.enums.EItemTipo;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -59,8 +60,7 @@ public class ControladorJogo implements JogoADT {
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
             System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
-            if(divisaoEscolhida.getInimigos() != null) {
-                System.out.println("Existem" + divisaoEscolhida.getInimigos().size() + " inimigos nesta divisão. Confronto Iniciado");
+            if(!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
                     confronto(player, divisaoEscolhida.getInimigos(), divisaoEscolhida);
                 } catch (EmptyStackException e) {
@@ -112,11 +112,16 @@ public class ControladorJogo implements JogoADT {
         divisaoAtual.setPlayer(null);
         player.mover(novaDivisao);
 
-        if (novaDivisao.getInimigos() != null) {
+        if (!novaDivisao.getInimigos().isEmpty()) {
             try {
                 confronto(player, novaDivisao.getInimigos(), novaDivisao);
             } catch (EmptyStackException e) {
                 e.printStackTrace();
+            }
+        }
+        if (novaDivisao.getItems() != null) {
+            for(Item item : novaDivisao.getItems()) {
+                player.apanharItem(item);
             }
         }
 
@@ -142,12 +147,15 @@ public class ControladorJogo implements JogoADT {
         int movimentos = 0;
 
         while (movimentos < 2) {
-
             Iterator<Divisao> iter = edificio.getAdjacentes(divisaoAtual);
             UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
             while (iter.hasNext()) {
                 Divisao divisao = iter.next();
                 divisoesAdjacentes.addToRear(divisao);
+            }
+
+            if (divisoesAdjacentes.size() == 0) {
+                return;
             }
 
             int index = random.nextInt(divisoesAdjacentes.size());
@@ -169,10 +177,8 @@ public class ControladorJogo implements JogoADT {
 
             divisaoAtual.getInimigos().remove(inimigo);
             inimigo.mover(novaDivisao);
-            System.out.println("Inimigo " + inimigo.getNome() + " movido de " +
-                    divisaoAtual.getNome() + " para " + novaDivisao.getNome());
 
-            if(novaDivisao.getPlayer() != null) {
+            if (novaDivisao.getPlayer() != null) {
                 inimigo.atacar(novaDivisao.getPlayer());
                 confronto(novaDivisao.getPlayer(), novaDivisao.getInimigos(), novaDivisao);
                 return;
@@ -183,6 +189,7 @@ public class ControladorJogo implements JogoADT {
             movimentos++;
         }
     }
+
 
     private Divisao encontrarInimigo(Inimigo inimigo, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -230,7 +237,6 @@ public class ControladorJogo implements JogoADT {
     @Override
     public void confronto(Player player, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
         System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
-        // NEED TO FIX THIS
         Iterator<Inimigo> inimigosIterator = inimigos.iterator();  // Obtendo o iterador para percorrer a lista
 
         while (inimigosIterator.hasNext()) {
@@ -260,8 +266,104 @@ public class ControladorJogo implements JogoADT {
         System.out.println("Todos os inimigos na divisão foram derrotados!");
     }
 
+    @Override
+    public void mostrarInimigos(Edificio<Divisao> edificio) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+        System.out.println("=== Inimigos ===");
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+            if (!divisao.getInimigos().isEmpty()) {
+                System.out.println("Divisão: " + divisao.getNome());
+                for (Inimigo inimigo : divisao.getInimigos()) {
+                    System.out.println(inimigo.toString());
+                }
+            }
+        }
+    }
 
+    @Override
+    public void mostrarItens(Edificio<Divisao> edificio) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+        System.out.println("=== Itens ===");
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+            if (!divisao.getItems().isEmpty()) {
+                System.out.println("Divisão: " + divisao.getNome());
+                for (Item item : divisao.getItems()) {
+                    System.out.println(item.toString());
+                }
+            }
+        }
+    }
 
+    @Override
+    public void mostrarAlvo(Edificio<Divisao> edificio) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+        System.out.println("=== Alvo ===");
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+            if (divisao.getAlvo() != null) {
+                System.out.println("O alvo está na Divisão: " + divisao.getNome());
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void caminhoMaisCurtoKit(Player player, Edificio<Divisao> edificio) {
+        Divisao divisaoPlayer = encontrarPlayer(player, edificio);
+
+        Divisao divisaoComKitMaisProximo = null;
+        double menorDistancia = Double.POSITIVE_INFINITY;
+        Iterator<Divisao> caminhoMaisCurto = null;
+
+        Iterator<Divisao> iter = edificio.getVertex();
+        while (iter.hasNext()) {
+            Divisao divisao = iter.next();
+
+            for (Item item : divisao.getItems()) {
+                if (item.getTipo() == EItemTipo.KIT) {
+                    Iterator<Divisao> caminhoAtual = edificio.findShortestPath(divisaoPlayer, divisao);
+                    double distancia = edificio.shortestPathWeight(divisaoPlayer, divisao);
+
+                    if (distancia < menorDistancia) {
+                        menorDistancia = distancia;
+                        divisaoComKitMaisProximo = divisao;
+                        caminhoMaisCurto = caminhoAtual;
+                    }
+                }
+            }
+        }
+
+        if (divisaoComKitMaisProximo != null) {
+            System.out.println("Kit mais próximo encontrado na divisão: " + divisaoComKitMaisProximo.getNome());
+            System.out.println("Distância: " + menorDistancia);
+
+            System.out.print("Caminho até o kit: ");
+            while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext()) {
+                Divisao divisao = caminhoMaisCurto.next();
+                System.out.print(divisao.getNome() + " -> ");
+            }
+            System.out.println("Destino: " + divisaoComKitMaisProximo.getNome());
+        } else {
+            System.out.println("Nenhum kit encontrado no edifício.");
+        }
+    }
+
+    @Override
+    public void caminhoMaisCurtoColete(Player player, Edificio<Divisao> edificio) {
+
+    }
+
+    @Override
+    public void caminhoMaisCurtoAlvo(Player player, Edificio<Divisao> edificio) {
+
+    }
+
+    @Override
+    public void caminhoMaisCurtoSaida(Player player, Edificio<Divisao> edificio) {
+
+    }
 
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {

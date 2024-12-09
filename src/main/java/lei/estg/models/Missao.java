@@ -13,7 +13,6 @@ public class Missao {
 
     public Missao() {
         this.edificio = new Edificio<>(true);
-
     }
 
     public Missao(String codMissao, int versao, EDificuldadeMissao dificuldade, EMissaoTipo tipo, Edificio edificio, Alvo alvo) {
