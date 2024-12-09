@@ -62,7 +62,6 @@ public class SimulacaoManual {
         } catch (EmptyStackException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogo jogo) throws EmptyStackException {

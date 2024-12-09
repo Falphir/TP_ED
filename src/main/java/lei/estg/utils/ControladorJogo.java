@@ -3,11 +3,8 @@ package lei.estg.utils;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
-import lei.estg.models.Divisao;
-import lei.estg.models.Edificio;
-import lei.estg.models.Inimigo;
+import lei.estg.models.*;
 import lei.estg.models.Interfaces.JogoADT;
-import lei.estg.models.Player;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -40,13 +37,12 @@ public class ControladorJogo implements JogoADT {
 
         int escolha = -1;
         Scanner scanner = new Scanner(System.in);
-        // Garantir que a escolha é válida
         while (escolha < 1 || escolha > entradas.size()) {
             System.out.print("Escolha uma divisão para entrar (1-" + entradas.size() + "): ");
             if (scanner.hasNextInt()) {
                 escolha = scanner.nextInt();
             } else {
-                scanner.next();  // Descarta a entrada inválida
+                scanner.next();
             }
         }
 
@@ -63,7 +59,16 @@ public class ControladorJogo implements JogoADT {
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
             System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
+            if(divisaoEscolhida.getInimigos() != null) {
+                System.out.println("Existem" + divisaoEscolhida.getInimigos().size() + " inimigos nesta divisão. Confronto Iniciado");
+                try {
+                    confronto(player, divisaoEscolhida.getInimigos(), divisaoEscolhida);
+                } catch (EmptyStackException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
         return divisaoEscolhida;
     }
 
@@ -107,6 +112,13 @@ public class ControladorJogo implements JogoADT {
         divisaoAtual.setPlayer(null);
         player.mover(novaDivisao);
 
+        if (novaDivisao.getInimigos() != null) {
+            try {
+                confronto(player, novaDivisao.getInimigos(), novaDivisao);
+            } catch (EmptyStackException e) {
+                e.printStackTrace();
+            }
+        }
 
         System.out.println("Player " + player.getNome() + " movido de " +
                 divisaoAtual.getNome() + " para " + novaDivisao.getNome());
@@ -160,6 +172,12 @@ public class ControladorJogo implements JogoADT {
             System.out.println("Inimigo " + inimigo.getNome() + " movido de " +
                     divisaoAtual.getNome() + " para " + novaDivisao.getNome());
 
+            if(novaDivisao.getPlayer() != null) {
+                inimigo.atacar(novaDivisao.getPlayer());
+                confronto(novaDivisao.getPlayer(), novaDivisao.getInimigos(), novaDivisao);
+                return;
+            }
+
             divisaoAtual = novaDivisao;
 
             movimentos++;
@@ -210,7 +228,53 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public boolean verificarFimJogo() {
+    public void confronto(Player player, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
+        System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
+        // NEED TO FIX THIS
+        Iterator<Inimigo> inimigosIterator = inimigos.iterator();  // Obtendo o iterador para percorrer a lista
+
+        while (inimigosIterator.hasNext()) {
+            Inimigo inimigo = inimigosIterator.next(); // Pega o próximo inimigo da lista
+            System.out.println("Confronto com " + inimigo.getNome() + " iniciado!");
+
+            while (player.getVida() > 0 && inimigo.getPoder() > 0) {
+                player.atacar(inimigo);
+
+                if (inimigo.getPoder() > 0) { // Se o inimigo ainda está vivo
+                    inimigo.atacar(player);
+                } else { // Inimigo derrotado
+                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado!");
+                    inimigosIterator.remove(); // Remove o inimigo derrotado da lista
+                    // Não é necessário incrementar o índice, pois a remoção já ajusta o iterador
+                    break; // Sai do loop para confrontar o próximo inimigo
+                }
+            }
+
+            if (player.getVida() <= 0) { // Verifica se o jogador foi derrotado
+                System.out.println("Player " + player.getNome() + " morreu!");
+                divisao.getPlayer().mover(null);
+                return;
+            }
+        }
+
+        System.out.println("Todos os inimigos na divisão foram derrotados!");
+    }
+
+
+
+
+    @Override
+    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
+        if (player.getVida() == 0) {
+            System.out.println("Player morreu!");
+            return true;
+        } else if (alvo.isAcaoRealizada() && playerSaiu) {
+            System.out.println("Fim do Jogo! Player saiu do edifício e interagiu com o alvo!");
+            return true;
+        } else if (playerSaiu && !alvo.isAcaoRealizada()) {
+            System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
+            return true;
+        }
         return false;
     }
 
