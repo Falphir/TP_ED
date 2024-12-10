@@ -18,7 +18,7 @@ public class JogoConfig {
             JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
             return jsonObject;
         } catch (JsonException | IOException e) {
-
+            e.printStackTrace();
         }
         return null;
     }

@@ -85,6 +85,7 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         }
     }
 
+    @Override
     public int getNumVertices() {
         return numVertices;
     }

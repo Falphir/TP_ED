@@ -39,10 +39,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item{" +
-                "nome='" + nome + '\'' +
-                ", pontos=" + pontos +
-                ", tipo=" + tipo +
-                '}';
+        return String.format("- Item: %s | Pontos: %d | Tipo: %s", nome, pontos, tipo);
     }
 }

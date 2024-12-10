@@ -48,9 +48,7 @@ public class Inimigo<T extends EntidadeADT<T>> implements EntidadeADT<T> {
 
     @Override
     public String toString() {
-        return "Inimigo{" +
-                "nome='" + nome + '\'' +
-                ", poder=" + poder +
-                '}';
+        return String.format("- Inimigo: %s | Poder: %d", nome, poder);
     }
+
 }

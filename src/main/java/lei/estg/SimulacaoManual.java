@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         Missao missao;
@@ -32,11 +33,11 @@ public class SimulacaoManual {
 
             Edificio<Divisao> edificio = missao.getEdificio();
 
-            boolean jogoAtivo = true;
+
 
             int turno = 1;
 
-            while (jogoAtivo) {
+            while (jogo.isJogoAtivo()) {
                 System.out.println("Turno do jogador " + turno);
                 jogo.mostrarInimigos(edificio);
                 jogo.mostrarItens(edificio);
@@ -44,7 +45,7 @@ public class SimulacaoManual {
                 turnoPlayer(player, edificio, jogo);
                 System.out.println("Turno do inimigo " + turno);
                 Iterator it = missao.getEdificio().getVertex();
-                UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>(); // Lista temporária para armazenar inimigos a mover
+                UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>();
                 while (it.hasNext()) {
                     Divisao divisao = (Divisao) it.next();
                     if (divisao.getInimigos() != null) {
@@ -57,7 +58,6 @@ public class SimulacaoManual {
                 for (Inimigo inimigo : inimigosParaMover) {
                     jogo.moverInimigo(inimigo, missao.getEdificio());
                 }
-
 
                 //jogoAtivo = jogo.verificarFimJogo();
             }
@@ -73,12 +73,23 @@ public class SimulacaoManual {
         Divisao divisao = jogo.encontrarPlayer(player, edificio);
 
         System.out.println(player.getNome() + " encontra-se na divisão " + divisao.getNome());
-        System.out.println("Escolha uma ação:");
+        System.out.println("============  Status " + player.getNome() + " ============");
+        System.out.println("Vida: " + player.getVida());
+        System.out.println("Poder: " + player.getPoder());
+        System.out.println("Colete: " + player.getVidaColete());
+        System.out.println("Kits: " + player.getMochila().size());
+        System.out.println("Divisao: " + divisao.getNome());
+        System.out.println("============================================");
+
+        jogo.mostrarTodosCaminhosMaisProximos(player, edificio);
+
+        System.out.println("============  Escolha uma ação  ============");
         System.out.println("1 - Mover-se para outra divisão");
         System.out.println("2 - Atacar inimigo");
         System.out.println("3 - Usar kit");
-        System.out.println("4 - Verificar status");
-        System.out.println("5 - Ver Caminhos Mais proximos");
+        System.out.println("4 - Interagir com o Alvo");
+        System.out.println("5 - Sair do edificio");
+        System.out.println("============================================");
         System.out.println("Opção: ");
 
         int opcao = scanner.nextInt();
@@ -100,11 +111,19 @@ public class SimulacaoManual {
                 player.usarKit();
                 break;
             case 4:
-                System.out.println(player.toString());
+                if (divisao.getAlvo() != null) {
+                    jogo.interagirComAlvo(player, divisao.getAlvo() ,divisao);
+                } else {
+                    System.out.println("Não existe um alvo nesta divisão.");
+                }
                 break;
-            case 5:
-                jogo.caminhoMaisCurtoKit(player, edificio);
-                break;
+                case 5:
+                    if (divisao.isEntradaSaida()) {
+                        jogo.terminarJogo(player, edificio);
+                    } else {
+                        System.out.println("Você não pode sair do edificio.");
+                    }
+                    break;
             default:
                 System.out.println("Opção inválida");
         }

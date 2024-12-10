@@ -14,6 +14,7 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
     private int poder;
     private ArrayStack<Item> mochila;
     private int mochilaLimite;
+    private boolean alvoInteragido;
 
     public Player(String nome, int poder, int vidaMaxima, int mochilaLimite) {
         this.nome = nome;
@@ -23,6 +24,7 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
         this.poder = 15;
         this.mochilaLimite = mochilaLimite;
         this.mochila = new ArrayStack<>(mochilaLimite);
+        this.alvoInteragido = false;
     }
 
     @Override
@@ -143,6 +145,14 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
 
     public void setMochila(ArrayStack<Item> mochila) {
         this.mochila = mochila;
+    }
+
+    public boolean isAlvoInteragido() {
+        return alvoInteragido;
+    }
+
+    public void setAlvoInteragido(boolean alvoInteragido) {
+        this.alvoInteragido = alvoInteragido;
     }
 
     @Override
