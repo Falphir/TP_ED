@@ -5,13 +5,14 @@ import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
 import lei.estg.models.Interfaces.JogoADT;
+import lei.estg.models.Interfaces.ModoManualADT;
 import lei.estg.models.enums.EItemTipo;
 
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 
-public class ControladorJogo implements JogoADT {
+public class ControladorJogo implements ModoManualADT {
     private boolean isJogoAtivo = true;
 
     @Override
@@ -69,7 +70,7 @@ public class ControladorJogo implements JogoADT {
             System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
-                    confronto(player, divisaoEscolhida.getInimigos(), divisaoEscolhida);
+                    confronto(player, edificio ,divisaoEscolhida.getInimigos(), divisaoEscolhida);
                 } catch (EmptyStackException e) {
                     e.printStackTrace();
                 }
@@ -81,6 +82,11 @@ public class ControladorJogo implements JogoADT {
 
     @Override
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
+
+        if(player.getVida() == 0) {
+            terminarJogo(player, edificio);
+            return;
+        }
 
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
         UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
@@ -124,7 +130,7 @@ public class ControladorJogo implements JogoADT {
 
         if (!novaDivisao.getInimigos().isEmpty()) {
             try {
-                confronto(player, novaDivisao.getInimigos(), novaDivisao);
+                confronto(player, edificio ,novaDivisao.getInimigos(), novaDivisao);
             } catch (EmptyStackException e) {
                 e.printStackTrace();
             }
@@ -159,18 +165,27 @@ public class ControladorJogo implements JogoADT {
         int movimentos = 0;
 
         while (movimentos < 2) {
+            if (inimigo.getPoder() == 0) {
+                System.out.println("Inimigo sem poder, saindo do movimento.");
+                return;
+            }
+
             Iterator<Divisao> iter = edificio.getAdjacentes(divisaoAtual);
             UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
+
+            // Adicionando divisões adjacentes
             while (iter.hasNext()) {
                 Divisao divisao = iter.next();
                 divisoesAdjacentes.addToRear(divisao);
             }
 
             if (divisoesAdjacentes.isEmpty()) {
+                System.out.println("Sem divisões adjacentes, encerrando movimento.");
                 return;
             }
 
             int index = random.nextInt(divisoesAdjacentes.size());
+
             Divisao novaDivisao = null;
             int count = 0;
 
@@ -184,23 +199,37 @@ public class ControladorJogo implements JogoADT {
                 count++;
             }
 
+            // Garantindo que novaDivisao não seja nula
+            if (novaDivisao == null) {
+                System.out.println("Erro: novaDivisao é nula!");
+                return;
+            }
+
             resetarPeso(divisaoAtual, edificio, inimigo);
             atualizarPeso(novaDivisao, edificio, inimigo);
 
             divisaoAtual.getInimigos().remove(inimigo);
+            System.out.println("Inimigo movido da divisão atual.");
+
             inimigo.mover(novaDivisao);
 
             if (novaDivisao.getPlayer() != null) {
+                System.out.println("Confronto iniciado com o jogador na nova divisão.");
                 inimigo.atacar(novaDivisao.getPlayer());
-                confronto(novaDivisao.getPlayer(), novaDivisao.getInimigos(), novaDivisao);
-                return;
+                confronto(novaDivisao.getPlayer(), edificio ,novaDivisao.getInimigos(), novaDivisao);
+
+                if (inimigo.getPoder() == 0) {
+                    System.out.println("Inimigo derrotado durante o confronto.");
+                    return;
+                }
             }
 
             divisaoAtual = novaDivisao;
-
             movimentos++;
         }
     }
+
+
 
     private Divisao encontrarInimigo(Inimigo inimigo, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -246,36 +275,72 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public void confronto(Player player, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
+    public void confronto(Player player, Edificio<Divisao> edificio, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
         System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
-        Iterator<Inimigo> inimigosIterator = inimigos.iterator();  // Obtendo o iterador para percorrer a lista
 
-        while (inimigosIterator.hasNext()) {
-            Inimigo inimigo = inimigosIterator.next(); // Pega o próximo inimigo da lista
-            System.out.println("Confronto com " + inimigo.getNome() + " iniciado!");
+        while (!inimigos.isEmpty() && player.getVida() > 0) {
+            System.out.println("=== Turno do Player ===");
+            System.out.println("1 - Atacar todos os inimigos");
+            System.out.println("2 - Usar um kit (perde o turno)");
+            System.out.print("Escolha uma ação (1 ou 2): ");
 
-            while (player.getVida() > 0 && inimigo.getPoder() > 0) {
-                player.atacar(inimigo);
+            Scanner scanner = new Scanner(System.in);
+            int escolha = scanner.nextInt();
 
-                if (inimigo.getPoder() > 0) { // Se o inimigo ainda está vivo
-                    inimigo.atacar(player);
+            if (escolha == 1) {
+                System.out.println("Você escolheu atacar todos os inimigos!");
+
+                Iterator<Inimigo> inimigosIterator = inimigos.iterator();
+                while (inimigosIterator.hasNext()) {
+                    Inimigo inimigo = inimigosIterator.next();
+                    player.atacar(inimigo);
+                    System.out.println("Inimigo " + inimigo.getNome() + " recebeu dano. Poder restante: " + inimigo.getPoder());
+                }
+
+            } else if (escolha == 2) {
+                if (player.getMochila().isEmpty()) {
+                    System.out.println("Mochila vazia. Não é possível usar um kit.");
+                    continue;
+                } else if (player.getVida() == 100) {
+                    System.out.println("Vida já está no máximo. Não é possível usar um kit.");
+                    continue;
                 } else {
-                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado!");
-                    inimigosIterator.remove();
+                    player.usarKit();
+                    System.out.println("Você usou um kit e recuperou vida!");
+                }
+            } else {
+                System.out.println("Escolha inválida. Por favor, tente novamente.");
+                continue;
+            }
 
-                    break;
+            // Turno dos inimigos
+            System.out.println("=== Turno dos Inimigos ===");
+            UnorderedArrayList<Inimigo> inimigosRemover = new UnorderedArrayList<>();
+            for (Inimigo inimigo : inimigos) {
+                if (inimigo.getPoder() > 0) {
+                    inimigo.atacar(player);
+                    System.out.println("Inimigo " + inimigo.getNome() + " atacou você. Vida restante: " + player.getVida());
+
+                    if (player.getVida() <= 0) {
+                        System.out.println("Player " + player.getNome() + " morreu!");
+                        terminarJogo(player, edificio);
+                        return;
+                    }
+                } else {
+                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado e será removido.");
+                    inimigosRemover.addToRear(inimigo);
                 }
             }
 
-            if (player.getVida() <= 0) { // Verifica se o jogador foi derrotado
-                System.out.println("Player " + player.getNome() + " morreu!");
-                divisao.getPlayer().mover(null);
-                return;
+            // Remover inimigos derrotados
+            for (Inimigo inimigo : inimigosRemover) {
+                inimigos.remove(inimigo);
             }
         }
 
         System.out.println("Todos os inimigos na divisão foram derrotados!");
     }
+
 
     @Override
     public void mostrarInimigos(Edificio<Divisao> edificio) {
@@ -310,9 +375,14 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public void mostrarAlvo(Edificio<Divisao> edificio) {
+    public void mostrarAlvo(Player player, Edificio<Divisao> edificio) {
         System.out.println("\033[1m\033[35m=============  Alvo  =============\033[0m");
-        System.out.println("\033[34m O alvo está na Divisão: " + encontrarAlvo(edificio).getNome() + "\033[0m");
+        if (encontrarAlvo(edificio) == null && player.isAlvoInteragido()) {
+            System.out.println("\033[34m " + player.getNome() + " já interagiu com o Alvo!\033[0m");
+            System.out.println("\033[34m Vá para a saída para terminar a missao! \033[0m");
+        } else {
+            System.out.println("\033[34m O alvo está na Divisão: " + encontrarAlvo(edificio).getNome() + "\033[0m");
+        }
         System.out.println("\033[1m\033[35m==================================\033[0m");
     }
 

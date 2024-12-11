@@ -21,9 +21,9 @@ public class SimulacaoManual {
         Player player;
         ControladorJogo jogo = new ControladorJogo();
         try {
-            Path caminhoArquivo = Paths.get(Main.class.getClassLoader().getResource("missoes/missao.json").toURI());
+            Path caminhoArquivo = Paths.get(SimulacaoManual.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
             missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
-            Path caminhoConfig = Paths.get(Main.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
+            Path caminhoConfig = Paths.get(SimulacaoManual.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
             JogoConfig config = new JogoConfig();
             player = config.carregarPlayerConfig(String.valueOf(caminhoConfig));
 
@@ -41,7 +41,7 @@ public class SimulacaoManual {
                 System.out.println("Turno do jogador " + turno);
                 jogo.mostrarInimigos(edificio);
                 jogo.mostrarItens(edificio);
-                jogo.mostrarAlvo(edificio);
+                jogo.mostrarAlvo(player, edificio);
                 turnoPlayer(player, edificio, jogo);
                 System.out.println("Turno do inimigo " + turno);
                 Iterator it = missao.getEdificio().getVertex();
