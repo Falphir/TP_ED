@@ -614,4 +614,59 @@ public class ControladorJogo implements ModoManualADT {
         }
         return  null;
     }
+
+    public void mostrarMapa(Edificio<Divisao> edificio, Player player) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+
+        System.out.println("=== Mapa ===");
+
+        // Exibe as conexões entre as divisões
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+
+            System.out.println(divisao.getNome() + ":");
+
+            // Obtém as divisões adjacentes
+            Iterator<Divisao> adjacentes = edificio.getAdjacentes(divisao);
+
+            while (adjacentes.hasNext()) {
+                Divisao divisaoAdjacente = adjacentes.next();
+                System.out.print("    - " + divisaoAdjacente.getNome());
+
+                boolean hasInfo = false;
+
+                // Verificar se o Player está na divisão adjacente
+                if (divisaoAdjacente.getPlayer() != null) {
+                    System.out.print(" (Player aqui)");
+                    hasInfo = true;
+                }
+
+                // Verificar se há inimigos na divisão adjacente
+                if (!divisaoAdjacente.getInimigos().isEmpty()) {
+                    System.out.print(" (" + divisaoAdjacente.getInimigos().size() + " inimigos)");
+                    hasInfo = true;
+                }
+
+                // Verificar se há um alvo na divisão adjacente
+                if (divisaoAdjacente.getAlvo() != null) {
+                    System.out.print(" (Alvo aqui)");
+                    hasInfo = true;
+                }
+
+                // Verificar se há itens na divisão adjacente
+                if (!divisaoAdjacente.getItems().isEmpty()) {
+                    System.out.print(" (" + divisaoAdjacente.getItems().size() + " Kit" + (divisaoAdjacente.getItems().size() > 1 ? "s" : "") + ")");
+                    hasInfo = true;
+                }
+
+                if (!hasInfo) {
+                    System.out.print(" (Vazia)");
+                }
+
+                System.out.println();  // Nova linha após exibir as informações de cada divisão adjacente
+            }
+        }
+    }
+
+
 }

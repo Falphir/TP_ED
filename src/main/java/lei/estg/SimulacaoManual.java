@@ -33,8 +33,6 @@ public class SimulacaoManual {
 
             Edificio<Divisao> edificio = missao.getEdificio();
 
-
-
             int turno = 1;
 
             while (jogo.isJogoAtivo()) {
@@ -89,6 +87,7 @@ public class SimulacaoManual {
         System.out.println("3 - Usar kit");
         System.out.println("4 - Interagir com o Alvo");
         System.out.println("5 - Sair do edificio");
+        System.out.println("6 - Mostra Mapa");
         System.out.println("============================================");
         System.out.println("Opção: ");
 
@@ -112,18 +111,22 @@ public class SimulacaoManual {
                 break;
             case 4:
                 if (divisao.getAlvo() != null) {
-                    jogo.interagirComAlvo(player, divisao.getAlvo() ,divisao);
+                    jogo.interagirComAlvo(player, divisao.getAlvo(), divisao);
                 } else {
                     System.out.println("Não existe um alvo nesta divisão.");
                 }
                 break;
-                case 5:
-                    if (divisao.isEntradaSaida()) {
-                        jogo.terminarJogo(player, edificio);
-                    } else {
-                        System.out.println("Você não pode sair do edificio.");
-                    }
-                    break;
+            case 5:
+                if (divisao.isEntradaSaida()) {
+                    jogo.terminarJogo(player, edificio);
+                } else {
+                    System.out.println("Você não pode sair do edificio.");
+                }
+                break;
+            case 6:
+                jogo.mostrarMapa(edificio, player);
+                turnoPlayer(player, edificio, jogo);
+                break;
             default:
                 System.out.println("Opção inválida");
         }
