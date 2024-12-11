@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
+    Missao missao;
 
     public static void main(String[] args) {
 
@@ -42,7 +43,7 @@ public class SimulacaoManual {
                 jogo.mostrarInimigos(edificio);
                 jogo.mostrarItens(edificio);
                 jogo.mostrarAlvo(edificio);
-                turnoPlayer(player, edificio, jogo);
+                turnoPlayer(player, edificio, jogo, missao);
                 System.out.println("Turno do inimigo " + turno);
                 Iterator it = missao.getEdificio().getVertex();
                 UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>();
@@ -68,7 +69,7 @@ public class SimulacaoManual {
         }
     }
 
-    private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogo jogo) throws EmptyStackException {
+    private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogo jogo, Missao missao) throws EmptyStackException {
 
         Divisao divisao = jogo.encontrarPlayer(player, edificio);
 
@@ -119,7 +120,7 @@ public class SimulacaoManual {
                 break;
                 case 5:
                     if (divisao.isEntradaSaida()) {
-                        jogo.terminarJogo(player, edificio);
+                        jogo.terminarJogo(player, edificio, missao);
                     } else {
                         System.out.println("Você não pode sair do edificio.");
                     }

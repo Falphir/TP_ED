@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 public class ControladorJogo implements JogoADT {
     private boolean isJogoAtivo = true;
+    private UnorderedArrayList<Divisao> trajeto = new UnorderedArrayList<>();
 
     @Override
     public void iniciarJogo() {
@@ -20,13 +21,13 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public void terminarJogo(Player player, Edificio<Divisao> edificio) {
+    public void terminarJogo(Player player, Edificio<Divisao> edificio, Missao missao) {
         Divisao divisao = encontrarPlayer(player, edificio);
         if (divisao != null) {
             divisao.setPlayer(null);
         }
         isJogoAtivo = false;
-        verificarFimJogo(player, divisao.getAlvo(), true);
+        verificarFimJogo(player, divisao.getAlvo(), true, missao);
     }
 
     @Override
@@ -66,6 +67,7 @@ public class ControladorJogo implements JogoADT {
 
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
+            trajeto.addToRear(divisaoEscolhida);
             System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
@@ -118,6 +120,7 @@ public class ControladorJogo implements JogoADT {
 
         divisaoAtual.setPlayer(null);
         player.mover(novaDivisao);
+        trajeto.addToRear(novaDivisao);
 
         System.out.println("Player " + player.getNome() + " movido de " +
                 divisaoAtual.getNome() + " para " + novaDivisao.getNome());
@@ -526,15 +529,21 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
+    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu, Missao missao) {
         if (player.getVida() == 0) {
             System.out.println("Player morreu!");
+            RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
+            relatorio.exportarParaJSON(relatorio);
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
             System.out.println("Fim do Jogo! Player saiu do edifício e interagiu com o alvo!");
+            RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
+            relatorio.exportarParaJSON(relatorio);
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
             System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
+            RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
+            relatorio.exportarParaJSON(relatorio);
             return true;
         }
         return false;

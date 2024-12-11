@@ -7,7 +7,7 @@ import lei.estg.models.*;
 public interface JogoADT {
 
     public void iniciarJogo();
-    public void terminarJogo(Player player, Edificio<Divisao> edificio);
+    public void terminarJogo(Player player, Edificio<Divisao> edificio, Missao missao);
 
     public Divisao selecionarEntrada(Player player, Edificio<Divisao> edificio);
     public Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio);
@@ -20,7 +20,7 @@ public interface JogoADT {
 
     public void mostrarTodosCaminhosMaisProximos(Player player, Edificio<Divisao> edificio);
 
-    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu);
+    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu, Missao missao);
     public void verificarVitoria();
 
 }
