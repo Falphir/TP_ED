@@ -25,6 +25,7 @@ public class ControladorJogoAutomatico implements JogoADT {
         }
         isJogoAtivo = false;
         verificarFimJogo(player, divisao.getAlvo(), true);
+        System.exit(0);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class ControladorJogoAutomatico implements JogoADT {
             System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
-                    confronto(player, edificio ,divisaoEscolhida.getInimigos(), divisaoEscolhida);
+                    confronto(player, edificio, divisaoEscolhida.getInimigos(), divisaoEscolhida);
                 } catch (EmptyStackException e) {
                     e.printStackTrace();
                 }
@@ -81,116 +82,12 @@ public class ControladorJogoAutomatico implements JogoADT {
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
 
-        if (divisaoAtual.getAlvo() != null) {
-            System.out.println("O jogador já alcançou o alvo!");
-            player.setAlvoInteragido(true);
-            return;
-        }
-
         if (!player.isAlvoInteragido()) {
-            Divisao divisaoAlvo = encontrarAlvo(edificio);
-            if (divisaoAlvo == null) {
-                System.out.println("Não há alvo disponível.");
-                return;
-            }
-
-            Iterator<Divisao> caminhoSeguro = edificio.findShortestPath(divisaoAtual, divisaoAlvo);
-
-            if (caminhoSeguro == null) {
-                System.out.println("Não há caminho seguro para o alvo.");
-                return;
-            }
-
-            while (caminhoSeguro.hasNext()) {
-                Divisao próximaDivisao = caminhoSeguro.next();
-
-                // Verifica se a próxima divisão tem inimigos e realiza confronto se necessário
-                if (!próximaDivisao.getInimigos().isEmpty()) {
-                    try {
-                        confronto(player, edificio, próximaDivisao.getInimigos(), próximaDivisao);
-                    } catch (EmptyStackException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                divisaoAtual.setPlayer(null);
-                player.mover(próximaDivisao);
-
-                System.out.println("Player " + player.getNome() + " movido para " + próximaDivisao.getNome());
-
-                if (próximaDivisao.getItems() != null) {
-                    for (Item item : próximaDivisao.getItems()) {
-                        player.apanharItem(item);
-                    }
-                }
-
-                if (próximaDivisao.getAlvo() != null) {
-                    player.setAlvoInteragido(true);
-                    break;
-                }
-
-                divisaoAtual = próximaDivisao;
-            }
+            System.out.println("Player ainda não interagiu com o alvo.");
+            moverPlayerAlvo(player, edificio, divisaoAtual);
         } else {
-            Divisao divisaoPlayer = encontrarPlayer(player, edificio);
-
-            if (divisaoPlayer.isEntradaSaida()) {
-                System.out.println("\n" + player.getNome() + " já se encontra na saída!");
-                return;
-            }
-
-            Divisao saidaMaisProxima = null;
-            double menorDistancia = Double.POSITIVE_INFINITY;
-            Iterator<Divisao> caminhoMaisCurto = null;
-
-            Iterator<Divisao> iter = edificio.getVertex();
-            while (iter.hasNext()) {
-                Divisao divisao = iter.next();
-                if (divisao.isEntradaSaida()) {
-                    Iterator<Divisao> caminhoAtual = edificio.findShortestPath(divisaoPlayer, divisao);
-                    double distancia = edificio.shortestPathWeight(divisaoPlayer, divisao);
-
-                    if (distancia < menorDistancia) {
-                        menorDistancia = distancia;
-                        saidaMaisProxima = divisao;
-                        caminhoMaisCurto = caminhoAtual;
-                    }
-                }
-            }
-
-            if (caminhoMaisCurto == null) {
-                System.out.println("Não há caminho seguro");
-            }
-
-            while (caminhoMaisCurto.hasNext()) {
-                Divisao próximaDivisao = caminhoMaisCurto.next();
-
-                if (!próximaDivisao.getInimigos().isEmpty()) {
-                    try {
-                        confronto(player, edificio, próximaDivisao.getInimigos(), próximaDivisao);
-                    } catch (EmptyStackException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                divisaoAtual.setPlayer(null);
-                player.mover(próximaDivisao);
-
-                System.out.println("Player " + player.getNome() + " movido para " + próximaDivisao.getNome());
-
-                if (próximaDivisao.getItems() != null) {
-                    for (Item item : próximaDivisao.getItems()) {
-                        player.apanharItem(item);
-                    }
-                }
-
-                if (próximaDivisao.isEntradaSaida()) {
-                    terminarJogo(player, edificio);
-                    break;
-                }
-
-                divisaoAtual = próximaDivisao;
-            }
+            System.out.println("Player já interagiu com o alvo!");
+            moverPlayerSaida(player, edificio, divisaoAtual);
         }
     }
 
@@ -215,10 +112,8 @@ public class ControladorJogoAutomatico implements JogoADT {
                 divisoesAdjacentes.addToRear(divisao);
             }
 
-            System.out.println("Divisões adjacentes encontradas: " + divisoesAdjacentes.size());
-
             if (divisoesAdjacentes.isEmpty()) {
-                System.out.println("Sem divisões adjacentes, encerrando movimento.");
+                //System.out.println("Sem divisões adjacentes, encerrando movimento.");
                 return;
             }
 
@@ -245,9 +140,7 @@ public class ControladorJogoAutomatico implements JogoADT {
             resetarPeso(divisaoAtual, edificio, inimigo);
             atualizarPeso(novaDivisao, edificio, inimigo);
 
-            // Remover o inimigo da divisão atual
             divisaoAtual.getInimigos().remove(inimigo);
-            System.out.println("Inimigo movido da divisão atual.");
 
             inimigo.mover(novaDivisao);
 
@@ -333,10 +226,10 @@ public class ControladorJogoAutomatico implements JogoADT {
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
-            System.out.println("Player morreu!");
+            System.out.println("Fim do Jogo! " + player.getNome() + " morreu!");
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
-            System.out.println("Fim do Jogo! Player saiu do edifício e interagiu com o alvo!");
+            System.out.println("Fim do Jogo! " + player.getNome() + " saiu do edifício e interagiu com o alvo!");
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
             System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
@@ -395,5 +288,111 @@ public class ControladorJogoAutomatico implements JogoADT {
 
     public void setJogoAtivo(boolean jogoAtivo) {
         isJogoAtivo = jogoAtivo;
+    }
+
+    private void moverPlayerAlvo(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
+        Divisao divisaoAlvo = encontrarAlvo(edificio);
+        if (divisaoAlvo == null) {
+            System.out.println("Não há alvo disponível.");
+            return;
+        }
+
+        Iterator<Divisao> caminhoSeguro = edificio.findShortestPath(divisaoAtual, divisaoAlvo);
+
+        if (caminhoSeguro == null) {
+            System.out.println("Não há caminho seguro para o alvo.");
+            return;
+        }
+        Divisao proximaDivisao = caminhoSeguro.next();
+        proximaDivisao = caminhoSeguro.next();
+
+        if (!proximaDivisao.getInimigos().isEmpty()) {
+            try {
+                confronto(player, edificio, proximaDivisao.getInimigos(), proximaDivisao);
+            } catch (EmptyStackException e) {
+                e.printStackTrace();
+            }
+        }
+
+        divisaoAtual.setPlayer(null);
+        player.mover(proximaDivisao);
+
+        System.out.println("Player " + player.getNome() + " movido para " + proximaDivisao.getNome());
+
+        if (proximaDivisao.getItems() != null) {
+            for (Item item : proximaDivisao.getItems()) {
+                player.apanharItem(item);
+            }
+        }
+
+        if (proximaDivisao.getAlvo() != null && !player.isAlvoInteragido()) {
+            player.setAlvoInteragido(true);
+            System.out.println(player.getNome() + " interagiu com o alvo!");
+        }
+
+        divisaoAtual = proximaDivisao;
+
+    }
+
+    private void moverPlayerSaida(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
+        Divisao divisaoPlayer = encontrarPlayer(player, edificio);
+
+        if (divisaoPlayer.isEntradaSaida()) {
+            System.out.println("\n" + player.getNome() + " já se encontra na saída!");
+            return;
+        }
+
+        Divisao saidaMaisProxima = null;
+        double menorDistancia = Double.POSITIVE_INFINITY;
+        Iterator<Divisao> caminhoMaisCurto = null;
+
+        Iterator<Divisao> iter = edificio.getVertex();
+        while (iter.hasNext()) {
+            Divisao divisao = iter.next();
+            if (divisao.isEntradaSaida()) {
+                Iterator<Divisao> caminhoAtual = edificio.findShortestPath(divisaoPlayer, divisao);
+                double distancia = edificio.shortestPathWeight(divisaoPlayer, divisao);
+
+                if (distancia < menorDistancia) {
+                    menorDistancia = distancia;
+                    saidaMaisProxima = divisao;
+                    caminhoMaisCurto = caminhoAtual;
+                }
+            }
+        }
+
+        if (caminhoMaisCurto == null) {
+            System.out.println("Não há caminho seguro");
+        }
+
+        while (caminhoMaisCurto.hasNext()) {
+            Divisao proximaDivisao = caminhoMaisCurto.next();
+
+            if (!proximaDivisao.getInimigos().isEmpty()) {
+                try {
+                    confronto(player, edificio, proximaDivisao.getInimigos(), proximaDivisao);
+                } catch (EmptyStackException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            divisaoAtual.setPlayer(null);
+            player.mover(proximaDivisao);
+
+            System.out.println("Player " + player.getNome() + " movido para " + proximaDivisao.getNome());
+
+            if (proximaDivisao.getItems() != null) {
+                for (Item item : proximaDivisao.getItems()) {
+                    player.apanharItem(item);
+                }
+            }
+
+            if (proximaDivisao.isEntradaSaida()) {
+                terminarJogo(player, edificio);
+                break;
+            }
+
+            divisaoAtual = proximaDivisao;
+        }
     }
 }

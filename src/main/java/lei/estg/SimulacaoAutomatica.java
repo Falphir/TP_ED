@@ -38,10 +38,8 @@ public class SimulacaoAutomatica {
             while (jogo.isJogoAtivo()) {
                 System.out.println("Turno do jogador " + turno);
 
-                // Ações automáticas do jogador
                 turnoPlayerAutomatico(player, edificio, jogo);
 
-                // Ações automáticas dos inimigos
                 System.out.println("Turno dos inimigos " + turno);
                 Iterator it = missao.getEdificio().getVertex();
                 UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>();
@@ -80,9 +78,6 @@ public class SimulacaoAutomatica {
         System.out.println("Divisao: " + divisao.getNome());
         System.out.println("============================================");
 
-        // Ações automáticas do jogador
-
-        // Mover-se para outra divisão
         jogo.moverPlayer(player, edificio);
 
         if (divisao.getInimigos() != null) {
@@ -99,10 +94,9 @@ public class SimulacaoAutomatica {
 
         if (divisao.getAlvo() != null) {
             player.setAlvoInteragido(true);
-            System.out.println(player.getNome() + " interagiu com o alvo " + divisao.getAlvo());
         }
 
-        if (divisao.isEntradaSaida()) {
+        if (divisao.isEntradaSaida() && player.isAlvoInteragido()) {
             jogo.terminarJogo(player, edificio);
             System.out.println(player.getNome() + " saiu do edifício.");
         }

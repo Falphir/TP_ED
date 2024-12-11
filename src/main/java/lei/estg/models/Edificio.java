@@ -146,7 +146,7 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
      * @param endVertex   the index of the end vertex
      * @return an iterator over the indices of the vertices in the shortest path
      */
-    public Iterator<T> findShortestPath(T startVertex, T endVertex) {
+    public Iterator<T> findShortestPath(T startVertex, T endVertex){
         int startIndex = getIndex(startVertex);
         int targetIndex = getIndex(endVertex);
         if (!indexIsValid(startIndex) || !indexIsValid(targetIndex)) {

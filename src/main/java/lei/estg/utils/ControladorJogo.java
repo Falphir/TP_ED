@@ -209,7 +209,6 @@ public class ControladorJogo implements ModoManualADT {
             atualizarPeso(novaDivisao, edificio, inimigo);
 
             divisaoAtual.getInimigos().remove(inimigo);
-            System.out.println("Inimigo movido da divisão atual.");
 
             inimigo.mover(novaDivisao);
 
