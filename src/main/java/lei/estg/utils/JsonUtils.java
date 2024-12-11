@@ -90,8 +90,6 @@ public class JsonUtils {
                 String divisaoNome = (String) itemJson.get("divisao");
                 Divisao divisao = getDivisao(divisaoNome, (Edificio) edificio);
 
-                System.out.println("tipo: " + tipo);
-
                 if (tipo.equals("kit de vida")) {
                     Item item = new Item(
                             (String) itemJson.get("nome"),
