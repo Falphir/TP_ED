@@ -248,67 +248,68 @@ public class ControladorJogo implements JogoADT {
     @Override
     public void confronto(Player player, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
         System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
-        Iterator<Inimigo> inimigosIterator = inimigos.iterator(); 
 
-        while (inimigosIterator.hasNext()) {
-            Inimigo inimigo = inimigosIterator.next();
-            for (Inimigo inimigoNoLoop : inimigos) {
-                System.out.println("Confronto com " + inimigoNoLoop.getNome() + " iniciado!");
-            }
+        while (!inimigos.isEmpty()) {
+            System.out.println("=== Turno do Player ===");
+            System.out.println("1 - Atacar todos os inimigos");
+            System.out.println("2 - Usar um kit (perde o turno)");
+            System.out.print("Escolha uma ação (1 ou 2): ");
 
-            while (player.getVida() > 0 && inimigo.getPoder() > 0) {
-                System.out.println("=== Turno do Player ===");
-                System.out.println("1 - Atacar o inimigo");
-                System.out.println("2 - Usar um kit (perde o turno)");
-                System.out.print("Escolha uma ação (1 ou 2): ");
-                Scanner scanner = new Scanner(System.in);
-                int escolha = scanner.nextInt();
+            Scanner scanner = new Scanner(System.in);
+            int escolha = scanner.nextInt();
 
-                if (escolha == 1) {
-                    System.out.println("Você escolheu atacar!");
+            if (escolha == 1) {
+                System.out.println("Você escolheu atacar todos os inimigos!");
+
+                Iterator<Inimigo> inimigosIterator = inimigos.iterator();
+                while (inimigosIterator.hasNext()) {
+                    Inimigo inimigo = inimigosIterator.next();
                     player.atacar(inimigo);
-
-                    if (inimigo.getPoder() <= 0) {
-                        System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado!");
-                        inimigosIterator.remove(); 
-                        break; 
-                    }
-                } else if (escolha == 2) {
-                    if (player.getMochila().isEmpty()) {
-                        System.out.println("Mochila vazia. Não é possível usar um kit.");
-                        continue;
-                    } else if (player.getVida() == 100) {
-                        System.out.println("Vida já está no máximo. Não é possível usar um kit.");
-                        continue;
-                    } else {
-                        player.usarKit();
-                        System.out.println("Você usou um kit e recuperou vida!");
-                        break; 
-                    }
-                } else {
-                    System.out.println("Escolha inválida. Por favor, tente novamente.");
-                    continue;
                 }
 
+            } else if (escolha == 2) {
+                if (player.getMochila().isEmpty()) {
+                    System.out.println("Mochila vazia. Não é possível usar um kit.");
+                    continue;
+                } else if (player.getVida() == 100) {
+                    System.out.println("Vida já está no máximo. Não é possível usar um kit.");
+                    continue;
+                } else {
+                    player.usarKit();
+                    System.out.println("Você usou um kit e recuperou vida!");
+                }
+            } else {
+                System.out.println("Escolha inválida. Por favor, tente novamente.");
+                continue;
+            }
+
+            // Turno dos inimigos
+            System.out.println("=== Turno dos Inimigos ===");
+            UnorderedArrayList<Inimigo> inimigosRemover = new UnorderedArrayList<>();
+            for (Inimigo inimigo : inimigos) {
                 if (inimigo.getPoder() > 0) {
                     inimigo.atacar(player);
-                    System.out.println("Você recebeu " + inimigo.getPoder() + " de dano.");
-                } else { 
-                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado!");
-                    inimigosIterator.remove(); 
-                    break; 
+
+                    if (player.getVida() <= 0) {
+                        System.out.println("Player " + player.getNome() + " morreu!");
+                        divisao.getPlayer().mover(null);
+                        return;
+                    }
+                } else {
+                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado e será removido.");
+                    inimigosRemover.addToRear(inimigo);
                 }
             }
 
-            if (player.getVida() <= 0) { 
-                System.out.println("Player " + player.getNome() + " morreu!");
-                divisao.getPlayer().mover(null);
-                return;
+            // Remover inimigos derrotados
+            for (Inimigo inimigo : inimigosRemover) {
+                inimigos.remove(inimigo);
             }
         }
 
         System.out.println("Todos os inimigos na divisão foram derrotados!");
     }
+
 
     @Override
     public void mostrarInimigos(Edificio<Divisao> edificio) {
