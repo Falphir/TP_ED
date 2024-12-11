@@ -238,11 +238,6 @@ public class ControladorJogoAutomatico implements JogoADT {
         return false;
     }
 
-    @Override
-    public void verificarVitoria() {
-
-    }
-
     private Divisao encontrarAlvo(Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
         while (divisoes.hasNext()) {

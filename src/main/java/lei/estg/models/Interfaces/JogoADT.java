@@ -15,6 +15,5 @@ public interface JogoADT {
     public void moverInimigo(Inimigo inimigo, Edificio<Divisao> edificio) throws EmptyStackException;
     public void confronto(Player player, Edificio<Divisao> edificio ,UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException;
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu);
-    public void verificarVitoria();
 
 }

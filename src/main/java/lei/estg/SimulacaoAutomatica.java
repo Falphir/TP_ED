@@ -3,7 +3,6 @@ package lei.estg;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.models.*;
-import lei.estg.utils.ControladorJogo;
 import lei.estg.utils.ControladorJogoAutomatico;
 import lei.estg.utils.JogoConfig;
 import lei.estg.utils.JsonUtils;
@@ -16,8 +15,7 @@ import java.util.Random;
 public class SimulacaoAutomatica {
     protected static Random random = new Random();
 
-    public static void main(String[] args) {
-
+    public static void jogar() {
         Missao missao;
         Player player;
         ControladorJogoAutomatico jogo = new ControladorJogoAutomatico();
@@ -69,7 +67,6 @@ public class SimulacaoAutomatica {
 
         Divisao divisao = jogo.encontrarPlayer(player, edificio);
 
-        System.out.println(player.getNome() + " encontra-se na divisão " + divisao.getNome());
         System.out.println("============  Status " + player.getNome() + " ============");
         System.out.println("Vida: " + player.getVida());
         System.out.println("Poder: " + player.getPoder());

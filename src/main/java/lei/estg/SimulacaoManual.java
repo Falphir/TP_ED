@@ -3,7 +3,7 @@ package lei.estg;
 import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.models.*;
-import lei.estg.utils.ControladorJogo;
+import lei.estg.utils.ControladorJogoManual;
 import lei.estg.utils.JogoConfig;
 import lei.estg.utils.JsonUtils;
 
@@ -15,11 +15,10 @@ import java.util.Scanner;
 public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) {
-
+    public static void jogar() {
         Missao missao;
         Player player;
-        ControladorJogo jogo = new ControladorJogo();
+        ControladorJogoManual jogo = new ControladorJogoManual();
         try {
             Path caminhoArquivo = Paths.get(SimulacaoManual.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
             missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
@@ -33,15 +32,14 @@ public class SimulacaoManual {
 
             Edificio<Divisao> edificio = missao.getEdificio();
 
-            int turno = 1;
 
             while (jogo.isJogoAtivo()) {
-                System.out.println("Turno do jogador " + turno);
+                System.out.println("\033[32m========== Turno do jogador ==========\033[0m");
                 jogo.mostrarInimigos(edificio);
                 jogo.mostrarItens(edificio);
                 jogo.mostrarAlvo(player, edificio);
                 turnoPlayer(player, edificio, jogo);
-                System.out.println("Turno do inimigo " + turno);
+                System.out.println("\033[31m==========  Turno do inimigo ==========\033[0m");
                 Iterator it = missao.getEdificio().getVertex();
                 UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>();
                 while (it.hasNext()) {
@@ -56,8 +54,6 @@ public class SimulacaoManual {
                 for (Inimigo inimigo : inimigosParaMover) {
                     jogo.moverInimigo(inimigo, missao.getEdificio());
                 }
-
-                //jogoAtivo = jogo.verificarFimJogo();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,18 +62,17 @@ public class SimulacaoManual {
         }
     }
 
-    private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogo jogo) throws EmptyStackException {
+    private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogoManual jogo) throws EmptyStackException {
 
         Divisao divisao = jogo.encontrarPlayer(player, edificio);
 
-        System.out.println(player.getNome() + " encontra-se na divisão " + divisao.getNome());
-        System.out.println("============  Status " + player.getNome() + " ============");
-        System.out.println("Vida: " + player.getVida());
-        System.out.println("Poder: " + player.getPoder());
-        System.out.println("Colete: " + player.getVidaColete());
-        System.out.println("Kits: " + player.getMochila().size());
-        System.out.println("Divisao: " + divisao.getNome());
-        System.out.println("============================================");
+        System.out.println("\033[1m\033[32m============  Status " + player.getNome() + " ============\033[0m");
+        System.out.println("\033[34mVida: " + player.getVida() + "\033[0m");
+        System.out.println("\033[34mPoder: " + player.getPoder() + "\033[0m");
+        System.out.println("\033[34mColete: " + player.getVidaColete() + "\033[0m");
+        System.out.println("\033[34mKits: " + player.getMochila().size() + "\033[0m");
+        System.out.println("\033[34mDivisao: " + divisao.getNome() + "\033[0m");
+        System.out.println("\033[1m\033[32m=========================================\033[0m");
 
         jogo.mostrarTodosCaminhosMaisProximos(player, edificio);
 
@@ -98,12 +93,13 @@ public class SimulacaoManual {
                 jogo.moverPlayer(player, edificio);
                 break;
             case 2:
-                if (divisao.getInimigos() != null) {
+                if (!divisao.getInimigos().isEmpty()) {
                     for (Inimigo inimigo : divisao.getInimigos()) {
                         player.atacar(inimigo);
                     }
                 } else {
-                    System.out.println("Não existem inimigos nesta divisão.");
+                    System.out.println("\033[31mNão existem inimigos nesta divisão.\033[0m");
+                    turnoPlayer(player, edificio, jogo);
                 }
                 break;
             case 3:
@@ -113,14 +109,16 @@ public class SimulacaoManual {
                 if (divisao.getAlvo() != null) {
                     jogo.interagirComAlvo(player, divisao.getAlvo(), divisao);
                 } else {
-                    System.out.println("Não existe um alvo nesta divisão.");
+                    System.out.println("\033[31mNão existe um alvo nesta divisão.\033[0m");
+                    turnoPlayer(player, edificio, jogo);
                 }
                 break;
             case 5:
                 if (divisao.isEntradaSaida()) {
                     jogo.terminarJogo(player, edificio);
                 } else {
-                    System.out.println("Você não pode sair do edificio.");
+                    System.out.println("\033[31mVocê não pode sair do edificio.\033[0m");
+                    turnoPlayer(player, edificio, jogo);
                 }
                 break;
             case 6:
@@ -128,7 +126,7 @@ public class SimulacaoManual {
                 turnoPlayer(player, edificio, jogo);
                 break;
             default:
-                System.out.println("Opção inválida");
+                System.out.println("\033[31mOpção inválida!\033[0m");
         }
     }
 

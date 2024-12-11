@@ -4,7 +4,6 @@ import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
-import lei.estg.models.Interfaces.JogoADT;
 import lei.estg.models.Interfaces.ModoManualADT;
 import lei.estg.models.enums.EItemTipo;
 
@@ -12,7 +11,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 
-public class ControladorJogo implements ModoManualADT {
+public class ControladorJogoManual implements ModoManualADT {
     private boolean isJogoAtivo = true;
 
     @Override
@@ -67,7 +66,7 @@ public class ControladorJogo implements ModoManualADT {
 
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
-            System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
+            System.out.println("\033[3m\033[32mPlayer entrou na divisão: " + divisaoEscolhida.getNome() + "\033[0m");
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
                     confronto(player, edificio ,divisaoEscolhida.getInimigos(), divisaoEscolhida);
@@ -87,7 +86,7 @@ public class ControladorJogo implements ModoManualADT {
             terminarJogo(player, edificio);
             return;
         }
-
+        System.out.println("===========  Divisões possiveis  ===========");
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
         UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
         Iterator<Divisao> iterator = edificio.getAdjacentes(divisaoAtual);
@@ -98,11 +97,13 @@ public class ControladorJogo implements ModoManualADT {
             divisoesAdjacentes.addToRear(divisao);
             index++;
         }
+        System.out.println("============================================");
+
 
         Scanner scanner = new Scanner(System.in);
         int escolha = -1;
         while (escolha < 1 || escolha > divisoesAdjacentes.size()) {
-            System.out.print("Escolha uma divisão (1-" + divisoesAdjacentes.size() + "): ");
+            System.out.print("Escolha uma divisão (\033[1m\033[33m1-" + divisoesAdjacentes.size() + "\033[0m): ");
             if (scanner.hasNextInt()) {
                 escolha = scanner.nextInt();
             } else {
@@ -125,8 +126,8 @@ public class ControladorJogo implements ModoManualADT {
         divisaoAtual.setPlayer(null);
         player.mover(novaDivisao);
 
-        System.out.println("Player " + player.getNome() + " movido de " +
-                divisaoAtual.getNome() + " para " + novaDivisao.getNome());
+        System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
+                divisaoAtual.getNome() + " para " + novaDivisao.getNome()+ "\033[0m");
 
         if (!novaDivisao.getInimigos().isEmpty()) {
             try {
@@ -163,8 +164,10 @@ public class ControladorJogo implements ModoManualADT {
         Random random = new Random();
         Divisao divisaoAtual = encontrarInimigo(inimigo, edificio);
         int movimentos = 0;
+        int maxMovimentos = random.nextInt(2);
 
-        while (movimentos < 2) {
+
+        while (movimentos < maxMovimentos) {
             if (inimigo.getPoder() == 0) {
                 System.out.println("Inimigo sem poder, saindo do movimento.");
                 return;
@@ -173,14 +176,12 @@ public class ControladorJogo implements ModoManualADT {
             Iterator<Divisao> iter = edificio.getAdjacentes(divisaoAtual);
             UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
 
-            // Adicionando divisões adjacentes
             while (iter.hasNext()) {
                 Divisao divisao = iter.next();
                 divisoesAdjacentes.addToRear(divisao);
             }
 
             if (divisoesAdjacentes.isEmpty()) {
-                System.out.println("Sem divisões adjacentes, encerrando movimento.");
                 return;
             }
 
@@ -199,7 +200,6 @@ public class ControladorJogo implements ModoManualADT {
                 count++;
             }
 
-            // Garantindo que novaDivisao não seja nula
             if (novaDivisao == null) {
                 System.out.println("Erro: novaDivisao é nula!");
                 return;
@@ -213,12 +213,13 @@ public class ControladorJogo implements ModoManualADT {
             inimigo.mover(novaDivisao);
 
             if (novaDivisao.getPlayer() != null) {
-                System.out.println("Confronto iniciado com o jogador na nova divisão.");
+                System.out.println("\033[3m\033[31mConfronto iniciado com o jogador na nova divisão. \033[0m");
                 inimigo.atacar(novaDivisao.getPlayer());
                 confronto(novaDivisao.getPlayer(), edificio ,novaDivisao.getInimigos(), novaDivisao);
 
                 if (inimigo.getPoder() == 0) {
-                    System.out.println("Inimigo derrotado durante o confronto.");
+                    System.out.println("\033[33mInimigo derrotado durante o confronto. \033[0m");
+                    resetarPeso(novaDivisao, edificio, inimigo);
                     return;
                 }
             }
@@ -227,8 +228,6 @@ public class ControladorJogo implements ModoManualADT {
             movimentos++;
         }
     }
-
-
 
     private Divisao encontrarInimigo(Inimigo inimigo, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -312,7 +311,6 @@ public class ControladorJogo implements ModoManualADT {
                 continue;
             }
 
-            // Turno dos inimigos
             System.out.println("=== Turno dos Inimigos ===");
             UnorderedArrayList<Inimigo> inimigosRemover = new UnorderedArrayList<>();
             for (Inimigo inimigo : inimigos) {
@@ -331,7 +329,6 @@ public class ControladorJogo implements ModoManualADT {
                 }
             }
 
-            // Remover inimigos derrotados
             for (Inimigo inimigo : inimigosRemover) {
                 inimigos.remove(inimigo);
             }
@@ -410,19 +407,19 @@ public class ControladorJogo implements ModoManualADT {
         }
 
         if (divisaoComKitMaisProximo != null) {
-            System.out.println("Kit mais próximo encontrado na divisão: " + divisaoComKitMaisProximo.getNome());
+            System.out.println("\033[34mKit mais próximo encontrado na divisão: \033[0m\033[1m\033[32m" + divisaoComKitMaisProximo.getNome() + "\033[0m");
 
-            System.out.print("Caminho até o kit: ");
+            System.out.print("\033[34mCaminho até o kit: \033[0m");
             while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext()) {
                 Divisao divisao = caminhoMaisCurto.next();
                 if (divisao.equals(divisaoComKitMaisProximo)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m"+divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(divisaoComKitMaisProximo.getNome());
+            System.out.print("\033[1m\033[32m" + divisaoComKitMaisProximo.getNome() + "\033[0m");
         } else {
-            System.out.println("Nenhum kit encontrado no edifício.");
+            System.out.println("\033[3m\033[31mNenhum kit encontrado no edifício.\033[0m");
         }
     }
 
@@ -451,19 +448,19 @@ public class ControladorJogo implements ModoManualADT {
         }
 
         if (divisaoComColeteMaisProximo != null) {
-            System.out.println("\nColete mais próximo encontrado na divisão: " + divisaoComColeteMaisProximo.getNome());
+            System.out.println("\n\033[34mColete mais próximo encontrado na divisão: \033[0m\033[1m\033[32m" + divisaoComColeteMaisProximo.getNome() + "\033[0m");
 
-            System.out.print("Caminho até o Colete: ");
+            System.out.print("\033[34mCaminho até o Colete: \033[0m");
             while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext()) {
                 Divisao divisao = caminhoMaisCurto.next();
                 if (divisao.equals(divisaoComColeteMaisProximo)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m" + divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(divisaoComColeteMaisProximo.getNome());
+            System.out.print("\033[1m\033[32m" + divisaoComColeteMaisProximo.getNome() + "\033[0m");
         } else {
-            System.out.println("Nenhum colete encontrado no edifício.");
+            System.out.println("\033[3m\033[31mNenhum colete encontrado no edifício.\033[0m");
         }
     }
 
@@ -490,19 +487,19 @@ public class ControladorJogo implements ModoManualADT {
         }
 
         if (divisaoAlvo != null) {
-            System.out.println("\nAlvo encontrado na divisão: " + divisaoAlvo.getNome());
+            System.out.println("\n\033[34mAlvo encontrado na divisão: \033[0m\033[1m\033[32m" + divisaoAlvo.getNome() + "\033[0m");
 
-            System.out.print("Caminho mais seguro até ao Alvo: ");
+            System.out.print("\033[34mCaminho mais seguro até ao Alvo: \033[0m");
             while (caminhoMaisSeguro != null && caminhoMaisSeguro.hasNext()) {
                 Divisao divisao = caminhoMaisSeguro.next();
                 if (divisao.equals(divisaoAlvo)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m" + divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(divisaoAlvo.getNome());
+            System.out.print("\033[1m\033[32m" + divisaoAlvo.getNome() + "\033[0m");
         } else {
-            System.out.println("Alvo não encontrado.");
+            System.out.println("\033[3m\033[31mAlvo não encontrado.\033[0m");
         }
     }
 
@@ -510,7 +507,7 @@ public class ControladorJogo implements ModoManualADT {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
 
         if (divisaoPlayer.isEntradaSaida()) {
-            System.out.println("\n"+  player.getNome() + " já se encontra na saída!");
+            System.out.println("\n\033[35m\033[3m"+  player.getNome() + " já se encontra na saída! \033[0m");
             return;
         }
 
@@ -534,19 +531,19 @@ public class ControladorJogo implements ModoManualADT {
         }
 
         if (saidaMaisProxima != null) {
-            System.out.println("\nSaída mais segura na divisão: " + saidaMaisProxima.getNome());
+            System.out.println("\n\033[34mSaída mais segura na divisão: \033[0m\033[1m\033[32m" + saidaMaisProxima.getNome() + "\033[0m");
 
-            System.out.print("Caminho até à saída: ");
+            System.out.print("\033[34mCaminho até à saída: \033[0m");
             while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext() ) {
                 Divisao divisao = caminhoMaisCurto.next();
                 if (divisao.equals(saidaMaisProxima)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m" + divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(saidaMaisProxima.getNome() + "\n");
+            System.out.print("\033[1m\033[32m" + saidaMaisProxima.getNome() + "\033[0m\n");
         } else {
-            System.out.println("Nao foi possivel encontrar uma saída");
+            System.out.println("\033[3m\033[31mNao foi possivel encontrar uma saída\033[0m");
         }
     }
 
@@ -564,12 +561,15 @@ public class ControladorJogo implements ModoManualADT {
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
             System.out.println("Player morreu!");
+            System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
-            System.out.println("Fim do Jogo! Player saiu do edifício e interagiu com o alvo!");
+            System.out.println("\033[32mVitória! Parabéns! Continua assim!\033[0m");
+
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
             System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
+            System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         }
         return false;
@@ -587,12 +587,6 @@ public class ControladorJogo implements ModoManualADT {
         } else {
             System.out.println("Alvo não encontrado nesta divisão!");
         }
-    }
-
-
-    @Override
-    public void verificarVitoria() {
-
     }
 
     public boolean isJogoAtivo() {
@@ -619,13 +613,11 @@ public class ControladorJogo implements ModoManualADT {
 
         System.out.println("=== Mapa ===");
 
-        // Exibe as conexões entre as divisões
         while (divisoes.hasNext()) {
             Divisao divisao = divisoes.next();
 
             System.out.println(divisao.getNome() + ":");
 
-            // Obtém as divisões adjacentes
             Iterator<Divisao> adjacentes = edificio.getAdjacentes(divisao);
 
             while (adjacentes.hasNext()) {
@@ -634,25 +626,21 @@ public class ControladorJogo implements ModoManualADT {
 
                 boolean hasInfo = false;
 
-                // Verificar se o Player está na divisão adjacente
                 if (divisaoAdjacente.getPlayer() != null) {
                     System.out.print(" (Player aqui)");
                     hasInfo = true;
                 }
 
-                // Verificar se há inimigos na divisão adjacente
                 if (!divisaoAdjacente.getInimigos().isEmpty()) {
                     System.out.print(" (" + divisaoAdjacente.getInimigos().size() + " inimigos)");
                     hasInfo = true;
                 }
 
-                // Verificar se há um alvo na divisão adjacente
                 if (divisaoAdjacente.getAlvo() != null) {
                     System.out.print(" (Alvo aqui)");
                     hasInfo = true;
                 }
 
-                // Verificar se há itens na divisão adjacente
                 if (!divisaoAdjacente.getItems().isEmpty()) {
                     System.out.print(" (" + divisaoAdjacente.getItems().size() + " Kit" + (divisaoAdjacente.getItems().size() > 1 ? "s" : "") + ")");
                     hasInfo = true;
@@ -662,7 +650,7 @@ public class ControladorJogo implements ModoManualADT {
                     System.out.print(" (Vazia)");
                 }
 
-                System.out.println();  // Nova linha após exibir as informações de cada divisão adjacente
+                System.out.println();
             }
         }
     }
