@@ -15,11 +15,6 @@ public class ControladorJogoManual implements ModoManualADT {
     private boolean isJogoAtivo = true;
 
     @Override
-    public void iniciarJogo() {
-
-    }
-
-    @Override
     public void terminarJogo(Player player, Edificio<Divisao> edificio) {
         Divisao divisao = encontrarPlayer(player, edificio);
         if (divisao != null) {
@@ -560,7 +555,7 @@ public class ControladorJogoManual implements ModoManualADT {
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
-            System.out.println("Player morreu!");
+            System.out.println("\033[31mPlayer morreu!\033[0m");
             System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
@@ -568,7 +563,7 @@ public class ControladorJogoManual implements ModoManualADT {
 
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
-            System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
+            System.out.println("\033[31mPlayer saiu do edifício! Mas nao interagiu com o alvo!\033[0m");
             System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         }
@@ -581,7 +576,7 @@ public class ControladorJogoManual implements ModoManualADT {
             return;
         }
         if (alvo != null) {
-            System.out.println("Player interagiu com o alvo!");
+            System.out.println("\033[3m\033[32mPlayer interagiu com o alvo!\033[0m");
             player.setAlvoInteragido(true);
             divisao.setAlvo(null);
         } else {
@@ -611,48 +606,49 @@ public class ControladorJogoManual implements ModoManualADT {
     public void mostrarMapa(Edificio<Divisao> edificio, Player player) {
         Iterator<Divisao> divisoes = edificio.getVertex();
 
-        System.out.println("=== Mapa ===");
+        System.out.println("\033[33m\033[1m==============  Mapa  ==============\033[0m");
 
         while (divisoes.hasNext()) {
             Divisao divisao = divisoes.next();
 
-            System.out.println(divisao.getNome() + ":");
+            System.out.println("\033[32m\033[1m" + divisao.getNome() + ":\033[0m");
 
             Iterator<Divisao> adjacentes = edificio.getAdjacentes(divisao);
 
             while (adjacentes.hasNext()) {
                 Divisao divisaoAdjacente = adjacentes.next();
-                System.out.print("    - " + divisaoAdjacente.getNome());
+                System.out.print("\033[34m    - " + divisaoAdjacente.getNome() + "\033[0m");
 
                 boolean hasInfo = false;
 
                 if (divisaoAdjacente.getPlayer() != null) {
-                    System.out.print(" (Player aqui)");
+                    System.out.print("\033[35m (Player aqui)\033[0m");
                     hasInfo = true;
                 }
 
                 if (!divisaoAdjacente.getInimigos().isEmpty()) {
-                    System.out.print(" (" + divisaoAdjacente.getInimigos().size() + " inimigos)");
+                    System.out.print("\033[31m (" + divisaoAdjacente.getInimigos().size() + " inimigos)\033[0m");
                     hasInfo = true;
                 }
 
                 if (divisaoAdjacente.getAlvo() != null) {
-                    System.out.print(" (Alvo aqui)");
+                    System.out.print("\033[36m (Alvo aqui)\033[0m");
                     hasInfo = true;
                 }
 
                 if (!divisaoAdjacente.getItems().isEmpty()) {
-                    System.out.print(" (" + divisaoAdjacente.getItems().size() + " Kit" + (divisaoAdjacente.getItems().size() > 1 ? "s" : "") + ")");
+                    System.out.print("\033[32m (" + divisaoAdjacente.getItems().size() + " Kit" + (divisaoAdjacente.getItems().size() > 1 ? "s" : "") + ")\033[0m");
                     hasInfo = true;
                 }
 
                 if (!hasInfo) {
-                    System.out.print(" (Vazia)");
+                    System.out.print("\033[33m (Vazia)\033[0m");
                 }
 
                 System.out.println();
             }
         }
+        System.out.println("\033[33m\033[1m====================================\033[0m");
     }
 
 

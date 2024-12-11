@@ -5,10 +5,7 @@ import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.models.*;
 
 public interface JogoADT {
-
-    public void iniciarJogo();
     public void terminarJogo(Player player, Edificio<Divisao> edificio);
-
     public Divisao selecionarEntrada(Player player, Edificio<Divisao> edificio);
     public Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio);
     public void moverPlayer(Player player, Edificio<Divisao> edificio);

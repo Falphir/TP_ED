@@ -13,11 +13,6 @@ public class ControladorJogoAutomatico implements JogoADT {
     private boolean isJogoAtivo = true;
 
     @Override
-    public void iniciarJogo() {
-
-    }
-
-    @Override
     public void terminarJogo(Player player, Edificio<Divisao> edificio) {
         Divisao divisao = encontrarPlayer(player, edificio);
         if (divisao != null) {
@@ -113,7 +108,6 @@ public class ControladorJogoAutomatico implements JogoADT {
             }
 
             if (divisoesAdjacentes.isEmpty()) {
-                //System.out.println("Sem divisões adjacentes, encerrando movimento.");
                 return;
             }
 
