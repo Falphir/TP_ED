@@ -31,14 +31,13 @@ public class SimulacaoAutomatica {
             Divisao divisaoInicial = jogo.selecionarEntrada(player, missao.getEdificio());
 
             Edificio<Divisao> edificio = missao.getEdificio();
-            int turno = 1;
 
             while (jogo.isJogoAtivo()) {
-                System.out.println("Turno do jogador " + turno);
+                System.out.println("\033[32m========== Turno do jogador ==========\033[0m");
 
                 turnoPlayerAutomatico(player, edificio, jogo);
 
-                System.out.println("Turno dos inimigos " + turno);
+                System.out.println("\033[31m==========  Turno do inimigo ==========\033[0m");
                 Iterator it = missao.getEdificio().getVertex();
                 UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>();
                 while (it.hasNext()) {
@@ -54,7 +53,6 @@ public class SimulacaoAutomatica {
                     jogo.moverInimigo(inimigo, missao.getEdificio());
                 }
 
-                turno++;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,20 +65,20 @@ public class SimulacaoAutomatica {
 
         Divisao divisao = jogo.encontrarPlayer(player, edificio);
 
-        System.out.println("============  Status " + player.getNome() + " ============");
-        System.out.println("Vida: " + player.getVida());
-        System.out.println("Poder: " + player.getPoder());
-        System.out.println("Colete: " + player.getVidaColete());
-        System.out.println("Kits: " + player.getMochila().size());
-        System.out.println("Divisao: " + divisao.getNome());
-        System.out.println("============================================");
+        System.out.println("\033[1m\033[32m============  Status " + player.getNome() + " ============\033[0m");
+        System.out.println("\033[34mVida: " + player.getVida() + "\033[0m");
+        System.out.println("\033[34mPoder: " + player.getPoder() + "\033[0m");
+        System.out.println("\033[34mColete: " + player.getVidaColete() + "\033[0m");
+        System.out.println("\033[34mKits: " + player.getMochila().size() + "\033[0m");
+        System.out.println("\033[34mDivisao: " + divisao.getNome() + "\033[0m");
+        System.out.println("\033[1m\033[32m=========================================\033[0m");
 
         jogo.moverPlayer(player, edificio);
 
         if (divisao.getInimigos() != null) {
             for (Inimigo inimigo : divisao.getInimigos()) {
                 player.atacar(inimigo);
-                System.out.println(player.getNome() + " atacou " + inimigo.getNome() + ". Poder restante: " + inimigo.getPoder());
+                System.out.println(inimigo.getNome() + " recebeu dano. Poder restante: " + inimigo.getPoder());
             }
         }
 

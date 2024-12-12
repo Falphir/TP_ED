@@ -49,7 +49,7 @@ public class ControladorJogoAutomatico implements JogoADT {
 
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
-            System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
+            System.out.println("\033[3m\033[32m" + player.getNome() + " entrou na divisão: " + divisaoEscolhida.getNome() + "\033[0m");
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
                     confronto(player, edificio, divisaoEscolhida.getInimigos(), divisaoEscolhida);
@@ -78,10 +78,8 @@ public class ControladorJogoAutomatico implements JogoADT {
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
 
         if (!player.isAlvoInteragido()) {
-            System.out.println("Player ainda não interagiu com o alvo.");
             moverPlayerAlvo(player, edificio, divisaoAtual);
         } else {
-            System.out.println("Player já interagiu com o alvo!");
             moverPlayerSaida(player, edificio, divisaoAtual);
         }
     }
@@ -138,14 +136,22 @@ public class ControladorJogoAutomatico implements JogoADT {
 
             inimigo.mover(novaDivisao);
 
+            System.out.println("\033[3m\033[31m" + inimigo.getNome() + " movido de " +
+                    divisaoAtual.getNome() + " para " + novaDivisao.getNome()+ "\033[0m");
+
             if (novaDivisao.getPlayer() != null) {
                 System.out.println("Confronto iniciado com o jogador na nova divisão.");
 
                 inimigo.atacar(novaDivisao.getPlayer());
+                if (novaDivisao.getPlayer().getVida() == 0) {
+                    terminarJogo(novaDivisao.getPlayer(), edificio);
+                    return;
+                }
                 confronto(novaDivisao.getPlayer(), edificio, novaDivisao.getInimigos(), novaDivisao);
 
                 if (inimigo.getPoder() == 0) {
                     System.out.println("Inimigo derrotado durante o confronto.");
+                    resetarPeso(novaDivisao, edificio, inimigo);
                     return;
                 }
             }
@@ -173,7 +179,7 @@ public class ControladorJogoAutomatico implements JogoADT {
 
     @Override
     public void confronto(Player player, Edificio<Divisao> edificio, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
-        System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
+        System.out.println("\033[31mExistem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado\033[0m");
 
         while (!inimigos.isEmpty() && player.getVida() > 0) {
             System.out.println("=== Turno do Player ===");
@@ -183,7 +189,7 @@ public class ControladorJogoAutomatico implements JogoADT {
                     System.out.println("Vida abaixo de 50. Usando kit automaticamente...");
                     player.usarKit();
                 } else {
-                    System.out.println("Mochila vazia nao possui kits.");
+                    System.out.println("\033[33mMochila vazia nao possui kits.\033[0m");
                 }
             }
             Iterator<Inimigo> inimigosIterator = inimigos.iterator();
@@ -199,34 +205,37 @@ public class ControladorJogoAutomatico implements JogoADT {
                     inimigo.atacar(player);
 
                     if (player.getVida() <= 0) {
-                        System.out.println(player.getNome() + " morreu!");
                         terminarJogo(player, edificio);
                         return;
                     }
                 } else {
-                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado e será removido.");
+                    System.out.println(inimigo.getNome() + " foi derrotado.");
                     inimigosRemover.addToRear(inimigo);
                 }
             }
 
             for (Inimigo inimigo : inimigosRemover) {
+                Divisao div = encontrarInimigo(inimigo, edificio);
+                resetarPeso(div, edificio, inimigo);
                 inimigos.remove(inimigo);
             }
         }
-        System.out.println("Todos os inimigos na divisão foram derrotados!");
+        System.out.println("\033[32mTodos os inimigos na divisão foram derrotados!\033[0m");
     }
 
 
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
-            System.out.println("Fim do Jogo! " + player.getNome() + " morreu!");
+            System.out.println("\033[31mPlayer morreu!\033[0m");
+            System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
-            System.out.println("Fim do Jogo! " + player.getNome() + " saiu do edifício e interagiu com o alvo!");
+            System.out.println("\033[32mVitória! Parabéns! Continua assim!\033[0m");
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
-            System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
+            System.out.println("\033[31mPlayer saiu do edifício! Mas nao interagiu com o alvo!\033[0m");
+            System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         }
         return false;
@@ -282,14 +291,14 @@ public class ControladorJogoAutomatico implements JogoADT {
     private void moverPlayerAlvo(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
         Divisao divisaoAlvo = encontrarAlvo(edificio);
         if (divisaoAlvo == null) {
-            System.out.println("Não há alvo disponível.");
+            System.out.println("\033[31mNão há alvo disponível.\033[0m");
             return;
         }
 
         Iterator<Divisao> caminhoSeguro = edificio.findShortestPath(divisaoAtual, divisaoAlvo);
 
         if (caminhoSeguro == null) {
-            System.out.println("Não há caminho seguro para o alvo.");
+            System.out.println("\033[31mNão existe um caminho seguro até ao alvo.\033[0m");
             return;
         }
         Divisao proximaDivisao = caminhoSeguro.next();
@@ -306,7 +315,8 @@ public class ControladorJogoAutomatico implements JogoADT {
         divisaoAtual.setPlayer(null);
         player.mover(proximaDivisao);
 
-        System.out.println("Player " + player.getNome() + " movido para " + proximaDivisao.getNome());
+        System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
+                divisaoAtual.getNome() + " para " + proximaDivisao.getNome()+ "\033[0m");
 
         if (proximaDivisao.getItems() != null) {
             for (Item item : proximaDivisao.getItems()) {
@@ -316,7 +326,7 @@ public class ControladorJogoAutomatico implements JogoADT {
 
         if (proximaDivisao.getAlvo() != null && !player.isAlvoInteragido()) {
             player.setAlvoInteragido(true);
-            System.out.println(player.getNome() + " interagiu com o alvo!");
+            System.out.println("\033[34m" + player.getNome() + " já interagiu com o Alvo!\033[0m");
         }
 
         divisaoAtual = proximaDivisao;
@@ -327,7 +337,7 @@ public class ControladorJogoAutomatico implements JogoADT {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
 
         if (divisaoPlayer.isEntradaSaida()) {
-            System.out.println("\n" + player.getNome() + " já se encontra na saída!");
+            System.out.println("\n\033[35m\033[3m"+  player.getNome() + " já se encontra na saída! \033[0m");
             return;
         }
 
@@ -368,7 +378,8 @@ public class ControladorJogoAutomatico implements JogoADT {
             divisaoAtual.setPlayer(null);
             player.mover(proximaDivisao);
 
-            System.out.println("Player " + player.getNome() + " movido para " + proximaDivisao.getNome());
+            System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
+                    divisaoAtual.getNome() + " para " + proximaDivisao.getNome()+ "\033[0m");
 
             if (proximaDivisao.getItems() != null) {
                 for (Item item : proximaDivisao.getItems()) {

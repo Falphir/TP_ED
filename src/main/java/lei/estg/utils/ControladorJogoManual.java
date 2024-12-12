@@ -61,7 +61,7 @@ public class ControladorJogoManual implements ModoManualADT {
 
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
-            System.out.println("\033[3m\033[32mPlayer entrou na divisão: " + divisaoEscolhida.getNome() + "\033[0m");
+            System.out.println("\033[3m\033[32m" + player.getNome() + " entrou na divisão: " + divisaoEscolhida.getNome() + "\033[0m");
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
                     confronto(player, edificio ,divisaoEscolhida.getInimigos(), divisaoEscolhida);
@@ -164,7 +164,6 @@ public class ControladorJogoManual implements ModoManualADT {
 
         while (movimentos < maxMovimentos) {
             if (inimigo.getPoder() == 0) {
-                System.out.println("Inimigo sem poder, saindo do movimento.");
                 return;
             }
 
@@ -196,7 +195,7 @@ public class ControladorJogoManual implements ModoManualADT {
             }
 
             if (novaDivisao == null) {
-                System.out.println("Erro: novaDivisao é nula!");
+                //System.out.println("Erro: novaDivisao é nula!");
                 return;
             }
 
@@ -269,7 +268,7 @@ public class ControladorJogoManual implements ModoManualADT {
 
     @Override
     public void confronto(Player player, Edificio<Divisao> edificio, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
-        System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
+        System.out.println("\033[31mExistem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado\033[0m");
 
         while (!inimigos.isEmpty() && player.getVida() > 0) {
             System.out.println("=== Turno do Player ===");
@@ -281,7 +280,7 @@ public class ControladorJogoManual implements ModoManualADT {
             int escolha = scanner.nextInt();
 
             if (escolha == 1) {
-                System.out.println("Você escolheu atacar todos os inimigos!");
+                System.out.println("Escolheste atacar todos os inimigos!");
 
                 Iterator<Inimigo> inimigosIterator = inimigos.iterator();
                 while (inimigosIterator.hasNext()) {
@@ -311,25 +310,26 @@ public class ControladorJogoManual implements ModoManualADT {
             for (Inimigo inimigo : inimigos) {
                 if (inimigo.getPoder() > 0) {
                     inimigo.atacar(player);
-                    System.out.println("Inimigo " + inimigo.getNome() + " atacou você. Vida restante: " + player.getVida());
+                    System.out.println(inimigo.getNome() + " atacou-te. Vida restante: " + player.getVida());
 
                     if (player.getVida() <= 0) {
-                        System.out.println("Player " + player.getNome() + " morreu!");
                         terminarJogo(player, edificio);
                         return;
                     }
                 } else {
-                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado e será removido.");
+                    System.out.println(inimigo.getNome() + " foi derrotado.");
                     inimigosRemover.addToRear(inimigo);
                 }
             }
 
             for (Inimigo inimigo : inimigosRemover) {
+                Divisao div = encontrarInimigo(inimigo, edificio);
+                resetarPeso(div, edificio, inimigo);
                 inimigos.remove(inimigo);
             }
         }
 
-        System.out.println("Todos os inimigos na divisão foram derrotados!");
+        System.out.println("\033[32mTodos os inimigos na divisão foram derrotados!\033[0m");
     }
 
 
@@ -555,12 +555,11 @@ public class ControladorJogoManual implements ModoManualADT {
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
-            System.out.println("\033[31mPlayer morreu!\033[0m");
+            System.out.println("\033[31m"+ player.getNome()+ "morreu!\033[0m");
             System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
             System.out.println("\033[32mVitória! Parabéns! Continua assim!\033[0m");
-
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
             System.out.println("\033[31mPlayer saiu do edifício! Mas nao interagiu com o alvo!\033[0m");
