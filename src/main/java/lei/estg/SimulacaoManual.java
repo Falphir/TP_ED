@@ -6,6 +6,9 @@ import lei.estg.models.*;
 import lei.estg.utils.ControladorJogoManual;
 import lei.estg.utils.JogoConfig;
 import lei.estg.utils.JsonUtils;
+import lei.estg.utils.Mapa;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,28 +19,29 @@ public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
 
     public static void jogar() {
-
-
         Missao missao;
         Player player;
         ControladorJogoManual jogo;
+        Mapa mapa = new Mapa();
 
         try {
-            Path caminhoArquivo = Paths.get(Main.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
+            Path caminhoArquivo = Paths
+                    .get(Main.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
             missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
-            Path caminhoConfig = Paths.get(Main.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
+            Path caminhoConfig = Paths
+                    .get(Main.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
             JogoConfig config = new JogoConfig();
             player = config.carregarPlayerConfig(String.valueOf(caminhoConfig));
 
-            jogo = new ControladorJogoManual(missao);
+            jogo = new ControladorJogoManual(missao, mapa);
 
             System.out.println("Bem-vindo ao jogo!");
 
-            Divisao divisaoInicial = jogo.selecionarEntrada(player, missao.getEdificio());
-
             Edificio<Divisao> edificio = missao.getEdificio();
 
+            mapa.mostrarMapa(edificio);
 
+            Divisao divisaoInicial = jogo.selecionarEntrada(player, edificio);
 
             int turno = 1;
 
@@ -70,7 +74,8 @@ public class SimulacaoManual {
         }
     }
 
-    private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogoManual jogo) throws EmptyStackException {
+    private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogoManual jogo)
+            throws EmptyStackException {
 
         Divisao divisao = jogo.encontrarPlayer(player, edificio);
 
@@ -113,22 +118,23 @@ public class SimulacaoManual {
                 break;
             case 4:
                 if (divisao.getAlvo() != null) {
-                    jogo.interagirComAlvo(player, divisao.getAlvo() ,divisao);
+                    jogo.interagirComAlvo(player, divisao.getAlvo(), divisao);
                 } else {
                     System.out.println("Não existe um alvo nesta divisão.");
                 }
                 break;
-                case 5:
-                    if (divisao.isEntradaSaida()) {
-                        jogo.terminarJogo(player, edificio);
-                    } else {
-                        System.out.println("Você não pode sair do edificio.");
-                    }
-                    break;
+            case 5:
+                if (divisao.isEntradaSaida()) {
+                    jogo.terminarJogo(player, edificio);
+                } else {
+                    System.out.println("Você não pode sair do edificio.");
+                }
+                break;
             default:
                 System.out.println("Opção inválida");
         }
     }
+
 
 
 }

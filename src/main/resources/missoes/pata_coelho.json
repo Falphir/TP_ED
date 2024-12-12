@@ -104,7 +104,7 @@
       "dificuldade": "medio",
       "tipo": "resgate",
       "edificio": ["Heliporto", "Escada 6", "Camaratas", "Armazém", "Escada 5",
-        "Laboratório", "Escritório 3", "Escada 4", "WC", "Corredor 2",
+        "Laboratório", "Escritório 3", "Escada 4","Escada 3", "WC", "Corredor 2",
         "Segurança", "Hall", "Biblioteca", "Escritório 2", "Escada de Emergência",
         "Cozinha", "Escada 2", "Porteiro", "Escada 1", "Garagem", "Auditório", "Refeitório"],
       "ligacoes": [
@@ -116,6 +116,7 @@
         ["Cozinha", "Escada 2"],
         ["Cozinha", "Escritório 1"],
         ["Cozinha", "Escritório 2"],
+        ["Cozinha", "Escada 3"],
         ["Cozinha", "Hall"],
         ["Hall", "Biblioteca"],
         ["Hall", "Segurança"],
@@ -145,7 +146,9 @@
       "itens": [
         {"nome": "Kit Básico", "divisao": "WC", "pontos-recuperados": 20, "tipo": "kit de vida"},
         {"nome": "Kit Avançado", "divisao": "Segurança", "pontos-recuperados": 25, "tipo": "kit de vida"},
+        {"nome": "Kit Avançado", "divisao": "Porteiro", "pontos-recuperados": 25, "tipo": "kit de vida"},
         {"nome": "Colete Básico", "divisao": "Corredor 1", "pontos-extra": 25, "tipo": "colete"},
+        {"nome": "Colete Básico", "divisao": "Refeitório", "pontos-extra": 25, "tipo": "colete"},
         {"nome": "Colete Avançado", "divisao": "Camaratas", "pontos-extra": 45, "tipo": "colete"}
       ]
     },
@@ -155,7 +158,7 @@
       "dificuldade": "dificil",
       "tipo": "resgate",
       "edificio": ["Heliporto", "Escada 6", "Camaratas", "Armazém", "Escada 5",
-        "Laboratório", "Escritório 3", "Escada 4", "WC", "Corredor 2",
+        "Laboratório", "Escritório 3", "Escada 4","Escada 3", "WC", "Corredor 2",
         "Segurança", "Hall", "Biblioteca", "Escritório 2", "Escada de Emergência",
         "Cozinha", "Escada 2", "Porteiro", "Escada 1", "Garagem", "Auditório", "Refeitório", "Cave", "Estacionamento"],
       "ligacoes": [
@@ -170,7 +173,8 @@
         ["Cozinha", "Hall"],
         ["Hall", "Biblioteca"],
         ["Hall", "Segurança"],
-        ["Corredor 2", "Segurança"],
+        ["Escada 3", "Segurança"],
+        ["Corredor 2", "Escada 3"],
         ["Corredor 2", "WC"],
         ["Corredor 2", "Escada 4"],
         ["Escritório 3", "Escada 4"],
@@ -181,7 +185,7 @@
         ["Camaratas", "Escada 6"],
         ["Heliporto", "Escada 6"],
         ["Auditório", "Escada de Emergência"],
-        ["Refeitório", "Escada 3"],
+        ["Refeitório", "Escada 4"],
         ["Estacionamento", "Escada de Emergência"],
         ["Cave", "Estacionamento"]
       ],
@@ -198,7 +202,7 @@
       "alvo": {"divisao": "Cave", "tipo": "documento confidencial"},
       "itens": [
         {"nome": "Kit Básico", "divisao": "WC", "pontos-recuperados": 20, "tipo": "kit de vida"},
-        {"nome": "Kit Básico", "divisao": "WC", "pontos-recuperados": 20, "tipo": "kit de vida"},
+        {"nome": "Kit Básico", "divisao": "Auditório", "pontos-recuperados": 20, "tipo": "kit de vida"},
         {"nome": "Kit Avançado", "divisao": "Segurança", "pontos-recuperados": 25, "tipo": "kit de vida"},
         {"nome": "Colete Básico", "divisao": "Corredor 1", "pontos-extra": 25, "tipo": "colete"},
         {"nome": "Colete Avançado", "divisao": "Camaratas", "pontos-extra": 45, "tipo": "colete"}

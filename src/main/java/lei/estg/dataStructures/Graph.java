@@ -159,8 +159,6 @@ public class Graph<T> implements GraphADT<T> {
             x = traversalQueue.dequeue();
             resultList.addToRear(vertices[x]);
 
-            /** Find all vertices adjacent to x that have not been visited
-             and queue them up */
             for (int i = 0; i < numVertices; i++)
             {
                 if (adjMatrix[x][i] && !visited[i])
@@ -341,7 +339,7 @@ public class Graph<T> implements GraphADT<T> {
         return -1;
     }
 
-    public boolean containsEdge(T vertex1, T vertex2) {
+    protected boolean containsEdge(T vertex1, T vertex2) {
         int index1 = getIndex(vertex1);
         int index2 = getIndex(vertex2);
 

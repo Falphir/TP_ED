@@ -76,8 +76,7 @@ public class RelatorioMissao {
     public void exportarParaJSON(RelatorioMissao missao) {
         JsonObject root;
         String filePath = "relatorioMissoes.json";
-    
-        // Ler JSON existente ou criar um novo
+
         try (FileReader reader = new FileReader(filePath)) {
             root = (JsonObject) Jsoner.deserialize(reader);
         } catch (Exception e) {
@@ -91,14 +90,13 @@ public class RelatorioMissao {
         JsonObject missaoExistente = null;
         for (Object obj : missoes) {
             JsonObject m = (JsonObject) obj;
-            if (m.get("codMissao").equals(missao.getCodMissao())) {
+            if (m.get("codMissao").equals(missao.getCodMissao()) && m.get("versao").equals(missao.getVersao())) {
                 missaoExistente = m;
                 break;
             }
         }
     
         if (missaoExistente == null) {
-            // Criar uma nova missão
             missaoExistente = new JsonObject();
             missaoExistente.put("codMissao", missao.getCodMissao());
             missaoExistente.put("dificuldade", missao.getDificuldade().toString());
@@ -106,8 +104,7 @@ public class RelatorioMissao {
             missaoExistente.put("tentativas", new JsonArray());
             missoes.add(missaoExistente);
         }
-    
-        // Adicionar nova tentativa
+
         JsonArray tentativas = (JsonArray) missaoExistente.get("tentativas");
         JsonObject novaTentativa = new JsonObject();
         novaTentativa.put("codTentativa", String.valueOf(tentativas.size() + 1));
@@ -115,13 +112,12 @@ public class RelatorioMissao {
     
         JsonArray jsonTrajetos = new JsonArray();
         for (Divisao divisao : missao.getTrajetos()) {
-            jsonTrajetos.add("Divisao: " + divisao.toString());
+            jsonTrajetos.add("Divisao: " + divisao.getNome());
         }
         novaTentativa.put("trajetos", jsonTrajetos);
     
         tentativas.add(novaTentativa);
-    
-        // Salvar no ficheiro
+
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(root.toJson());
             writer.flush();

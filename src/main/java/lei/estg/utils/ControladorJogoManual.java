@@ -15,8 +15,9 @@ public class ControladorJogoManual implements ModoManualADT {
     private boolean isJogoAtivo = true;
     private UnorderedArrayList<Divisao> trajeto;
     private Missao missao;
+    private Mapa mapa;
 
-    public ControladorJogoManual(Missao missao) {
+    public ControladorJogoManual(Missao missao, Mapa mapa) {
         this.missao = missao;
         this.trajeto = new UnorderedArrayList<>();
     }
@@ -85,11 +86,6 @@ public class ControladorJogoManual implements ModoManualADT {
 
     @Override
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
-/*
-        if(player.getVida() == 0) {
-            terminarJogo(player, edificio, missao);
-            return;
-        }*/
         System.out.println("===========  Divisões possiveis  ===========");
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
         UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
