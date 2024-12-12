@@ -13,6 +13,13 @@ import java.util.Scanner;
 
 public class ControladorJogoManual implements ModoManualADT {
     private boolean isJogoAtivo = true;
+    private UnorderedArrayList<Divisao> trajeto;
+    private Missao missao;
+
+    public ControladorJogoManual(Missao missao) {
+        this.missao = missao;
+        this.trajeto = new UnorderedArrayList<>();
+    }
 
     @Override
     public void terminarJogo(Player player, Edificio<Divisao> edificio) {
@@ -22,6 +29,7 @@ public class ControladorJogoManual implements ModoManualADT {
         }
         isJogoAtivo = false;
         verificarFimJogo(player, divisao.getAlvo(), true);
+        System.exit(0);
     }
 
     @Override
@@ -61,6 +69,7 @@ public class ControladorJogoManual implements ModoManualADT {
 
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
+            trajeto.addToRear(divisaoEscolhida);
             System.out.println("\033[3m\033[32m" + player.getNome() + " entrou na divisão: " + divisaoEscolhida.getNome() + "\033[0m");
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
@@ -76,11 +85,11 @@ public class ControladorJogoManual implements ModoManualADT {
 
     @Override
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
-
+/*
         if(player.getVida() == 0) {
-            terminarJogo(player, edificio);
+            terminarJogo(player, edificio, missao);
             return;
-        }
+        }*/
         System.out.println("===========  Divisões possiveis  ===========");
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
         UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
@@ -120,6 +129,7 @@ public class ControladorJogoManual implements ModoManualADT {
 
         divisaoAtual.setPlayer(null);
         player.mover(novaDivisao);
+        trajeto.addToRear(novaDivisao);
 
         System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
                 divisaoAtual.getNome() + " para " + novaDivisao.getNome()+ "\033[0m");
@@ -195,7 +205,6 @@ public class ControladorJogoManual implements ModoManualADT {
             }
 
             if (novaDivisao == null) {
-                //System.out.println("Erro: novaDivisao é nula!");
                 return;
             }
 
@@ -557,13 +566,19 @@ public class ControladorJogoManual implements ModoManualADT {
         if (player.getVida() == 0) {
             System.out.println("\033[31m"+ player.getNome()+ "morreu!\033[0m");
             System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
+            RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
+            relatorio.exportarParaJSON(relatorio);
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
             System.out.println("\033[32mVitória! Parabéns! Continua assim!\033[0m");
+            RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
+            relatorio.exportarParaJSON(relatorio);
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
             System.out.println("\033[31mPlayer saiu do edifício! Mas nao interagiu com o alvo!\033[0m");
             System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
+            RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
+            relatorio.exportarParaJSON(relatorio);
             return true;
         }
         return false;

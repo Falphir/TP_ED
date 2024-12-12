@@ -16,15 +16,20 @@ public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
 
     public static void jogar() {
+
+
         Missao missao;
         Player player;
-        ControladorJogoManual jogo = new ControladorJogoManual();
+        ControladorJogoManual jogo;
+
         try {
-            Path caminhoArquivo = Paths.get(SimulacaoManual.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
+            Path caminhoArquivo = Paths.get(Main.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
             missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
-            Path caminhoConfig = Paths.get(SimulacaoManual.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
+            Path caminhoConfig = Paths.get(Main.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
             JogoConfig config = new JogoConfig();
             player = config.carregarPlayerConfig(String.valueOf(caminhoConfig));
+
+            jogo = new ControladorJogoManual(missao);
 
             System.out.println("Bem-vindo ao jogo!");
 
@@ -32,6 +37,9 @@ public class SimulacaoManual {
 
             Edificio<Divisao> edificio = missao.getEdificio();
 
+
+
+            int turno = 1;
 
             while (jogo.isJogoAtivo()) {
                 System.out.println("\033[32m========== Turno do jogador ==========\033[0m");
@@ -82,7 +90,6 @@ public class SimulacaoManual {
         System.out.println("3 - Usar kit");
         System.out.println("4 - Interagir com o Alvo");
         System.out.println("5 - Sair do edificio");
-        System.out.println("6 - Mostra Mapa");
         System.out.println("============================================");
         System.out.println("Opção: ");
 
@@ -93,13 +100,12 @@ public class SimulacaoManual {
                 jogo.moverPlayer(player, edificio);
                 break;
             case 2:
-                if (!divisao.getInimigos().isEmpty()) {
+                if (divisao.getInimigos() != null) {
                     for (Inimigo inimigo : divisao.getInimigos()) {
                         player.atacar(inimigo);
                     }
                 } else {
-                    System.out.println("\033[31mNão existem inimigos nesta divisão.\033[0m");
-                    turnoPlayer(player, edificio, jogo);
+                    System.out.println("Não existem inimigos nesta divisão.");
                 }
                 break;
             case 3:
@@ -107,26 +113,20 @@ public class SimulacaoManual {
                 break;
             case 4:
                 if (divisao.getAlvo() != null) {
-                    jogo.interagirComAlvo(player, divisao.getAlvo(), divisao);
+                    jogo.interagirComAlvo(player, divisao.getAlvo() ,divisao);
                 } else {
-                    System.out.println("\033[31mNão existe um alvo nesta divisão.\033[0m");
-                    turnoPlayer(player, edificio, jogo);
+                    System.out.println("Não existe um alvo nesta divisão.");
                 }
                 break;
-            case 5:
-                if (divisao.isEntradaSaida()) {
-                    jogo.terminarJogo(player, edificio);
-                } else {
-                    System.out.println("\033[31mVocê não pode sair do edificio.\033[0m");
-                    turnoPlayer(player, edificio, jogo);
-                }
-                break;
-            case 6:
-                jogo.mostrarMapa(edificio, player);
-                turnoPlayer(player, edificio, jogo);
-                break;
+                case 5:
+                    if (divisao.isEntradaSaida()) {
+                        jogo.terminarJogo(player, edificio);
+                    } else {
+                        System.out.println("Você não pode sair do edificio.");
+                    }
+                    break;
             default:
-                System.out.println("\033[31mOpção inválida!\033[0m");
+                System.out.println("Opção inválida");
         }
     }
 
