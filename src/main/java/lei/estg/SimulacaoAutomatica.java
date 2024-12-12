@@ -1,0 +1,99 @@
+package lei.estg;
+
+import lei.estg.dataStructures.UnorderedArrayList;
+import lei.estg.dataStructures.exceptions.EmptyStackException;
+import lei.estg.models.*;
+import lei.estg.utils.ControladorJogoAutomatico;
+import lei.estg.utils.JogoConfig;
+import lei.estg.utils.JsonUtils;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Random;
+
+public class SimulacaoAutomatica {
+    protected static Random random = new Random();
+
+    public static void jogar() {
+        Missao missao;
+        Player player;
+        ControladorJogoAutomatico jogo = new ControladorJogoAutomatico();
+        try {
+            Path caminhoArquivo = Paths.get(SimulacaoAutomatica.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
+            missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
+            Path caminhoConfig = Paths.get(SimulacaoAutomatica.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
+            JogoConfig config = new JogoConfig();
+            player = config.carregarPlayerConfig(String.valueOf(caminhoConfig));
+
+            System.out.println("Bem-vindo ao jogo!");
+
+            Divisao divisaoInicial = jogo.selecionarEntrada(player, missao.getEdificio());
+
+            Edificio<Divisao> edificio = missao.getEdificio();
+
+            while (jogo.isJogoAtivo()) {
+                System.out.println("\033[32m========== Turno do jogador ==========\033[0m");
+
+                turnoPlayerAutomatico(player, edificio, jogo);
+
+                System.out.println("\033[31m==========  Turno do inimigo ==========\033[0m");
+                Iterator it = missao.getEdificio().getVertex();
+                UnorderedArrayList<Inimigo> inimigosParaMover = new UnorderedArrayList<>();
+                while (it.hasNext()) {
+                    Divisao divisao = (Divisao) it.next();
+                    if (divisao.getInimigos() != null) {
+                        for (Inimigo inimigo : divisao.getInimigos()) {
+                            inimigosParaMover.addToRear(inimigo);
+                        }
+                    }
+                }
+
+                for (Inimigo inimigo : inimigosParaMover) {
+                    jogo.moverInimigo(inimigo, missao.getEdificio());
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } catch (EmptyStackException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void turnoPlayerAutomatico(Player player, Edificio<Divisao> edificio, ControladorJogoAutomatico jogo) throws EmptyStackException {
+
+        Divisao divisao = jogo.encontrarPlayer(player, edificio);
+
+        System.out.println("\033[1m\033[32m============  Status " + player.getNome() + " ============\033[0m");
+        System.out.println("\033[34mVida: " + player.getVida() + "\033[0m");
+        System.out.println("\033[34mPoder: " + player.getPoder() + "\033[0m");
+        System.out.println("\033[34mColete: " + player.getVidaColete() + "\033[0m");
+        System.out.println("\033[34mKits: " + player.getMochila().size() + "\033[0m");
+        System.out.println("\033[34mDivisao: " + divisao.getNome() + "\033[0m");
+        System.out.println("\033[1m\033[32m=========================================\033[0m");
+
+        jogo.moverPlayer(player, edificio);
+
+        if (divisao.getInimigos() != null) {
+            for (Inimigo inimigo : divisao.getInimigos()) {
+                player.atacar(inimigo);
+                System.out.println(inimigo.getNome() + " recebeu dano. Poder restante: " + inimigo.getPoder());
+            }
+        }
+
+        if (player.getVida() < 50 && player.getMochila().size() > 0) {
+            player.usarKit();
+            System.out.println(player.getNome() + " usou um kit para recuperar vida.");
+        }
+
+        if (divisao.getAlvo() != null) {
+            player.setAlvoInteragido(true);
+        }
+
+        if (divisao.isEntradaSaida() && player.isAlvoInteragido()) {
+            jogo.terminarJogo(player, edificio);
+            System.out.println(player.getNome() + " saiu do edifício.");
+        }
+    }
+}

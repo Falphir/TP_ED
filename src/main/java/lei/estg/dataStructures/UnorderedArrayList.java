@@ -31,8 +31,7 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
 
     @Override
     public void addToRear(T element) {
-
-        if (rear == arrayList.length) {
+        if (rear >= arrayList.length) {
             expandCapacity();
         }
         arrayList[rear] = element;
@@ -42,7 +41,6 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
 
     @Override
     public void addAfter(T element, T target) {
-
         if (rear == arrayList.length) {
             expandCapacity();
         }

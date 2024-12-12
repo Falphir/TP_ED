@@ -4,30 +4,32 @@ import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.dataStructures.exceptions.EmptyStackException;
 import lei.estg.dataStructures.interfaces.UnorderedListADT;
 import lei.estg.models.*;
-import lei.estg.models.Interfaces.JogoADT;
+import lei.estg.models.Interfaces.ModoManualADT;
 import lei.estg.models.enums.EItemTipo;
 
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 
-public class ControladorJogo implements JogoADT {
+public class ControladorJogoManual implements ModoManualADT {
     private boolean isJogoAtivo = true;
-    private UnorderedArrayList<Divisao> trajeto = new UnorderedArrayList<>();
+    private UnorderedArrayList<Divisao> trajeto;
+    private Missao missao;
 
-    @Override
-    public void iniciarJogo() {
-
+    public ControladorJogoManual(Missao missao) {
+        this.missao = missao;
+        this.trajeto = new UnorderedArrayList<>();
     }
 
     @Override
-    public void terminarJogo(Player player, Edificio<Divisao> edificio, Missao missao) {
+    public void terminarJogo(Player player, Edificio<Divisao> edificio) {
         Divisao divisao = encontrarPlayer(player, edificio);
         if (divisao != null) {
             divisao.setPlayer(null);
         }
         isJogoAtivo = false;
-        verificarFimJogo(player, divisao.getAlvo(), true, missao);
+        verificarFimJogo(player, divisao.getAlvo(), true);
+        System.exit(0);
     }
 
     @Override
@@ -68,10 +70,10 @@ public class ControladorJogo implements JogoADT {
         if (divisaoEscolhida != null) {
             player.mover(divisaoEscolhida);
             trajeto.addToRear(divisaoEscolhida);
-            System.out.println("Player entrou na divisão: " + divisaoEscolhida.getNome());
+            System.out.println("\033[3m\033[32m" + player.getNome() + " entrou na divisão: " + divisaoEscolhida.getNome() + "\033[0m");
             if (!divisaoEscolhida.getInimigos().isEmpty()) {
                 try {
-                    confronto(player, divisaoEscolhida.getInimigos(), divisaoEscolhida);
+                    confronto(player, edificio ,divisaoEscolhida.getInimigos(), divisaoEscolhida);
                 } catch (EmptyStackException e) {
                     e.printStackTrace();
                 }
@@ -83,7 +85,12 @@ public class ControladorJogo implements JogoADT {
 
     @Override
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
-
+/*
+        if(player.getVida() == 0) {
+            terminarJogo(player, edificio, missao);
+            return;
+        }*/
+        System.out.println("===========  Divisões possiveis  ===========");
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
         UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
         Iterator<Divisao> iterator = edificio.getAdjacentes(divisaoAtual);
@@ -94,11 +101,13 @@ public class ControladorJogo implements JogoADT {
             divisoesAdjacentes.addToRear(divisao);
             index++;
         }
+        System.out.println("============================================");
+
 
         Scanner scanner = new Scanner(System.in);
         int escolha = -1;
         while (escolha < 1 || escolha > divisoesAdjacentes.size()) {
-            System.out.print("Escolha uma divisão (1-" + divisoesAdjacentes.size() + "): ");
+            System.out.print("Escolha uma divisão (\033[1m\033[33m1-" + divisoesAdjacentes.size() + "\033[0m): ");
             if (scanner.hasNextInt()) {
                 escolha = scanner.nextInt();
             } else {
@@ -122,12 +131,12 @@ public class ControladorJogo implements JogoADT {
         player.mover(novaDivisao);
         trajeto.addToRear(novaDivisao);
 
-        System.out.println("Player " + player.getNome() + " movido de " +
-                divisaoAtual.getNome() + " para " + novaDivisao.getNome());
+        System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
+                divisaoAtual.getNome() + " para " + novaDivisao.getNome()+ "\033[0m");
 
         if (!novaDivisao.getInimigos().isEmpty()) {
             try {
-                confronto(player, novaDivisao.getInimigos(), novaDivisao);
+                confronto(player, edificio ,novaDivisao.getInimigos(), novaDivisao);
             } catch (EmptyStackException e) {
                 e.printStackTrace();
             }
@@ -160,10 +169,17 @@ public class ControladorJogo implements JogoADT {
         Random random = new Random();
         Divisao divisaoAtual = encontrarInimigo(inimigo, edificio);
         int movimentos = 0;
+        int maxMovimentos = random.nextInt(2);
 
-        while (movimentos < 2) {
+
+        while (movimentos < maxMovimentos) {
+            if (inimigo.getPoder() == 0) {
+                return;
+            }
+
             Iterator<Divisao> iter = edificio.getAdjacentes(divisaoAtual);
             UnorderedListADT<Divisao> divisoesAdjacentes = new UnorderedArrayList<>();
+
             while (iter.hasNext()) {
                 Divisao divisao = iter.next();
                 divisoesAdjacentes.addToRear(divisao);
@@ -174,6 +190,7 @@ public class ControladorJogo implements JogoADT {
             }
 
             int index = random.nextInt(divisoesAdjacentes.size());
+
             Divisao novaDivisao = null;
             int count = 0;
 
@@ -187,20 +204,30 @@ public class ControladorJogo implements JogoADT {
                 count++;
             }
 
+            if (novaDivisao == null) {
+                return;
+            }
+
             resetarPeso(divisaoAtual, edificio, inimigo);
             atualizarPeso(novaDivisao, edificio, inimigo);
 
             divisaoAtual.getInimigos().remove(inimigo);
+
             inimigo.mover(novaDivisao);
 
             if (novaDivisao.getPlayer() != null) {
+                System.out.println("\033[3m\033[31mConfronto iniciado com o jogador na nova divisão. \033[0m");
                 inimigo.atacar(novaDivisao.getPlayer());
-                confronto(novaDivisao.getPlayer(), novaDivisao.getInimigos(), novaDivisao);
-                return;
+                confronto(novaDivisao.getPlayer(), edificio ,novaDivisao.getInimigos(), novaDivisao);
+
+                if (inimigo.getPoder() == 0) {
+                    System.out.println("\033[33mInimigo derrotado durante o confronto. \033[0m");
+                    resetarPeso(novaDivisao, edificio, inimigo);
+                    return;
+                }
             }
 
             divisaoAtual = novaDivisao;
-
             movimentos++;
         }
     }
@@ -249,10 +276,10 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public void confronto(Player player, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
-        System.out.println("Existem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado");
+    public void confronto(Player player, Edificio<Divisao> edificio, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
+        System.out.println("\033[31mExistem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado\033[0m");
 
-        while (!inimigos.isEmpty()) {
+        while (!inimigos.isEmpty() && player.getVida() > 0) {
             System.out.println("=== Turno do Player ===");
             System.out.println("1 - Atacar todos os inimigos");
             System.out.println("2 - Usar um kit (perde o turno)");
@@ -262,12 +289,13 @@ public class ControladorJogo implements JogoADT {
             int escolha = scanner.nextInt();
 
             if (escolha == 1) {
-                System.out.println("Você escolheu atacar todos os inimigos!");
+                System.out.println("Escolheste atacar todos os inimigos!");
 
                 Iterator<Inimigo> inimigosIterator = inimigos.iterator();
                 while (inimigosIterator.hasNext()) {
                     Inimigo inimigo = inimigosIterator.next();
                     player.atacar(inimigo);
+                    System.out.println("Inimigo " + inimigo.getNome() + " recebeu dano. Poder restante: " + inimigo.getPoder());
                 }
 
             } else if (escolha == 2) {
@@ -286,31 +314,31 @@ public class ControladorJogo implements JogoADT {
                 continue;
             }
 
-            // Turno dos inimigos
             System.out.println("=== Turno dos Inimigos ===");
             UnorderedArrayList<Inimigo> inimigosRemover = new UnorderedArrayList<>();
             for (Inimigo inimigo : inimigos) {
                 if (inimigo.getPoder() > 0) {
                     inimigo.atacar(player);
+                    System.out.println(inimigo.getNome() + " atacou-te. Vida restante: " + player.getVida());
 
                     if (player.getVida() <= 0) {
-                        System.out.println("Player " + player.getNome() + " morreu!");
-                        divisao.getPlayer().mover(null);
+                        terminarJogo(player, edificio);
                         return;
                     }
                 } else {
-                    System.out.println("Inimigo " + inimigo.getNome() + " foi derrotado e será removido.");
+                    System.out.println(inimigo.getNome() + " foi derrotado.");
                     inimigosRemover.addToRear(inimigo);
                 }
             }
 
-            // Remover inimigos derrotados
             for (Inimigo inimigo : inimigosRemover) {
+                Divisao div = encontrarInimigo(inimigo, edificio);
+                resetarPeso(div, edificio, inimigo);
                 inimigos.remove(inimigo);
             }
         }
 
-        System.out.println("Todos os inimigos na divisão foram derrotados!");
+        System.out.println("\033[32mTodos os inimigos na divisão foram derrotados!\033[0m");
     }
 
 
@@ -347,9 +375,14 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public void mostrarAlvo(Edificio<Divisao> edificio) {
+    public void mostrarAlvo(Player player, Edificio<Divisao> edificio) {
         System.out.println("\033[1m\033[35m=============  Alvo  =============\033[0m");
-        System.out.println("\033[34m O alvo está na Divisão: " + encontrarAlvo(edificio).getNome() + "\033[0m");
+        if (encontrarAlvo(edificio) == null && player.isAlvoInteragido()) {
+            System.out.println("\033[34m " + player.getNome() + " já interagiu com o Alvo!\033[0m");
+            System.out.println("\033[34m Vá para a saída para terminar a missao! \033[0m");
+        } else {
+            System.out.println("\033[34m O alvo está na Divisão: " + encontrarAlvo(edificio).getNome() + "\033[0m");
+        }
         System.out.println("\033[1m\033[35m==================================\033[0m");
     }
 
@@ -378,19 +411,19 @@ public class ControladorJogo implements JogoADT {
         }
 
         if (divisaoComKitMaisProximo != null) {
-            System.out.println("Kit mais próximo encontrado na divisão: " + divisaoComKitMaisProximo.getNome());
+            System.out.println("\033[34mKit mais próximo encontrado na divisão: \033[0m\033[1m\033[32m" + divisaoComKitMaisProximo.getNome() + "\033[0m");
 
-            System.out.print("Caminho até o kit: ");
+            System.out.print("\033[34mCaminho até o kit: \033[0m");
             while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext()) {
                 Divisao divisao = caminhoMaisCurto.next();
                 if (divisao.equals(divisaoComKitMaisProximo)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m"+divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(divisaoComKitMaisProximo.getNome());
+            System.out.print("\033[1m\033[32m" + divisaoComKitMaisProximo.getNome() + "\033[0m");
         } else {
-            System.out.println("Nenhum kit encontrado no edifício.");
+            System.out.println("\033[3m\033[31mNenhum kit encontrado no edifício.\033[0m");
         }
     }
 
@@ -419,19 +452,19 @@ public class ControladorJogo implements JogoADT {
         }
 
         if (divisaoComColeteMaisProximo != null) {
-            System.out.println("\nColete mais próximo encontrado na divisão: " + divisaoComColeteMaisProximo.getNome());
+            System.out.println("\n\033[34mColete mais próximo encontrado na divisão: \033[0m\033[1m\033[32m" + divisaoComColeteMaisProximo.getNome() + "\033[0m");
 
-            System.out.print("Caminho até o Colete: ");
+            System.out.print("\033[34mCaminho até o Colete: \033[0m");
             while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext()) {
                 Divisao divisao = caminhoMaisCurto.next();
                 if (divisao.equals(divisaoComColeteMaisProximo)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m" + divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(divisaoComColeteMaisProximo.getNome());
+            System.out.print("\033[1m\033[32m" + divisaoComColeteMaisProximo.getNome() + "\033[0m");
         } else {
-            System.out.println("Nenhum colete encontrado no edifício.");
+            System.out.println("\033[3m\033[31mNenhum colete encontrado no edifício.\033[0m");
         }
     }
 
@@ -458,19 +491,19 @@ public class ControladorJogo implements JogoADT {
         }
 
         if (divisaoAlvo != null) {
-            System.out.println("\nAlvo encontrado na divisão: " + divisaoAlvo.getNome());
+            System.out.println("\n\033[34mAlvo encontrado na divisão: \033[0m\033[1m\033[32m" + divisaoAlvo.getNome() + "\033[0m");
 
-            System.out.print("Caminho mais seguro até ao Alvo: ");
+            System.out.print("\033[34mCaminho mais seguro até ao Alvo: \033[0m");
             while (caminhoMaisSeguro != null && caminhoMaisSeguro.hasNext()) {
                 Divisao divisao = caminhoMaisSeguro.next();
                 if (divisao.equals(divisaoAlvo)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m" + divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(divisaoAlvo.getNome());
+            System.out.print("\033[1m\033[32m" + divisaoAlvo.getNome() + "\033[0m");
         } else {
-            System.out.println("Alvo não encontrado.");
+            System.out.println("\033[3m\033[31mAlvo não encontrado.\033[0m");
         }
     }
 
@@ -478,7 +511,7 @@ public class ControladorJogo implements JogoADT {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
 
         if (divisaoPlayer.isEntradaSaida()) {
-            System.out.println("\n"+  player.getNome() + " já se encontra na saída!");
+            System.out.println("\n\033[35m\033[3m"+  player.getNome() + " já se encontra na saída! \033[0m");
             return;
         }
 
@@ -502,19 +535,19 @@ public class ControladorJogo implements JogoADT {
         }
 
         if (saidaMaisProxima != null) {
-            System.out.println("\nSaída mais segura na divisão: " + saidaMaisProxima.getNome());
+            System.out.println("\n\033[34mSaída mais segura na divisão: \033[0m\033[1m\033[32m" + saidaMaisProxima.getNome() + "\033[0m");
 
-            System.out.print("Caminho até à saída: ");
+            System.out.print("\033[34mCaminho até à saída: \033[0m");
             while (caminhoMaisCurto != null && caminhoMaisCurto.hasNext() ) {
                 Divisao divisao = caminhoMaisCurto.next();
                 if (divisao.equals(saidaMaisProxima)) {
                     break;
                 }
-                System.out.print(divisao.getNome() + " -> ");
+                System.out.print("\033[1m\033[32m" + divisao.getNome() + "\033[0m\033[1m\033[35m -> \033[0m");
             }
-            System.out.print(saidaMaisProxima.getNome() + "\n");
+            System.out.print("\033[1m\033[32m" + saidaMaisProxima.getNome() + "\033[0m\n");
         } else {
-            System.out.println("Nao foi possivel encontrar uma saída");
+            System.out.println("\033[3m\033[31mNao foi possivel encontrar uma saída\033[0m");
         }
     }
 
@@ -529,19 +562,21 @@ public class ControladorJogo implements JogoADT {
     }
 
     @Override
-    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu, Missao missao) {
+    public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
-            System.out.println("Player morreu!");
+            System.out.println("\033[31m"+ player.getNome()+ "morreu!\033[0m");
+            System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
             relatorio.exportarParaJSON(relatorio);
             return true;
         } else if (player.isAlvoInteragido() && playerSaiu) {
-            System.out.println("Fim do Jogo! Player saiu do edifício e interagiu com o alvo!");
+            System.out.println("\033[32mVitória! Parabéns! Continua assim!\033[0m");
             RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
             relatorio.exportarParaJSON(relatorio);
             return true;
         } else if (playerSaiu && !player.isAlvoInteragido()) {
-            System.out.println("Player saiu do edifício! Mas nao interagiu com o alvo!");
+            System.out.println("\033[31mPlayer saiu do edifício! Mas nao interagiu com o alvo!\033[0m");
+            System.out.println("\033[31mDerrota! Não desistas, tenta novamente!\033[0m");
             RelatorioMissao relatorio = new RelatorioMissao(missao.getCodMissao(), missao.getVersao(), missao.getDificuldade(), player.getVida(), trajeto);
             relatorio.exportarParaJSON(relatorio);
             return true;
@@ -555,18 +590,12 @@ public class ControladorJogo implements JogoADT {
             return;
         }
         if (alvo != null) {
-            System.out.println("Player interagiu com o alvo!");
+            System.out.println("\033[3m\033[32mPlayer interagiu com o alvo!\033[0m");
             player.setAlvoInteragido(true);
             divisao.setAlvo(null);
         } else {
             System.out.println("Alvo não encontrado nesta divisão!");
         }
-    }
-
-
-    @Override
-    public void verificarVitoria() {
-
     }
 
     public boolean isJogoAtivo() {
@@ -587,4 +616,54 @@ public class ControladorJogo implements JogoADT {
         }
         return  null;
     }
+
+    public void mostrarMapa(Edificio<Divisao> edificio, Player player) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+
+        System.out.println("\033[33m\033[1m==============  Mapa  ==============\033[0m");
+
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+
+            System.out.println("\033[32m\033[1m" + divisao.getNome() + ":\033[0m");
+
+            Iterator<Divisao> adjacentes = edificio.getAdjacentes(divisao);
+
+            while (adjacentes.hasNext()) {
+                Divisao divisaoAdjacente = adjacentes.next();
+                System.out.print("\033[34m    - " + divisaoAdjacente.getNome() + "\033[0m");
+
+                boolean hasInfo = false;
+
+                if (divisaoAdjacente.getPlayer() != null) {
+                    System.out.print("\033[35m (Player aqui)\033[0m");
+                    hasInfo = true;
+                }
+
+                if (!divisaoAdjacente.getInimigos().isEmpty()) {
+                    System.out.print("\033[31m (" + divisaoAdjacente.getInimigos().size() + " inimigos)\033[0m");
+                    hasInfo = true;
+                }
+
+                if (divisaoAdjacente.getAlvo() != null) {
+                    System.out.print("\033[36m (Alvo aqui)\033[0m");
+                    hasInfo = true;
+                }
+
+                if (!divisaoAdjacente.getItems().isEmpty()) {
+                    System.out.print("\033[32m (" + divisaoAdjacente.getItems().size() + " Kit" + (divisaoAdjacente.getItems().size() > 1 ? "s" : "") + ")\033[0m");
+                    hasInfo = true;
+                }
+
+                if (!hasInfo) {
+                    System.out.print("\033[33m (Vazia)\033[0m");
+                }
+
+                System.out.println();
+            }
+        }
+        System.out.println("\033[33m\033[1m====================================\033[0m");
+    }
+
+
 }
