@@ -1,7 +1,0 @@
-{
-  "inimigos" : [
-    {"nome": "Guarda", "poder": 5},
-    {"nome": "Agente de Patrulha", "poder": 15},
-    {"nome": "Chefe de Segurança", "poder": 25}
-  ]
-}

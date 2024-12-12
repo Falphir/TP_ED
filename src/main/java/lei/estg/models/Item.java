@@ -4,13 +4,11 @@ import lei.estg.models.enums.EItemTipo;
 
 public class Item {
     private String nome;
-    private Divisao localizacao;
     private int pontos;
     private EItemTipo tipo;
 
-    public Item(String nome, Divisao localizacao, int pontos, EItemTipo tipo) {
+    public Item(String nome, int pontos, EItemTipo tipo) {
         this.nome = nome;
-        this.localizacao = localizacao;
         this.pontos = pontos;
         this.tipo = tipo;
     }
@@ -21,14 +19,6 @@ public class Item {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public Divisao getLocalizacao() {
-        return localizacao;
-    }
-
-    public void setLocalizacao(Divisao localizacao) {
-        this.localizacao = localizacao;
     }
 
     public int getPontos() {
@@ -45,5 +35,10 @@ public class Item {
 
     public void setTipo(EItemTipo tipo) {
         this.tipo = tipo;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("- Item: %s | Pontos: %d | Tipo: %s", nome, pontos, tipo);
     }
 }

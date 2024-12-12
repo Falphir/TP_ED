@@ -13,17 +13,17 @@ import java.io.IOException;
 
 public class JogoConfig {
 
-    public JsonObject carregarConfig(String caminhoFicheiro) {
+    private JsonObject carregarConfig(String caminhoFicheiro) {
         try (FileReader reader = new FileReader(caminhoFicheiro)) {
             JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
             return jsonObject;
         } catch (JsonException | IOException e) {
-
+            e.printStackTrace();
         }
         return null;
     }
 
-    private Player carregarPlayerConfig(String caminhoFicheiro) {
+    public Player carregarPlayerConfig(String caminhoFicheiro) {
         if (caminhoFicheiro == null) return null;
 
         JsonObject playerObject = (JsonObject) carregarConfig(caminhoFicheiro).get("player");

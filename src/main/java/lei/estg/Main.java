@@ -1,66 +1,74 @@
 package lei.estg;
 
-import lei.estg.dataStructures.UnorderedArrayList;
-import lei.estg.dataStructures.interfaces.UnorderedListADT;
-import lei.estg.models.*;
-import lei.estg.models.enums.EItemTipo;
-import lei.estg.utils.JsonUtils;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class Main {
-        public static void main(String[] args) {
-            try {
-                // Caminho do arquivo JSON
-                Path caminhoArquivo = Paths.get(Main.class.getClassLoader().getResource("missoes/missao.json").toURI());
 
-                // Carregar a missão a partir do arquivo JSON
-                String conteudoJson = new String(Files.readAllBytes(caminhoArquivo));
-                System.out.println(conteudoJson);
+    private static Scanner scanner = new Scanner(System.in);
 
-                Missao missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
+    public static void main(String[] args) {
+        System.out.println("Bem vindo ao jogo!");
+        menu();
+    }
 
+    public static void menu() {
+        System.out.println("Selecione uma opção:");
+        System.out.println("1 - Jogar");
+        System.out.println("2 - Ver relatorios");
+        System.out.println("3 - Configurações");
+        System.out.println("4 - Sair");
+        System.out.println("Opção: ");
 
-                System.out.println("Código da missão: " + missao.getCodMissao());
-                System.out.println("Versão: " + missao.getVersao());
+        int opcao = scanner.nextInt();
 
-                System.out.println("\nEdifícios: " + missao.getEdificio().toString());
-
-                System.out.println("\nDivisoes: " + missao.getDivisaoList().toString());
-
-
-                System.out.println("\nInimigos:");
-                for (Inimigo inimigo : missao.getInimigos()) {
-                    System.out.println("Nome: " + inimigo.getNome() + ", Poder: " + inimigo.getPoder() + ", Divisão: " + inimigo.getDivisao());
-                }
-
-                System.out.println("\nEntradas e saídas:");
-                for (Divisao entradaSaida : missao.getEntradasSaidas()) {
-                    System.out.println("- " + entradaSaida);
-                }
-
-                System.out.println("\nAlvo:");
-                System.out.println("Divisão: " + missao.getAlvo().getDivisao() + ", Tipo: " + missao.getAlvo().getTipo());
-
-                System.out.println("\nItens:");
-                for (Item item : missao.getItens()) {
-                    if (item.getTipo().equals(EItemTipo.KIT)) {
-                        System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
-                                ", Pontos Recuperados: " + item.getPontos());
-                    } else if (item.getTipo().equals(EItemTipo.COLETE)) {
-                        System.out.println("Tipo: " + item.getTipo() + ", Divisão: " + item.getLocalizacao() +
-                                ", Pontos Extra: " + item.getPontos());
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+        while (opcao != 4) {
+            switch (opcao) {
+                case 1:
+                    System.out.println("Você escolheu jogar!");
+                    jogar();
+                    break;
+                case 2:
+                    System.out.println("Você escolheu ver relatórios!");
+                    break;
+                case 3:
+                    System.out.println("Você escolheu configurar!");
+                    break;
+                case 4:
+                    System.out.println("Até breve!");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Opção inválida");
             }
         }
     }
+
+    public static void jogar() {
+        System.out.println("Selecione um modo de Jogo:");
+        System.out.println("1 - Simulação Manual");
+        System.out.println("2 - Simulação Automática");
+        System.out.println("3 - Voltar");
+        System.out.println("Opção: ");
+
+        int opcao = scanner.nextInt();
+
+        while (opcao != 3) {
+            switch (opcao) {
+                case 1:
+                    System.out.println("Você escolheu simulação manual!");
+                    SimulacaoManual.jogar();
+                    break;
+                case 2:
+                    System.out.println("Você escolheu simulação automática!");
+                    SimulacaoAutomatica.jogar();
+                    break;
+                case 3:
+                    System.out.println("Voltando ao menu...");
+                    menu();
+                    break;
+                default:
+                    System.out.println("Opção inválida");
+            }
+        }
+    }
+}

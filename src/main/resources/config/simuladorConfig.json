@@ -1,30 +1,8 @@
 {
   "player" : {
-    "name" : "Tó Cruz",
-    "MochilaLimit": 5,
-    "VidaMaxima": 100,
-    "Poder": 15
-  },
-  "missao": {
-    "dificuldade": [
-      {
-        "nome": "facil",
-        "numInimigos": 3,
-        "numKits": 5,
-        "numColetes": 2
-      },
-      {
-        "nome": "medio",
-        "numInimigos": 5,
-        "numKits": 3,
-        "numColetes": 2
-      },
-      {
-        "nome": "dificil",
-        "numInimigos": 7,
-        "numKits": 3,
-        "numColetes": 1
-      }
-    ]
+    "nome" : "Tó Cruz",
+    "mochila-limite": 5,
+    "vidaMaxima": 100,
+    "poder": 15
   }
 }
