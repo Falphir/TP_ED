@@ -248,8 +248,8 @@ public class ControladorJogoManual implements ModoManualADT {
                 return;
             }
 
-            resetarPeso(divisaoAtual, edificio, inimigo);
-            atualizarPeso(novaDivisao, edificio, inimigo);
+            atualizarPesoDivisaoAnterior(divisaoAtual, edificio, inimigo);
+            atualizarPesoNovaDivisao(novaDivisao, edificio, inimigo);
 
             divisaoAtual.getInimigos().remove(inimigo);
 
@@ -339,9 +339,8 @@ public class ControladorJogoManual implements ModoManualADT {
             }
 
             for (Inimigo inimigo : inimigosRemover) {
-                Divisao div = encontrarInimigo(inimigo, edificio);
-                resetarPeso(div, edificio, inimigo);
                 inimigos.remove(inimigo);
+                resetarPeso(divisao, edificio, inimigo);
             }
         }
 
@@ -471,9 +470,32 @@ public class ControladorJogoManual implements ModoManualADT {
         while (iter.hasNext()) {
             Divisao adjacente = iter.next();
 
-            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
+            double pesoBase = 0.1;
 
-            int novoPeso = pesoAtual - inimigo.getPoder();
+            double novoPeso = pesoBase + inimigo.getPoder();
+
+            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
+        }
+    }
+
+    /**
+     * Updates the weight of the edges connected to the specified division.
+     * This method iterates through all adjacent divisions, subtracts the enemy's power
+     * from the current weight of the edge, and updates the edge with the new weight.
+     *
+     * @param divisao the division whose edges' weights are being updated
+     * @param edificio the building containing the divisions
+     * @param inimigo the enemy whose power is subtracted from the edge weights
+     */
+    private void atualizarPesoDivisaoAnterior(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+        Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
+
+        while (iter.hasNext()) {
+            Divisao adjacente = iter.next();
+
+            double pesoAtual = edificio.getWeight(divisao, adjacente);
+
+            double novoPeso = pesoAtual - inimigo.getPoder();
 
             edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
         }
@@ -488,15 +510,15 @@ public class ControladorJogoManual implements ModoManualADT {
      * @param edificio the building containing the divisions
      * @param inimigo the enemy whose power is added to the edge weights
      */
-    private void atualizarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+    private void atualizarPesoNovaDivisao(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
 
         while (iter.hasNext()) {
             Divisao adjacente = iter.next();
 
-            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
+            double pesoAtual = edificio.getWeight(divisao, adjacente);
 
-            int novoPeso = pesoAtual + inimigo.getPoder();
+            double novoPeso = pesoAtual + inimigo.getPoder();
 
             edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
         }

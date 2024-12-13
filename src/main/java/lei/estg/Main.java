@@ -131,6 +131,15 @@ public class Main {
         } while (opcao != 3);
     }
 
+    /**
+     * Displays the mission reports from a JSON file.
+     * This method reads the mission reports from the specified JSON file,
+     * deserializes the data, and prints the mission details and attempts to the console.
+     * If the file is empty or an error occurs during reading, it initializes an empty report structure.
+     *
+     * @param caminhoFicheiro the path to the JSON file containing the mission reports
+     * @throws EmptyStackException if an error occurs while processing the mission reports
+     */
     private static void mostrarRelatorios(String caminhoFicheiro) throws EmptyStackException {
 
         JsonObject root;
@@ -165,6 +174,14 @@ public class Main {
         menu();
     }
 
+    /**
+     * Edits the game configurations from a JSON file.
+     * This method reads the game configurations from the specified JSON file,
+     * allows the user to edit the player settings, and saves the updated configurations back to the file.
+     * If the file cannot be read or the player settings are not found, appropriate error messages are displayed.
+     *
+     * @param caminhoFicheiro the path to the JSON file containing the game configurations
+     */
     private static void editarConfiguracoesJogo(String caminhoFicheiro) {
         JsonObject root;
 
@@ -183,7 +200,6 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Edita cada propriedade
         System.out.println("Editar configurações do jogador:");
 
         System.out.print("Nome atual (" + player.get("nome") + "): ");
@@ -231,6 +247,11 @@ public class Main {
         menu();
     }
 
+    /**
+     * A class that represents a comparable attempt in the game.
+     * This class implements the Comparable interface to allow sorting of attempts
+     * based on the player's life value.
+     */
     static class TentativaComparable implements Comparable<TentativaComparable> {
         private final JsonObject tentativa;
 
@@ -242,6 +263,14 @@ public class Main {
             return tentativa;
         }
 
+
+        /**
+         * Compares this attempt with another attempt based on the player's life value.
+         *
+         * @param other the other TentativaComparable object to compare to
+         * @return a negative integer, zero, or a positive integer as this attempt's life value
+         *         is less than, equal to, or greater than the other attempt's life value
+         */
         @Override
         public int compareTo(TentativaComparable other) {
             int vidaThis = ((Number) this.tentativa.get("vida")).intValue();

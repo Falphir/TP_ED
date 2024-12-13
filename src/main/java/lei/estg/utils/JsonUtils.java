@@ -33,7 +33,7 @@ public class JsonUtils {
 
             Random random = new Random();
             int indexAleatorio = random.nextInt(missoesArray.size());
-            JsonObject missaoJson = (JsonObject) missoesArray.get(indexAleatorio);
+            JsonObject missaoJson = (JsonObject) missoesArray.get(0);
 
             missao = criarMissaoFromJson(missaoJson);
 
@@ -90,7 +90,7 @@ public class JsonUtils {
                 }
             }
 
-            int peso = 1;
+            double peso = 0.1;
             if (origem != null && destino != null) {
                 edificio.addEdge(origem, destino, peso);
             }

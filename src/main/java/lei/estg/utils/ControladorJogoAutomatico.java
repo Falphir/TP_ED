@@ -173,8 +173,8 @@ public class ControladorJogoAutomatico implements JogoADT {
                 return;
             }
 
-            resetarPeso(divisaoAtual, edificio, inimigo);
-            atualizarPeso(novaDivisao, edificio, inimigo);
+            atualizarPesoDivisaoAnterior(divisaoAtual, edificio, inimigo);
+            atualizarPesoNovaDivisao(novaDivisao, edificio, inimigo);
 
             divisaoAtual.getInimigos().remove(inimigo);
 
@@ -336,12 +336,12 @@ public class ControladorJogoAutomatico implements JogoADT {
 
     /**
      * Resets the weight of the edges connected to the specified division.
-     * This method iterates through all adjacent divisions and updates the weight of the edges
-     * by subtracting the enemy's power from the current weight.
+     * This method iterates through all adjacent divisions, subtracts the enemy's power
+     * from the current weight of the edge, and updates the edge with the new weight.
      *
-     * @param divisao  the division whose edges' weights are to be reset
+     * @param divisao the division whose edges' weights are being reset
      * @param edificio the building containing the divisions
-     * @param inimigo  the enemy whose power is used to adjust the weights
+     * @param inimigo the enemy whose power is subtracted from the edge weights
      */
     private void resetarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
@@ -349,9 +349,9 @@ public class ControladorJogoAutomatico implements JogoADT {
         while (iter.hasNext()) {
             Divisao adjacente = iter.next();
 
-            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
+            double pesoBase = 0.1;
 
-            int novoPeso = pesoAtual - inimigo.getPoder();
+            double novoPeso = pesoBase + inimigo.getPoder();
 
             edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
         }
@@ -359,22 +359,45 @@ public class ControladorJogoAutomatico implements JogoADT {
 
     /**
      * Updates the weight of the edges connected to the specified division.
-     * This method iterates through all adjacent divisions and updates the weight of the edges
-     * by adding the enemy's power to the current weight.
+     * This method iterates through all adjacent divisions, subtracts the enemy's power
+     * from the current weight of the edge, and updates the edge with the new weight.
      *
-     * @param divisao  the division whose edges' weights are to be updated
+     * @param divisao the division whose edges' weights are being updated
      * @param edificio the building containing the divisions
-     * @param inimigo  the enemy whose power is used to adjust the weights
+     * @param inimigo the enemy whose power is subtracted from the edge weights
      */
-    private void atualizarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+    private void atualizarPesoDivisaoAnterior(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
 
         while (iter.hasNext()) {
             Divisao adjacente = iter.next();
 
-            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
+            double pesoAtual = edificio.getWeight(divisao, adjacente);
 
-            int novoPeso = pesoAtual + inimigo.getPoder();
+            double novoPeso = pesoAtual - inimigo.getPoder();
+
+            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
+        }
+    }
+
+    /**
+     * Updates the weight of the edges connected to the specified division.
+     * This method iterates through all adjacent divisions, adds the enemy's power
+     * to the current weight of the edge, and updates the edge with the new weight.
+     *
+     * @param divisao the division whose edges' weights are being updated
+     * @param edificio the building containing the divisions
+     * @param inimigo the enemy whose power is added to the edge weights
+     */
+    private void atualizarPesoNovaDivisao(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+        Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
+
+        while (iter.hasNext()) {
+            Divisao adjacente = iter.next();
+
+            double pesoAtual = edificio.getWeight(divisao, adjacente);
+
+            double novoPeso = pesoAtual + inimigo.getPoder();
 
             edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
         }
