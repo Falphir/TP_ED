@@ -154,7 +154,8 @@ public class RelatorioMissao {
         JsonObject missaoExistente = null;
         for (Object obj : missoes) {
             JsonObject m = (JsonObject) obj;
-            if (m.get("codMissao").equals(missao.getCodMissao()) && m.get("versao").equals(missao.getVersao())) {
+            int versao = ((Number) m.get("versao")).intValue();
+            if (m.get("codMissao").equals(missao.getCodMissao()) && versao == missao.getVersao()) {
                 missaoExistente = m;
                 break;
             }

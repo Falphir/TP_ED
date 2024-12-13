@@ -17,7 +17,7 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method finds the player's current division, removes the player from it,
      * sets the game as inactive, checks the end game conditions, and exits the system.
      *
-     * @param player the player whose game is being terminated
+     * @param player   the player whose game is being terminated
      * @param edificio the building where the game is taking place
      */
     @Override
@@ -37,7 +37,7 @@ public class ControladorJogoAutomatico implements JogoADT {
      * calculates the total enemy power in each division, and selects the division with the least total enemy power.
      * If such a division is found, the player is moved to it and a confrontation with the enemies in that division is initiated if any are present.
      *
-     * @param player the player who is selecting the entry division
+     * @param player   the player who is selecting the entry division
      * @param edificio the building containing the divisions
      * @return the selected entry division, or null if no suitable division is found
      */
@@ -85,7 +85,7 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method iterates through all divisions in the building to find the one
      * that contains the specified player.
      *
-     * @param player the player to be located
+     * @param player   the player to be located
      * @param edificio the building where the search is conducted
      * @return the division containing the player, or null if the player is not found
      */
@@ -106,7 +106,7 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method finds the player's current division and moves the player either towards the target or towards the exit,
      * depending on whether the player has interacted with the target.
      *
-     * @param player the player to be moved
+     * @param player   the player to be moved
      * @param edificio the building containing the divisions
      */
     @Override
@@ -125,7 +125,7 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method finds the enemy's current division and moves the enemy to a random adjacent division.
      * If the enemy encounters the player in the new division, a confrontation is initiated.
      *
-     * @param inimigo the enemy to be moved
+     * @param inimigo  the enemy to be moved
      * @param edificio the building containing the divisions
      * @throws EmptyStackException if an error occurs during the confrontation
      */
@@ -181,7 +181,7 @@ public class ControladorJogoAutomatico implements JogoADT {
             inimigo.mover(novaDivisao);
 
             System.out.println("\033[3m\033[31m" + inimigo.getNome() + " movido de " +
-                    divisaoAtual.getNome() + " para " + novaDivisao.getNome()+ "\033[0m");
+                    divisaoAtual.getNome() + " para " + novaDivisao.getNome() + "\033[0m");
 
             if (novaDivisao.getPlayer() != null) {
                 System.out.println("Confronto iniciado com o jogador na nova divisão.");
@@ -211,7 +211,7 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method iterates through all divisions in the building to find the one
      * that contains the specified enemy.
      *
-     * @param inimigo the enemy to be located
+     * @param inimigo  the enemy to be located
      * @param edificio the building where the search is conducted
      * @return the division containing the enemy, or null if the enemy is not found
      */
@@ -236,10 +236,10 @@ public class ControladorJogoAutomatico implements JogoADT {
      * If the player's health drops below 50, it automatically uses a health kit if available.
      * The confrontation continues until either the player or all enemies are defeated.
      *
-     * @param player the player involved in the confrontation
+     * @param player   the player involved in the confrontation
      * @param edificio the building containing the divisions
      * @param inimigos the list of enemies in the division
-     * @param divisao the division where the confrontation takes place
+     * @param divisao  the division where the confrontation takes place
      * @throws EmptyStackException if an error occurs during the confrontation
      */
     @Override
@@ -293,8 +293,8 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method verifies the end game conditions based on the player's health, interaction with the target, and whether the player has exited the building.
      * It prints appropriate messages for victory or defeat based on the conditions met.
      *
-     * @param player the player whose game status is being checked
-     * @param alvo the target that the player needs to interact with
+     * @param player     the player whose game status is being checked
+     * @param alvo       the target that the player needs to interact with
      * @param playerSaiu a boolean indicating if the player has exited the building
      * @return true if the game has ended, false otherwise
      */
@@ -339,9 +339,9 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method iterates through all adjacent divisions and updates the weight of the edges
      * by subtracting the enemy's power from the current weight.
      *
-     * @param divisao the division whose edges' weights are to be reset
+     * @param divisao  the division whose edges' weights are to be reset
      * @param edificio the building containing the divisions
-     * @param inimigo the enemy whose power is used to adjust the weights
+     * @param inimigo  the enemy whose power is used to adjust the weights
      */
     private void resetarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
@@ -362,9 +362,9 @@ public class ControladorJogoAutomatico implements JogoADT {
      * This method iterates through all adjacent divisions and updates the weight of the edges
      * by adding the enemy's power to the current weight.
      *
-     * @param divisao the division whose edges' weights are to be updated
+     * @param divisao  the division whose edges' weights are to be updated
      * @param edificio the building containing the divisions
-     * @param inimigo the enemy whose power is used to adjust the weights
+     * @param inimigo  the enemy whose power is used to adjust the weights
      */
     private void atualizarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
@@ -396,8 +396,8 @@ public class ControladorJogoAutomatico implements JogoADT {
      * If there are enemies in the next division, a confrontation is initiated.
      * The player picks up any items in the new division and interacts with the target if present.
      *
-     * @param player the player to be moved
-     * @param edificio the building containing the divisions
+     * @param player       the player to be moved
+     * @param edificio     the building containing the divisions
      * @param divisaoAtual the current division of the player
      */
     private void moverPlayerAlvo(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
@@ -413,7 +413,8 @@ public class ControladorJogoAutomatico implements JogoADT {
             System.out.println("\033[31mNão existe um caminho seguro até ao alvo.\033[0m");
             return;
         }
-        Divisao proximaDivisao = caminhoSeguro.next();
+        caminhoSeguro.next();
+        Divisao proximaDivisao;
         proximaDivisao = caminhoSeguro.next();
 
         if (!proximaDivisao.getInimigos().isEmpty()) {
@@ -428,7 +429,7 @@ public class ControladorJogoAutomatico implements JogoADT {
         player.mover(proximaDivisao);
 
         System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
-                divisaoAtual.getNome() + " para " + proximaDivisao.getNome()+ "\033[0m");
+                divisaoAtual.getNome() + " para " + proximaDivisao.getNome() + "\033[0m");
 
         if (proximaDivisao.getItems() != null) {
             for (Item item : proximaDivisao.getItems()) {
@@ -451,15 +452,15 @@ public class ControladorJogoAutomatico implements JogoADT {
      * If there are enemies in the next division, a confrontation is initiated.
      * The player picks up any items in the new division and exits the building if the exit is reached.
      *
-     * @param player the player to be moved
-     * @param edificio the building containing the divisions
+     * @param player       the player to be moved
+     * @param edificio     the building containing the divisions
      * @param divisaoAtual the current division of the player
      */
     private void moverPlayerSaida(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
 
         if (divisaoPlayer.isEntradaSaida()) {
-            System.out.println("\n\033[35m\033[3m"+  player.getNome() + " já se encontra na saída! \033[0m");
+            System.out.println("\n\033[35m\033[3m" + player.getNome() + " já se encontra na saída! \033[0m");
             return;
         }
 
@@ -486,35 +487,35 @@ public class ControladorJogoAutomatico implements JogoADT {
             System.out.println("Não há caminho seguro");
         }
 
-        while (caminhoMaisCurto.hasNext()) {
-            Divisao proximaDivisao = caminhoMaisCurto.next();
+        caminhoMaisCurto.next();
+        Divisao proximaDivisao;
+        proximaDivisao = caminhoMaisCurto.next();
 
-            if (!proximaDivisao.getInimigos().isEmpty()) {
-                try {
-                    confronto(player, edificio, proximaDivisao.getInimigos(), proximaDivisao);
-                } catch (EmptyStackException e) {
-                    e.printStackTrace();
-                }
+        if (!proximaDivisao.getInimigos().isEmpty()) {
+            try {
+                confronto(player, edificio, proximaDivisao.getInimigos(), proximaDivisao);
+            } catch (EmptyStackException e) {
+                e.printStackTrace();
             }
-
-            divisaoAtual.setPlayer(null);
-            player.mover(proximaDivisao);
-
-            System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
-                    divisaoAtual.getNome() + " para " + proximaDivisao.getNome()+ "\033[0m");
-
-            if (proximaDivisao.getItems() != null) {
-                for (Item item : proximaDivisao.getItems()) {
-                    player.apanharItem(item);
-                }
-            }
-
-            if (proximaDivisao.isEntradaSaida()) {
-                terminarJogo(player, edificio);
-                break;
-            }
-
-            divisaoAtual = proximaDivisao;
         }
+
+        divisaoAtual.setPlayer(null);
+        player.mover(proximaDivisao);
+
+        System.out.println("\033[3m\033[32m" + player.getNome() + " movido de " +
+                divisaoAtual.getNome() + " para " + proximaDivisao.getNome() + "\033[0m");
+
+        if (proximaDivisao.getItems() != null) {
+            for (Item item : proximaDivisao.getItems()) {
+                player.apanharItem(item);
+            }
+        }
+
+        if (proximaDivisao.isEntradaSaida()) {
+            terminarJogo(player, edificio);
+        }
+
+        divisaoAtual = proximaDivisao;
+
     }
 }

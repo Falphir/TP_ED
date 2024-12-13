@@ -5,7 +5,6 @@ import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import lei.estg.models.Edificio;
-import lei.estg.models.Interfaces.EdificioADT;
 import lei.estg.models.*;
 import lei.estg.models.enums.EDificuldadeMissao;
 import lei.estg.models.enums.EMissaoTipo;
@@ -30,7 +29,7 @@ public class JsonUtils {
             JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
 
             JsonArray missoesArray = (JsonArray) jsonObject.get("missoes");
-            Missao missao = null;
+            Missao missao;
 
             Random random = new Random();
             int indexAleatorio = random.nextInt(missoesArray.size());
@@ -121,24 +120,22 @@ public class JsonUtils {
             String divisaoNome = (String) itemJson.get("divisao");
             Divisao divisao = getDivisao(divisaoNome, edificio);
 
+            Item item;
             if (tipo.equals("kit de vida")) {
-                Item item = new Item(
+                item = new Item(
                         (String) itemJson.get("nome"),
                         ((Number) itemJson.get("pontos-recuperados")).intValue(),
                         itemTipoConverter.convertStringToEItemTipo(tipo)
                 );
-                if (divisao != null) {
-                    divisao.getItems().addToRear(item);
-                }
             } else {
-                Item item = new Item(
+                item = new Item(
                         (String) itemJson.get("nome"),
                         ((Number) itemJson.get("pontos-extra")).intValue(),
                         itemTipoConverter.convertStringToEItemTipo(tipo)
                 );
-                if (divisao != null) {
-                    divisao.getItems().addToRear(item);
-                }
+            }
+            if (divisao != null) {
+                divisao.getItems().addToRear(item);
             }
         }
 

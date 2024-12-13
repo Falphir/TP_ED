@@ -5,6 +5,7 @@ import lei.estg.models.Interfaces.MapaADT;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 public class Mapa implements MapaADT {
@@ -29,8 +30,13 @@ public class Mapa implements MapaADT {
             Divisao divisao = (Divisao) vertices.next();
             if (divisao != null) {
                 String nodeId = divisao.getNome().replaceAll("\\s+", "_");
+
+                String nomeDivisao = divisao.getNome();
+                byte[] utf8Bytes = nomeDivisao.getBytes(StandardCharsets.UTF_8);
+                String utf8String = new String(utf8Bytes, StandardCharsets.UTF_8);
+
                 graphStream.addNode(nodeId);
-                graphStream.getNode(nodeId).addAttribute("ui.label", divisao.getNome());
+                graphStream.getNode(nodeId).addAttribute("ui.label", utf8String);
             }
         }
 
@@ -57,4 +63,5 @@ public class Mapa implements MapaADT {
         graphStream.addAttribute("ui.antialias");
         graphStream.display();
     }
+
 }

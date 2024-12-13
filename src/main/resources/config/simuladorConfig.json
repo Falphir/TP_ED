@@ -1,8 +1,1 @@
-{
-  "player" : {
-    "nome" : "Tó Cruz",
-    "mochila-limite": 5,
-    "vidaMaxima": 100,
-    "poder": 15
-  }
-}
+{"player":{"vidaMaxima":100,"mochila-limite":5,"nome":"Tó Cruz","poder":15}}

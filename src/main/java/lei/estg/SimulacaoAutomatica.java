@@ -10,11 +10,9 @@ import lei.estg.utils.JsonUtils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.Random;
+import java.util.Objects;
 
 public class SimulacaoAutomatica {
-    protected static Random random = new Random();
-
     /**
      * Starts the automatic game simulation.
      * This method initializes the mission, player, and game controller, and then starts the game loop.
@@ -27,13 +25,19 @@ public class SimulacaoAutomatica {
         Player player;
         ControladorJogoAutomatico jogo = new ControladorJogoAutomatico();
         try {
-            Path caminhoArquivo = Paths.get(SimulacaoAutomatica.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
+            Path caminhoArquivo = Paths.get(Objects.requireNonNull(SimulacaoAutomatica.class.getClassLoader().getResource("missoes/pata_coelho.json")).toURI());
             missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
-            Path caminhoConfig = Paths.get(SimulacaoAutomatica.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
+            Path caminhoConfig = Paths.get(Objects.requireNonNull(SimulacaoAutomatica.class.getClassLoader().getResource("config/simuladorConfig.json")).toURI());
             JogoConfig config = new JogoConfig();
             player = config.carregarPlayerConfig(String.valueOf(caminhoConfig));
 
             System.out.println("Bem-vindo ao jogo!");
+
+            System.out.println("\033[1m\033[35m==================  Missão  ==================\033[0m");
+            System.out.println("\033[36mCódigo: " + missao.getCodMissao() + "\033[0m");
+            System.out.println("\033[36mVersão: " + missao.getVersao() + "\033[0m");
+            System.out.println("\033[36mDificuldade: " + missao.getDificuldade() + "\033[0m");
+            System.out.println("\033[1m\033[35m==============================================\033[0m");
 
             Divisao divisaoInicial = jogo.selecionarEntrada(player, missao.getEdificio());
 
@@ -100,7 +104,7 @@ public class SimulacaoAutomatica {
             }
         }
 
-        if (player.getVida() < 50 && player.getMochila().size() > 0) {
+        if (player.getVida() < 50 && !player.getMochila().isEmpty()) {
             player.usarKit();
             System.out.println(player.getNome() + " usou um kit para recuperar vida.");
         }

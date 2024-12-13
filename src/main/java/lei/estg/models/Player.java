@@ -34,7 +34,7 @@ public class Player<T extends EntidadeADT<T>> implements PlayerADT<T> {
         this.vida = vidaMaxima;
         this.vidaMaxima = vidaMaxima;
         this.vidaColete = 0;
-        this.poder = 15;
+        this.poder = poder;
         this.mochilaLimite = mochilaLimite;
         this.mochila = new ArrayStack<>(mochilaLimite);
         this.alvoInteragido = false;

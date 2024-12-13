@@ -7,12 +7,11 @@ import lei.estg.utils.ControladorJogoManual;
 import lei.estg.utils.JogoConfig;
 import lei.estg.utils.JsonUtils;
 import lei.estg.utils.Mapa;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class SimulacaoManual {
@@ -33,10 +32,10 @@ public class SimulacaoManual {
 
         try {
             Path caminhoArquivo = Paths
-                    .get(Main.class.getClassLoader().getResource("missoes/pata_coelho.json").toURI());
+                    .get(Objects.requireNonNull(Main.class.getClassLoader().getResource("missoes/pata_coelho.json")).toURI());
             missao = JsonUtils.carregarMissao(String.valueOf(caminhoArquivo));
             Path caminhoConfig = Paths
-                    .get(Main.class.getClassLoader().getResource("config/simuladorConfig.json").toURI());
+                    .get(Objects.requireNonNull(Main.class.getClassLoader().getResource("config/simuladorConfig.json")).toURI());
             JogoConfig config = new JogoConfig();
             player = config.carregarPlayerConfig(String.valueOf(caminhoConfig));
 
@@ -44,13 +43,20 @@ public class SimulacaoManual {
 
             System.out.println("Bem-vindo ao jogo!");
 
+            System.out.println("\033[1m\033[35m==================  Missão  ==================\033[0m");
+            System.out.println("\033[36mCódigo: " + missao.getCodMissao() + "\033[0m");
+            System.out.println("\033[36mVersão: " + missao.getVersao() + "\033[0m");
+            System.out.println("\033[36mDificuldade: " + missao.getDificuldade() + "\033[0m");
+            System.out.println("\033[1m\033[35m==============================================\033[0m");
+
             Edificio<Divisao> edificio = missao.getEdificio();
 
             mapa.mostrarMapa(edificio);
 
-            Divisao divisaoInicial = jogo.selecionarEntrada(player, edificio);
-
-            int turno = 1;
+            jogo.mostrarInimigos(edificio);
+            jogo.mostrarItens(edificio);
+            jogo.mostrarAlvo(player, edificio);
+            jogo.selecionarEntrada(player, edificio);
 
             while (jogo.isJogoAtivo()) {
                 System.out.println("\033[32m========== Turno do jogador ==========\033[0m");
