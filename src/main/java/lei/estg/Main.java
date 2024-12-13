@@ -164,11 +164,14 @@ public class Main {
                 orderedTentativas.add(new TentativaComparable(tentativa));
             }
 
-            System.out.println("Missão: " + missao.get("codMissao") + " - Versão: " + missao.get("versao") + " - Dificuldade: " + missao.get("dificuldade"));
+            System.out.println("\033[34mMissão:\033[0m " + "\033[33m" + missao.get("codMissao") + "\033[0m" +
+                    " | \033[34mVersão:\033[0m " + "\033[32m" + missao.get("versao") + "\033[0m" +
+                    " | \033[34mDificuldade:\033[0m " + "\033[31m" + missao.get("dificuldade") + "\033[0m");
             Iterator itTentativas = orderedTentativas.iterator();
             while (itTentativas.hasNext()) {
                 TentativaComparable tentativa = (TentativaComparable) itTentativas.next();
-                System.out.println("Tentativa: " + tentativa.getTentativa().get("codTentativa") + " - Vida: " + tentativa.getTentativa().get("vida"));
+                System.out.println("\033[36mTentativa:\033[0m " + "\033[33m" + tentativa.getTentativa().get("codTentativa") + "\033[0m" +
+                        " - \033[36mVida:\033[0m " + "\033[31m" + tentativa.getTentativa().get("vida") + "\033[0m");
             }
         }
         menu();
@@ -188,61 +191,61 @@ public class Main {
         try (FileReader reader = new FileReader(caminhoFicheiro)) {
             root = (JsonObject) Jsoner.deserialize(reader);
         } catch (Exception e) {
-            System.out.println("Erro ao carregar o arquivo de configurações: " + e.getMessage());
+            System.out.println("\033[31m\033[3mErro ao carregar o arquivo de configurações: " + e.getMessage() + "\033[0m");
             return;
         }
 
         JsonObject player = (JsonObject) root.get("player");
         if (player == null) {
-            System.out.println("Configurações do jogador não encontradas.");
+            System.out.println("\033[31m\033[3mConfigurações do jogador não encontradas. \033[0m");
             return;
         }
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Editar configurações do jogador:");
+        System.out.println("\033[35mEditar configurações do jogador:\033[0m");
 
-        System.out.print("Nome atual (" + player.get("nome") + "): ");
+        System.out.print("\033[36mNome atual (" + player.get("nome") + "): \033[0m");
         String novoNome = scanner.nextLine();
         if (!novoNome.isBlank()) {
             player.put("nome", novoNome);
         }
 
-        System.out.print("Mochila limite atual (" + player.get("mochila-limite") + "): ");
+        System.out.print("\033[36mLimite atual da Mochila (" + player.get("mochila-limite") + "): \033[0m");
         String novaMochilaLimite = scanner.nextLine();
         if (!novaMochilaLimite.isBlank()) {
             try {
                 player.put("mochila-limite", Integer.parseInt(novaMochilaLimite));
             } catch (NumberFormatException e) {
-                System.out.println("Valor inválido para mochila limite. Não foi alterado.");
+                System.out.println("\033[3m\033[31mValor inválido para mochila limite. Não foi alterado.\033[0m");
             }
         }
 
-        System.out.print("Vida máxima atual (" + player.get("vidaMaxima") + "): ");
+        System.out.print("\033[36mVida máxima atual (" + player.get("vidaMaxima") + "): \033[0m");
         String novaVidaMaxima = scanner.nextLine();
         if (!novaVidaMaxima.isBlank()) {
             try {
                 player.put("vidaMaxima", Integer.parseInt(novaVidaMaxima));
             } catch (NumberFormatException e) {
-                System.out.println("Valor inválido para vida máxima. Não foi alterado.");
+                System.out.println("\033[3m\033[31mValor inválido para vida máxima. Não foi alterado.\033[0m");
             }
         }
 
-        System.out.print("Poder atual (" + player.get("poder") + "): ");
+        System.out.print("\033[36mPoder atual (" + player.get("poder") + "): \033[0m");
         String novoPoder = scanner.nextLine();
         if (!novoPoder.isBlank()) {
             try {
                 player.put("poder", Integer.parseInt(novoPoder));
             } catch (NumberFormatException e) {
-                System.out.println("Valor inválido para poder. Não foi alterado.");
+                System.out.println("\033[3m\033[31mValor inválido para poder. Não foi alterado.\033[0m");
             }
         }
 
         try (FileWriter writer = new FileWriter(caminhoFicheiro)) {
             Jsoner.serialize(root, writer);
-            System.out.println("Configurações salvas com sucesso!");
+            System.out.println("\033[3m\033[32mConfigurações guardadas com sucesso!\033[0m");
         } catch (IOException e) {
-            System.out.println("Erro ao salvar o arquivo de configurações: " + e.getMessage());
+            System.out.println("\033[3m\033[31mErro ao guardar o arquivo de configurações: " + e.getMessage() + "\033[0m");
         }
         menu();
     }
