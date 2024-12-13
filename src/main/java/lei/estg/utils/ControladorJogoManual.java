@@ -22,6 +22,14 @@ public class ControladorJogoManual implements ModoManualADT {
         this.trajeto = new UnorderedArrayList<>();
     }
 
+    /**
+     * Terminates the game.
+     * This method finds the player's current division, removes the player from it,
+     * sets the game as inactive, checks the end game conditions, and exits the system.
+     *
+     * @param player the player whose game is being terminated
+     * @param edificio the building where the game is taking place
+     */
     @Override
     public void terminarJogo(Player player, Edificio<Divisao> edificio) {
         Divisao divisao = encontrarPlayer(player, edificio);
@@ -33,6 +41,15 @@ public class ControladorJogoManual implements ModoManualADT {
         System.exit(0);
     }
 
+    /**
+     * Selects an entry division for the player.
+     * This method iterates through all divisions in the building to find entry/exit points,
+     * prompts the player to choose one, and moves the player to the selected division.
+     *
+     * @param player the player who is selecting the entry division
+     * @param edificio the building where the game is taking place
+     * @return the selected entry division
+     */
     @Override
     public Divisao selecionarEntrada(Player player, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -84,6 +101,36 @@ public class ControladorJogoManual implements ModoManualADT {
         return divisaoEscolhida;
     }
 
+    /**
+     * Finds the division where the player is currently located.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the specified player.
+     *
+     * @param player the player to be located
+     * @param edificio the building where the search is conducted
+     * @return the division containing the player, or null if the player is not found
+     */
+    @Override
+    public Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+            if (divisao.getPlayer() != null && divisao.getPlayer().equals(player)) {
+                return divisao;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Moves the player to a new division.
+     * This method displays possible divisions, prompts the player to choose one,
+     * and moves the player to the selected division. It also handles interactions
+     * with enemies and items in the new division.
+     *
+     * @param player the player to be moved
+     * @param edificio the building where the game is taking place
+     */
     @Override
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
         System.out.println("===========  Divisões possiveis  ===========");
@@ -148,18 +195,15 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
-    @Override
-    public Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio) {
-        Iterator<Divisao> divisoes = edificio.getVertex();
-        while (divisoes.hasNext()) {
-            Divisao divisao = divisoes.next();
-            if (divisao.getPlayer() != null && divisao.getPlayer().equals(player)) {
-                return divisao;
-            }
-        }
-        return null;
-    }
-
+    /**
+     * Moves the enemy to a new division.
+     * This method randomly selects an adjacent division and moves the enemy to it.
+     * It also handles interactions with the player if present in the new division.
+     *
+     * @param inimigo the enemy to be moved
+     * @param edificio the building where the game is taking place
+     * @throws EmptyStackException if an error occurs during the confrontation
+     */
     @Override
     public void moverInimigo(Inimigo inimigo, Edificio<Divisao> edificio) throws EmptyStackException {
         Random random = new Random();
@@ -228,49 +272,17 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
-    private Divisao encontrarInimigo(Inimigo inimigo, Edificio<Divisao> edificio) {
-        Iterator<Divisao> divisoes = edificio.getVertex();
-        while (divisoes.hasNext()) {
-            Divisao divisao = divisoes.next();
-            if (divisao.getInimigos() != null) {
-                for (Inimigo i : divisao.getInimigos()) {
-                    if (i.equals(inimigo)) {
-                        return divisao;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private void resetarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
-        Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
-
-        while (iter.hasNext()) {
-            Divisao adjacente = iter.next();
-
-            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
-
-            int novoPeso = pesoAtual - inimigo.getPoder();
-
-            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
-        }
-    }
-
-    private void atualizarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
-        Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
-
-        while (iter.hasNext()) {
-            Divisao adjacente = iter.next();
-
-            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
-
-            int novoPeso = pesoAtual + inimigo.getPoder();
-
-            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
-        }
-    }
-
+    /**
+     * Handles the confrontation between the player and enemies in a division.
+     * This method initiates the confrontation, allows the player to choose actions,
+     * and processes the turns of both the player and the enemies until the confrontation ends.
+     *
+     * @param player the player involved in the confrontation
+     * @param edificio the building where the confrontation is taking place
+     * @param inimigos the list of enemies in the division
+     * @param divisao the division where the confrontation is happening
+     * @throws EmptyStackException if an error occurs during the confrontation
+     */
     @Override
     public void confronto(Player player, Edificio<Divisao> edificio, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
         System.out.println("\033[31mExistem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado\033[0m");
@@ -291,7 +303,6 @@ public class ControladorJogoManual implements ModoManualADT {
                 while (inimigosIterator.hasNext()) {
                     Inimigo inimigo = inimigosIterator.next();
                     player.atacar(inimigo);
-                    System.out.println("Inimigo " + inimigo.getNome() + " recebeu dano. Poder restante: " + inimigo.getPoder());
                 }
 
             } else if (escolha == 2) {
@@ -337,7 +348,13 @@ public class ControladorJogoManual implements ModoManualADT {
         System.out.println("\033[32mTodos os inimigos na divisão foram derrotados!\033[0m");
     }
 
-
+    /**
+     * Displays all enemies in the building.
+     * This method iterates through all divisions in the building, checks for enemies,
+     * and prints the details of each enemy found in the divisions.
+     *
+     * @param edificio the building where the game is taking place
+     */
     @Override
     public void mostrarInimigos(Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -354,6 +371,13 @@ public class ControladorJogoManual implements ModoManualADT {
         System.out.println("\033[1m\033[31m====================================\033[0m");
     }
 
+    /**
+     * Displays all items in the building.
+     * This method iterates through all divisions in the building, checks for items,
+     * and prints the details of each item found in the divisions.
+     *
+     * @param edificio the building where the game is taking place
+     */
     @Override
     public void mostrarItens(Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -370,6 +394,15 @@ public class ControladorJogoManual implements ModoManualADT {
         System.out.println("\033[1m\033[33m===================================\033[0m");
     }
 
+    /**
+     * Displays the target location in the building.
+     * This method checks if the player has already interacted with the target.
+     * If the player has interacted with the target, it prompts the player to go to the exit.
+     * Otherwise, it displays the division where the target is located.
+     *
+     * @param player the player whose target location is being displayed
+     * @param edificio the building where the game is taking place
+     */
     @Override
     public void mostrarAlvo(Player player, Edificio<Divisao> edificio) {
         System.out.println("\033[1m\033[35m=============  Alvo  =============\033[0m");
@@ -382,6 +415,101 @@ public class ControladorJogoManual implements ModoManualADT {
         System.out.println("\033[1m\033[35m==================================\033[0m");
     }
 
+    /**
+     * Displays the shortest paths to various targets in the building.
+     * This method prints the shortest paths to the nearest kit, vest, target, and exit.
+     *
+     * @param player the player for whom the paths are being displayed
+     * @param edificio the building where the game is taking place
+     */
+    @Override
+    public void mostrarTodosCaminhosMaisProximos(Player player, Edificio<Divisao> edificio) {
+        System.out.println("\033[33m============  Caminhos mais próximos  ============\033[0m");
+        caminhoMaisCurtoKit(player, edificio);
+        caminhoMaisCurtoColete(player, edificio);
+        caminhoMaisCurtoAlvo(player, edificio);
+        caminhoMaisCurtoSaida(player, edificio);
+        System.out.println("\033[33m=================================================\033[0m");
+    }
+
+    /**
+     * Finds the division where the specified enemy is currently located.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the specified enemy.
+     *
+     * @param inimigo the enemy to be located
+     * @param edificio the building where the search is conducted
+     * @return the division containing the enemy, or null if the enemy is not found
+     */
+    private Divisao encontrarInimigo(Inimigo inimigo, Edificio<Divisao> edificio) {
+        Iterator<Divisao> divisoes = edificio.getVertex();
+        while (divisoes.hasNext()) {
+            Divisao divisao = divisoes.next();
+            if (divisao.getInimigos() != null) {
+                for (Inimigo i : divisao.getInimigos()) {
+                    if (i.equals(inimigo)) {
+                        return divisao;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resets the weight of the edges connected to the specified division.
+     * This method iterates through all adjacent divisions, subtracts the enemy's power
+     * from the current weight of the edge, and updates the edge with the new weight.
+     *
+     * @param divisao the division whose edges' weights are being reset
+     * @param edificio the building containing the divisions
+     * @param inimigo the enemy whose power is subtracted from the edge weights
+     */
+    private void resetarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+        Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
+
+        while (iter.hasNext()) {
+            Divisao adjacente = iter.next();
+
+            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
+
+            int novoPeso = pesoAtual - inimigo.getPoder();
+
+            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
+        }
+    }
+
+    /**
+     * Updates the weight of the edges connected to the specified division.
+     * This method iterates through all adjacent divisions, adds the enemy's power
+     * to the current weight of the edge, and updates the edge with the new weight.
+     *
+     * @param divisao the division whose edges' weights are being updated
+     * @param edificio the building containing the divisions
+     * @param inimigo the enemy whose power is added to the edge weights
+     */
+    private void atualizarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
+        Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
+
+        while (iter.hasNext()) {
+            Divisao adjacente = iter.next();
+
+            int pesoAtual = (int) edificio.getWeight(divisao, adjacente);
+
+            int novoPeso = pesoAtual + inimigo.getPoder();
+
+            edificio.updateEdge(edificio.getIndex(divisao), edificio.getIndex(adjacente), novoPeso);
+        }
+    }
+
+    /**
+     * Finds the shortest path to the nearest kit in the building.
+     * This method iterates through all divisions in the building to find the one
+     * that contains a kit and calculates the shortest path to it from the player's current division.
+     *
+     * @param player the player for whom the path is being calculated
+     * @param edificio the building where the search is conducted
+     */
     private void caminhoMaisCurtoKit(Player player, Edificio<Divisao> edificio) {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
         Divisao divisaoComKitMaisProximo = null;
@@ -423,6 +551,14 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
+    /**
+     * Finds the shortest path to the nearest vest in the building.
+     * This method iterates through all divisions in the building to find the one
+     * that contains a vest and calculates the shortest path to it from the player's current division.
+     *
+     * @param player the player for whom the path is being calculated
+     * @param edificio the building where the search is conducted
+     */
     private void caminhoMaisCurtoColete(Player player, Edificio<Divisao> edificio) {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
         Divisao divisaoComColeteMaisProximo = null;
@@ -464,6 +600,14 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
+    /**
+     * Finds the shortest path to the nearest target in the building.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the target and calculates the shortest path to it from the player's current division.
+     *
+     * @param player the player for whom the path is being calculated
+     * @param edificio the building where the search is conducted
+     */
     private void caminhoMaisCurtoAlvo(Player player, Edificio<Divisao> edificio) {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
         Divisao divisaoAlvo = null;
@@ -503,6 +647,14 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
+    /**
+     * Finds the shortest path to the nearest exit in the building.
+     * This method iterates through all divisions in the building to find the one
+     * that is an exit and calculates the shortest path to it from the player's current division.
+     *
+     * @param player the player for whom the path is being calculated
+     * @param edificio the building where the search is conducted
+     */
     private void caminhoMaisCurtoSaida(Player player, Edificio<Divisao> edificio) {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
 
@@ -547,16 +699,17 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
-    @Override
-    public void mostrarTodosCaminhosMaisProximos(Player player, Edificio<Divisao> edificio) {
-        System.out.println("\033[33m============  Caminhos mais próximos  ============\033[0m");
-        caminhoMaisCurtoKit(player, edificio);
-        caminhoMaisCurtoColete(player, edificio);
-        caminhoMaisCurtoAlvo(player, edificio);
-        caminhoMaisCurtoSaida(player, edificio);
-        System.out.println("\033[33m=================================================\033[0m");
-    }
-
+    /**
+     * Checks the end game conditions and updates the game state accordingly.
+     * This method verifies if the player has died, if the player has interacted with the target and exited,
+     * or if the player has exited without interacting with the target. It prints the appropriate messages,
+     * generates a mission report, and returns a boolean indicating whether the game has ended.
+     *
+     * @param player the player whose game state is being checked
+     * @param alvo the target that the player needs to interact with
+     * @param playerSaiu a boolean indicating if the player has exited the building
+     * @return true if the game has ended, false otherwise
+     */
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
@@ -580,6 +733,18 @@ public class ControladorJogoManual implements ModoManualADT {
         return false;
     }
 
+    /**
+     * Interacts with the target in the specified division.
+     * This method checks if the player has already interacted with the target.
+     * If not, it sets the player's interaction status to true and removes the target from the division.
+     * If the player has already interacted with the target, it prints a message indicating so.
+     * If the target is not found in the division, it prints a message indicating that the target is not found.
+     *
+     * @param player the player interacting with the target
+     * @param alvo the target to be interacted with
+     * @param divisao the division where the interaction is taking place
+     */
+    @Override
     public void interagirComAlvo(Player player, Alvo alvo, Divisao divisao) {
         if (player.isAlvoInteragido()) {
             System.out.println("Player já interagiu com o alvo!");
@@ -594,14 +759,24 @@ public class ControladorJogoManual implements ModoManualADT {
         }
     }
 
+    /**
+     * Checks if the game is currently active.
+     * This method returns a boolean indicating whether the game is active or not.
+     *
+     * @return true if the game is active, false otherwise
+     */
     public boolean isJogoAtivo() {
         return isJogoAtivo;
     }
 
-    public void setJogoAtivo(boolean jogoAtivo) {
-        isJogoAtivo = jogoAtivo;
-    }
-
+    /**
+     * Finds the division where the target is currently located.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the target.
+     *
+     * @param edificio the building where the search is conducted
+     * @return the division containing the target, or null if the target is not found
+     */
     private Divisao encontrarAlvo (Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
         while (divisoes.hasNext()) {
@@ -612,54 +787,5 @@ public class ControladorJogoManual implements ModoManualADT {
         }
         return  null;
     }
-
-    public void mostrarMapa(Edificio<Divisao> edificio, Player player) {
-        Iterator<Divisao> divisoes = edificio.getVertex();
-
-        System.out.println("\033[33m\033[1m==============  Mapa  ==============\033[0m");
-
-        while (divisoes.hasNext()) {
-            Divisao divisao = divisoes.next();
-
-            System.out.println("\033[32m\033[1m" + divisao.getNome() + ":\033[0m");
-
-            Iterator<Divisao> adjacentes = edificio.getAdjacentes(divisao);
-
-            while (adjacentes.hasNext()) {
-                Divisao divisaoAdjacente = adjacentes.next();
-                System.out.print("\033[34m    - " + divisaoAdjacente.getNome() + "\033[0m");
-
-                boolean hasInfo = false;
-
-                if (divisaoAdjacente.getPlayer() != null) {
-                    System.out.print("\033[35m (Player aqui)\033[0m");
-                    hasInfo = true;
-                }
-
-                if (!divisaoAdjacente.getInimigos().isEmpty()) {
-                    System.out.print("\033[31m (" + divisaoAdjacente.getInimigos().size() + " inimigos)\033[0m");
-                    hasInfo = true;
-                }
-
-                if (divisaoAdjacente.getAlvo() != null) {
-                    System.out.print("\033[36m (Alvo aqui)\033[0m");
-                    hasInfo = true;
-                }
-
-                if (!divisaoAdjacente.getItems().isEmpty()) {
-                    System.out.print("\033[32m (" + divisaoAdjacente.getItems().size() + " Kit" + (divisaoAdjacente.getItems().size() > 1 ? "s" : "") + ")\033[0m");
-                    hasInfo = true;
-                }
-
-                if (!hasInfo) {
-                    System.out.print("\033[33m (Vazia)\033[0m");
-                }
-
-                System.out.println();
-            }
-        }
-        System.out.println("\033[33m\033[1m====================================\033[0m");
-    }
-
 
 }

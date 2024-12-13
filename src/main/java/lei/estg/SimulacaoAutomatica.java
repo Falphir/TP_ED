@@ -15,6 +15,13 @@ import java.util.Random;
 public class SimulacaoAutomatica {
     protected static Random random = new Random();
 
+    /**
+     * Starts the automatic game simulation.
+     * This method initializes the mission, player, and game controller, and then starts the game loop.
+     * The game loop alternates between the player's turn and the enemies' turn until the game is no longer active.
+     * During each turn, the game displays the current state and processes the player's automatic actions.
+     * Enemies are moved after the player's turn.
+     */
     public static void jogar() {
         Missao missao;
         Player player;
@@ -61,6 +68,17 @@ public class SimulacaoAutomatica {
         }
     }
 
+    /**
+     * Executes the player's turn automatically in the game.
+     * This method handles the player's actions during their turn, including displaying the player's status,
+     * moving the player, attacking enemies, using kits, and interacting with targets.
+     * The player's turn ends if they exit the building after interacting with the target.
+     *
+     * @param player the player object
+     * @param edificio the building object containing the divisions
+     * @param jogo the game controller object
+     * @throws EmptyStackException if an error occurs during the player's turn
+     */
     private static void turnoPlayerAutomatico(Player player, Edificio<Divisao> edificio, ControladorJogoAutomatico jogo) throws EmptyStackException {
 
         Divisao divisao = jogo.encontrarPlayer(player, edificio);

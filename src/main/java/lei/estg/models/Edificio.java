@@ -8,19 +8,29 @@ import lei.estg.dataStructures.interfaces.UnorderedListADT;
 
 import java.util.Iterator;
 
+/**
+ * The type Edificio.
+ *
+ * @param <T> the type parameter
+ */
 public class Edificio<T> extends Network<T> implements EdificioADT<T> {
 
+    /**
+     * Instantiates a new Edificio.
+     *
+     * @param isBidirectional the is bidirectional
+     */
     public Edificio(boolean isBidirectional) {
         super();
         this.isBidirectional = isBidirectional;
     }
 
-    public Edificio(boolean isBidirectional, int initialCapacity) {
-        super();
-        this.isBidirectional = isBidirectional;
-        this.capacity = initialCapacity;
-    }
-
+    /**
+     * Retrieves all vertices in the network.
+     * This method collects all vertices in the network and returns them as an iterator.
+     *
+     * @return an iterator over all vertices in the network
+     */
     @Override
     public Iterator<T> getVertex() {
         UnorderedListADT<T> vertex = new UnorderedArrayList<>();
@@ -30,6 +40,14 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         return vertex.iterator();
     }
 
+    /**
+     * Retrieves the adjacent vertices of a given vertex.
+     * This method finds all vertices that are directly connected to the specified vertex
+     * and returns them as an iterator.
+     *
+     * @param divisao the vertex for which to find adjacent vertices
+     * @return an iterator over the adjacent vertices of the specified vertex
+     */
     @Override
     public Iterator<T> getAdjacentes(T divisao) {
         UnorderedListADT<T> adjacentes = new UnorderedArrayList<>();
@@ -44,6 +62,15 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         return adjacentes.iterator();
     }
 
+    /**
+     * Finds a path between two vertices in the network.
+     * This method uses depth-first search (DFS) to find a path from the start vertex to the end vertex.
+     *
+     * @param divisao1 the starting vertex
+     * @param divisao2 the ending vertex
+     * @return an iterator over the vertices in the path from divisao1 to divisao2, or null if no path is found
+     * @throws EmptyStackException if the stack used in DFS is empty
+     */
     @Override
     public Iterator<T> encontrarCaminho(T divisao1, T divisao2) throws EmptyStackException {
         UnorderedListADT<T> caminho = new UnorderedArrayList<>();
@@ -54,6 +81,17 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         return null;
     }
 
+    /**
+     * Performs a depth-first search (DFS) to find a path between two vertices.
+     * This method recursively explores the network to find a path from the start vertex to the end vertex.
+     *
+     * @param index1   the index of the starting vertex
+     * @param index2   the index of the ending vertex
+     * @param visitado an array indicating whether each vertex has been visited
+     * @param caminho  a list to store the path of vertices
+     * @return true if a path is found, false otherwise
+     * @throws EmptyStackException if the stack used in DFS is empty
+     */
     private boolean dfsCaminho(int index1, int index2, boolean[] visitado, UnorderedListADT<T> caminho) throws EmptyStackException {
         visitado[index1] = true;
         caminho.addToRear(vertices[index1]);
@@ -71,6 +109,16 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         return false;
     }
 
+    /**
+     * Updates the weight of the edge between two vertices.
+     * This method sets the weight of the edge between the specified vertices.
+     * If the network is bidirectional, it also updates the weight of the edge in the opposite direction.
+     *
+     * @param index1 the index of the first vertex
+     * @param index2 the index of the second vertex
+     * @param weight the new weight of the edge
+     * @throws IllegalArgumentException if one or both vertices are not found in the network
+     */
     @Override
     public void updateEdge(int index1, int index2, double weight) {
 
@@ -85,6 +133,11 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
         }
     }
 
+    /**
+     * Retrieves the number of vertices in the network.
+     *
+     * @return the number of vertices in the network
+     */
     @Override
     public int getNumVertices() {
         return numVertices;
@@ -92,11 +145,12 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
 
     /**
      * Checks whether the network contains a specific vertex.
+     * This method iterates through all vertices in the network to determine if the specified vertex is present.
      *
      * @param vertex the vertex to check for
      * @return true if the vertex is present in the network, false otherwise
      */
-    public boolean containsVertex(T vertex) {
+    private boolean containsVertex(T vertex) {
         for (int i = 0; i < numVertices; i++) {
             if (vertex.equals(vertices[i])) {
                 return true;
@@ -112,7 +166,7 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
      * @return the vertex at the specified index
      * @throws IndexOutOfBoundsException if the index is out of range
      */
-    public T getVertex(int index) {
+    private T getVertex(int index) {
         if (indexIsValid(index)) {
             return vertices[index];
         } else {
@@ -122,11 +176,12 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
 
     /**
      * Retrieves the weight of the edge between two vertices.
+     * This method returns the weight of the edge connecting the specified vertices.
      *
      * @param vertex1 the first vertex
      * @param vertex2 the second vertex
-     * @return the weight of the edge
-     * @throws IllegalArgumentException if either vertex is not found
+     * @return the weight of the edge between the specified vertices
+     * @throws IllegalArgumentException if either vertex is not found in the network
      */
     public double getWeight(T vertex1, T vertex2) {
         int index1 = getIndex(vertex1);
@@ -140,11 +195,12 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
     }
 
     /**
-     * Finds the shortest path from a start vertex to an end vertex, avoiding certain locations.
+     * Finds the shortest path from a start vertex to an end vertex.
+     * This method uses Dijkstra's algorithm to find the shortest path between two vertices in the network.
      *
-     * @param startVertex the index of the start vertex
-     * @param endVertex   the index of the end vertex
-     * @return an iterator over the indices of the vertices in the shortest path
+     * @param startVertex the starting vertex
+     * @param endVertex the ending vertex
+     * @return an iterator over the vertices in the shortest path from startVertex to endVertex, or null if no path is found
      */
     public Iterator<T> findShortestPath(T startVertex, T endVertex){
         int startIndex = getIndex(startVertex);
@@ -164,7 +220,6 @@ public class Edificio<T> extends Network<T> implements EdificioADT<T> {
 
         distances[startIndex] = 0;
 
-        // Algoritmo de Dijkstra
         for (int i = 0; i < numVertices - 1; i++) {
             int u = minDistance(distances, visited);
             visited[u] = true;

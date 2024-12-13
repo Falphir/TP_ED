@@ -11,6 +11,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * The type Relatorio missao.
+ */
 public class RelatorioMissao {
     private String codMissao;
     private int versao;
@@ -18,6 +21,15 @@ public class RelatorioMissao {
     private int pontosDeVida;
     private UnorderedArrayList<Divisao> trajetos;
 
+    /**
+     * Instantiates a new Relatorio missao.
+     *
+     * @param codMissao    the cod missao
+     * @param versao       the versao
+     * @param dificuldade  the dificuldade
+     * @param pontosDeVida the pontos de vida
+     * @param trajetos     the trajetos
+     */
     public RelatorioMissao(String codMissao, int versao, EDificuldadeMissao dificuldade, int pontosDeVida, UnorderedArrayList<Divisao> trajetos) {
         this.codMissao = codMissao;
         this.versao = versao;
@@ -26,38 +38,83 @@ public class RelatorioMissao {
         this.trajetos = trajetos;
     }
 
+    /**
+     * Gets cod missao.
+     *
+     * @return the cod missao
+     */
     public String getCodMissao() {
         return codMissao;
     }
 
+    /**
+     * Sets cod missao.
+     *
+     * @param codMissao the cod missao
+     */
     public void setCodMissao(String codMissao) {
         this.codMissao = codMissao;
     }
 
+    /**
+     * Gets versao.
+     *
+     * @return the versao
+     */
     public int getVersao() {
         return versao;
     }
 
+    /**
+     * Sets versao.
+     *
+     * @param versao the versao
+     */
     public void setVersao(int versao) {
         this.versao = versao;
     }
 
+    /**
+     * Gets dificuldade.
+     *
+     * @return the dificuldade
+     */
     public EDificuldadeMissao getDificuldade() {
         return dificuldade;
     }
 
+    /**
+     * Sets dificuldade.
+     *
+     * @param dificuldade the dificuldade
+     */
     public void setDificuldade(EDificuldadeMissao dificuldade) {
         this.dificuldade = dificuldade;
     }
 
+    /**
+     * Gets pontos de vida.
+     *
+     * @return the pontos de vida
+     */
     public int getPontosDeVida() {
         return pontosDeVida;
     }
 
+    /**
+     * Sets pontos de vida.
+     *
+     * @param pontosDeVida the pontos de vida
+     */
     public void setPontosDeVida(int pontosDeVida) {
         this.pontosDeVida = pontosDeVida;
     }
 
+    /**
+     * Gets trajetos.
+     *
+     * @return the trajetos
+     */
     public UnorderedArrayList<Divisao> getTrajetos() {
         return trajetos;
     }
@@ -73,6 +130,14 @@ public class RelatorioMissao {
                 '}';
     }
 
+    /**
+     * Exports the mission report to a JSON file.
+     * This method serializes the mission report to a JSON format and writes it to a file.
+     * If the file already contains a report for the same mission and version, it updates the existing report.
+     * Otherwise, it adds a new report to the file.
+     *
+     * @param missao the mission report to be exported
+     */
     public void exportarParaJSON(RelatorioMissao missao) {
         JsonObject root;
         String filePath = "relatorioMissoes.json";
@@ -85,8 +150,7 @@ public class RelatorioMissao {
         }
     
         JsonArray missoes = (JsonArray) root.get("missoes");
-    
-        // Procurar missão existente
+
         JsonObject missaoExistente = null;
         for (Object obj : missoes) {
             JsonObject m = (JsonObject) obj;
@@ -126,5 +190,4 @@ public class RelatorioMissao {
             System.err.println("Erro ao exportar o relatório para JSON: " + e.getMessage());
         }
     }
-    
 }

@@ -56,7 +56,6 @@ public class ArrayStack<T> implements StackADT<T> {
     }
 
     private void expandCapacity() {
-        //System.out.println("Expanding capacity...");
         T[] newStack = (T[])(new Object[stack.length * 2]);
         for (int i = 0; i < top; i++) {
             newStack[i] = stack[i];

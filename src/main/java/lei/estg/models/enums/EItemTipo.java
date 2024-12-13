@@ -1,5 +1,6 @@
 package lei.estg.models.enums;
 
+
 public enum EItemTipo {
     COLETE("Colete"),
     KIT("Kit de vida");
@@ -10,6 +11,11 @@ public enum EItemTipo {
         this.description = description;
     }
 
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }

@@ -13,6 +13,14 @@ import java.io.IOException;
 
 public class JogoConfig {
 
+    /**
+     * Loads the configuration from the specified file.
+     * This method reads a JSON file from the given file path and deserializes it into a JsonObject.
+     * If an error occurs during reading or deserialization, the exception is caught and printed.
+     *
+     * @param caminhoFicheiro the path to the configuration file
+     * @return the deserialized JsonObject from the file, or null if an error occurs
+     */
     private JsonObject carregarConfig(String caminhoFicheiro) {
         try (FileReader reader = new FileReader(caminhoFicheiro)) {
             JsonObject jsonObject = (JsonObject) Jsoner.deserialize(reader);
@@ -23,6 +31,14 @@ public class JogoConfig {
         return null;
     }
 
+    /**
+     * Loads the player configuration from the specified file.
+     * This method reads a JSON file from the given file path, extracts the player configuration,
+     * and creates a Player object with the extracted data.
+     *
+     * @param caminhoFicheiro the path to the configuration file
+     * @return the Player object created from the configuration file, or null if the file path is null
+     */
     public Player carregarPlayerConfig(String caminhoFicheiro) {
         if (caminhoFicheiro == null) return null;
 
@@ -37,5 +53,4 @@ public class JogoConfig {
         return player;
 
     }
-
 }

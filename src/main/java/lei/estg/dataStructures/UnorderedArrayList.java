@@ -16,7 +16,6 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
             expandCapacity();
 
         }
-        //Se a arrayLista tiver mais que elemento
         if (rear > 0) {
             for (int i = rear; i > 0; i--) {
                 arrayList[i] = arrayList[i - 1];
@@ -47,7 +46,6 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
 
 
         int index = -1;
-        //Loop para encontrar o index da array
         for (int i = 0; i < rear; i++) {
             if (((Comparable) arrayList[i]).compareTo(target) == 0) {
                 index = i;
@@ -58,7 +56,6 @@ public class UnorderedArrayList<T> extends ArrayList<T> implements UnorderedList
         if (index == -1) {
             throw new NoSuchElementException("Target element not found.");
         }
-        //Mover a arrayLista para a direita
         for (int i = rear; i > index; i--) {
             arrayList[i] = arrayList[i - 1];
         }

@@ -12,6 +12,14 @@ import java.util.Random;
 public class ControladorJogoAutomatico implements JogoADT {
     private boolean isJogoAtivo = true;
 
+    /**
+     * Terminates the game.
+     * This method finds the player's current division, removes the player from it,
+     * sets the game as inactive, checks the end game conditions, and exits the system.
+     *
+     * @param player the player whose game is being terminated
+     * @param edificio the building where the game is taking place
+     */
     @Override
     public void terminarJogo(Player player, Edificio<Divisao> edificio) {
         Divisao divisao = encontrarPlayer(player, edificio);
@@ -23,6 +31,16 @@ public class ControladorJogoAutomatico implements JogoADT {
         System.exit(0);
     }
 
+    /**
+     * Selects an entry division for the player.
+     * This method iterates through all divisions in the building to find the entry/exit points,
+     * calculates the total enemy power in each division, and selects the division with the least total enemy power.
+     * If such a division is found, the player is moved to it and a confrontation with the enemies in that division is initiated if any are present.
+     *
+     * @param player the player who is selecting the entry division
+     * @param edificio the building containing the divisions
+     * @return the selected entry division, or null if no suitable division is found
+     */
     @Override
     public Divisao selecionarEntrada(Player player, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -62,6 +80,15 @@ public class ControladorJogoAutomatico implements JogoADT {
         return divisaoEscolhida;
     }
 
+    /**
+     * Finds the division where the player is currently located.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the specified player.
+     *
+     * @param player the player to be located
+     * @param edificio the building where the search is conducted
+     * @return the division containing the player, or null if the player is not found
+     */
     @Override
     public Divisao encontrarPlayer(Player player, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
@@ -74,6 +101,15 @@ public class ControladorJogoAutomatico implements JogoADT {
         return null;
     }
 
+    /**
+     * Moves the player within the building.
+     * This method finds the player's current division and moves the player either towards the target or towards the exit,
+     * depending on whether the player has interacted with the target.
+     *
+     * @param player the player to be moved
+     * @param edificio the building containing the divisions
+     */
+    @Override
     public void moverPlayer(Player player, Edificio<Divisao> edificio) {
         Divisao divisaoAtual = encontrarPlayer(player, edificio);
 
@@ -84,7 +120,15 @@ public class ControladorJogoAutomatico implements JogoADT {
         }
     }
 
-
+    /**
+     * Moves the enemy within the building.
+     * This method finds the enemy's current division and moves the enemy to a random adjacent division.
+     * If the enemy encounters the player in the new division, a confrontation is initiated.
+     *
+     * @param inimigo the enemy to be moved
+     * @param edificio the building containing the divisions
+     * @throws EmptyStackException if an error occurs during the confrontation
+     */
     @Override
     public void moverInimigo(Inimigo inimigo, Edificio<Divisao> edificio) throws EmptyStackException {
         Random random = new Random();
@@ -162,6 +206,15 @@ public class ControladorJogoAutomatico implements JogoADT {
 
     }
 
+    /**
+     * Finds the division where the specified enemy is currently located.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the specified enemy.
+     *
+     * @param inimigo the enemy to be located
+     * @param edificio the building where the search is conducted
+     * @return the division containing the enemy, or null if the enemy is not found
+     */
     private Divisao encontrarInimigo(Inimigo inimigo, Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
         while (divisoes.hasNext()) {
@@ -177,6 +230,18 @@ public class ControladorJogoAutomatico implements JogoADT {
         return null;
     }
 
+    /**
+     * Initiates a confrontation between the player and enemies in the specified division.
+     * This method handles the turn-based combat between the player and the enemies.
+     * If the player's health drops below 50, it automatically uses a health kit if available.
+     * The confrontation continues until either the player or all enemies are defeated.
+     *
+     * @param player the player involved in the confrontation
+     * @param edificio the building containing the divisions
+     * @param inimigos the list of enemies in the division
+     * @param divisao the division where the confrontation takes place
+     * @throws EmptyStackException if an error occurs during the confrontation
+     */
     @Override
     public void confronto(Player player, Edificio<Divisao> edificio, UnorderedArrayList<Inimigo> inimigos, Divisao divisao) throws EmptyStackException {
         System.out.println("\033[31mExistem " + inimigos.size() + " inimigos nesta divisão. Confronto Iniciado\033[0m");
@@ -223,7 +288,16 @@ public class ControladorJogoAutomatico implements JogoADT {
         System.out.println("\033[32mTodos os inimigos na divisão foram derrotados!\033[0m");
     }
 
-
+    /**
+     * Checks if the game has ended.
+     * This method verifies the end game conditions based on the player's health, interaction with the target, and whether the player has exited the building.
+     * It prints appropriate messages for victory or defeat based on the conditions met.
+     *
+     * @param player the player whose game status is being checked
+     * @param alvo the target that the player needs to interact with
+     * @param playerSaiu a boolean indicating if the player has exited the building
+     * @return true if the game has ended, false otherwise
+     */
     @Override
     public boolean verificarFimJogo(Player player, Alvo alvo, boolean playerSaiu) {
         if (player.getVida() == 0) {
@@ -241,6 +315,14 @@ public class ControladorJogoAutomatico implements JogoADT {
         return false;
     }
 
+    /**
+     * Finds the division containing the target.
+     * This method iterates through all divisions in the building to find the one
+     * that contains the target.
+     *
+     * @param edificio the building where the search is conducted
+     * @return the division containing the target, or null if no target is found
+     */
     private Divisao encontrarAlvo(Edificio<Divisao> edificio) {
         Iterator<Divisao> divisoes = edificio.getVertex();
         while (divisoes.hasNext()) {
@@ -252,6 +334,15 @@ public class ControladorJogoAutomatico implements JogoADT {
         return null;
     }
 
+    /**
+     * Resets the weight of the edges connected to the specified division.
+     * This method iterates through all adjacent divisions and updates the weight of the edges
+     * by subtracting the enemy's power from the current weight.
+     *
+     * @param divisao the division whose edges' weights are to be reset
+     * @param edificio the building containing the divisions
+     * @param inimigo the enemy whose power is used to adjust the weights
+     */
     private void resetarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
 
@@ -266,6 +357,15 @@ public class ControladorJogoAutomatico implements JogoADT {
         }
     }
 
+    /**
+     * Updates the weight of the edges connected to the specified division.
+     * This method iterates through all adjacent divisions and updates the weight of the edges
+     * by adding the enemy's power to the current weight.
+     *
+     * @param divisao the division whose edges' weights are to be updated
+     * @param edificio the building containing the divisions
+     * @param inimigo the enemy whose power is used to adjust the weights
+     */
     private void atualizarPeso(Divisao divisao, Edificio<Divisao> edificio, Inimigo inimigo) {
         Iterator<Divisao> iter = edificio.getAdjacentes(divisao);
 
@@ -280,14 +380,26 @@ public class ControladorJogoAutomatico implements JogoADT {
         }
     }
 
+    /**
+     * Checks if the game is currently active.
+     * This method returns the status of the game, indicating whether it is active or not.
+     *
+     * @return true if the game is active, false otherwise
+     */
     public boolean isJogoAtivo() {
         return isJogoAtivo;
     }
 
-    public void setJogoAtivo(boolean jogoAtivo) {
-        isJogoAtivo = jogoAtivo;
-    }
-
+    /**
+     * Moves the player towards the target within the building.
+     * This method finds the target division and moves the player towards it.
+     * If there are enemies in the next division, a confrontation is initiated.
+     * The player picks up any items in the new division and interacts with the target if present.
+     *
+     * @param player the player to be moved
+     * @param edificio the building containing the divisions
+     * @param divisaoAtual the current division of the player
+     */
     private void moverPlayerAlvo(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
         Divisao divisaoAlvo = encontrarAlvo(edificio);
         if (divisaoAlvo == null) {
@@ -333,6 +445,16 @@ public class ControladorJogoAutomatico implements JogoADT {
 
     }
 
+    /**
+     * Moves the player towards the exit within the building.
+     * This method finds the player's current division and moves the player towards the nearest exit.
+     * If there are enemies in the next division, a confrontation is initiated.
+     * The player picks up any items in the new division and exits the building if the exit is reached.
+     *
+     * @param player the player to be moved
+     * @param edificio the building containing the divisions
+     * @param divisaoAtual the current division of the player
+     */
     private void moverPlayerSaida(Player player, Edificio<Divisao> edificio, Divisao divisaoAtual) {
         Divisao divisaoPlayer = encontrarPlayer(player, edificio);
 

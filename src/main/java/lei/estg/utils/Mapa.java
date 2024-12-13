@@ -1,16 +1,23 @@
 package lei.estg.utils;
 
-import lei.estg.dataStructures.UnorderedArrayList;
 import lei.estg.models.*;
+import lei.estg.models.Interfaces.MapaADT;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
 import java.util.Iterator;
 
-public class Mapa {
+public class Mapa implements MapaADT {
     private Graph graphStream;
 
+    /**
+     * Displays the building map using GraphStream.
+     * This method initializes a GraphStream graph, adds nodes for each division in the building,
+     * and creates edges between adjacent divisions. It also applies a stylesheet for visual styling
+     * and displays the graph.
+     *
+     * @param edificio the building containing the divisions and their connections
+     */
     public void mostrarMapa(Edificio<Divisao> edificio) {
         graphStream = new SingleGraph("Building Map");
 

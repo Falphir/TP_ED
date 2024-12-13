@@ -78,7 +78,6 @@ public abstract class DoubleLinkedList<T> implements ListADT<T>, Iterable<T> {
     @Override
     public T remove(T element) throws EmptyStackException {
         if (isEmpty()) throw new EmptyStackException("List is empty");
-        //DoubleLinearNode<T> prv = null;
         DoubleLinearNode<T> current = head;
         while (current != null) {
             if (current.getValue().equals(element)) {

@@ -18,7 +18,6 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
      * Matrix to store the weights of the edges.
      */
     protected double[][] weightMatrix;
-    protected int capacity = 10;
 
     /**
      * Indicates whether the network is bidirectional.
@@ -47,25 +46,12 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
     }
 
     /**
-     * Constructor that initializes the network as either bidirectional or unidirectional.
-     *
-     * @param isBidirectional true if the network is bidirectional, false otherwise
-     */
-    public Network(boolean isBidirectional, int capacity) {
-        super();
-        this.capacity = capacity;
-        this.isBidirectional = isBidirectional;
-        weightMatrix = new double[capacity][capacity];
-        initializeWeightMatrix();
-    }
-
-    /**
      * Initializes the weight matrix with default values.
      * The weight for an edge from a vertex to itself is set to 0, and to Double.POSITIVE_INFINITY for all other edges.
      */
     private void initializeWeightMatrix() {
-        for (int i = 0; i < capacity; i++) {
-            for (int j = 0; j < capacity; j++) {
+        for (int i = 0; i < DEFAULT_CAPACITY; i++) {
+            for (int j = 0; j < DEFAULT_CAPACITY; j++) {
                 weightMatrix[i][j] = Double.POSITIVE_INFINITY;
             }
         }
@@ -201,6 +187,4 @@ public class Network<T> extends Graph<T> implements NetworkADT<T> {
         }
         return result;
     }
-
-
 }

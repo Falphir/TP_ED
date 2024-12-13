@@ -1,5 +1,6 @@
 package lei.estg.models.enums;
 
+
 public enum EMissaoTipo {
     RESGATE("Resgatar Reféns"),
     RECUPERAR("Recuperar Bens Valiosos"),
@@ -11,6 +12,11 @@ public enum EMissaoTipo {
         this.description = description;
     }
 
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }

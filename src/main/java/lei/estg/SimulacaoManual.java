@@ -18,6 +18,13 @@ import java.util.Scanner;
 public class SimulacaoManual {
     protected static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Starts the game simulation.
+     * This method initializes the mission, player, and game controller, and then starts the game loop.
+     * The game loop alternates between the player's turn and the enemies' turn until the game is no longer active.
+     * During each turn, the game displays the current state and allows the player to take actions.
+     * Enemies are moved after the player's turn.
+     */
     public static void jogar() {
         Missao missao;
         Player player;
@@ -74,6 +81,16 @@ public class SimulacaoManual {
         }
     }
 
+    /**
+     * Executes the player's turn in the game.
+     * This method handles the player's actions during their turn, including displaying the player's status,
+     * showing available actions, and processing the selected action.
+     *
+     * @param player the player object
+     * @param edificio the building object containing the divisions
+     * @param jogo the game controller object
+     * @throws EmptyStackException if an error occurs during the player's turn
+     */
     private static void turnoPlayer(Player player, Edificio<Divisao> edificio, ControladorJogoManual jogo)
             throws EmptyStackException {
 
@@ -134,7 +151,4 @@ public class SimulacaoManual {
                 System.out.println("Opção inválida");
         }
     }
-
-
-
 }
