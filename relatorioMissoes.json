@@ -1,0 +1,123 @@
+{
+  "missoes": [
+    {
+      "dificuldade": "FACIL",
+      "codMissao": "pata de coelho",
+      "tentativas": [
+        {
+          "trajetos": [
+            "Divisao: Heliporto",
+            "Divisao: Escada 6",
+            "Divisao: Camaratas",
+            "Divisao: Escada 5",
+            "Divisao: Laboratório",
+            "Divisao: Escada 5",
+            "Divisao: Laboratório",
+            "Divisao: Escada 5",
+            "Divisao: Camaratas",
+            "Divisao: Escada 6",
+            "Divisao: Heliporto"
+          ],
+          "codTentativa": "1",
+          "vida": 90
+        },
+        {
+          "trajetos": [
+            "Divisao: Heliporto",
+            "Divisao: Escada 6",
+            "Divisao: Camaratas",
+            "Divisao: Escada 5",
+            "Divisao: Laboratório",
+            "Divisao: Escada 5",
+            "Divisao: Laboratório",
+            "Divisao: Escada 5",
+            "Divisao: Camaratas",
+            "Divisao: Escada 6",
+            "Divisao: Heliporto"
+          ],
+          "codTentativa": "2",
+          "vida": 90
+        },
+        {
+          "trajetos": [
+            "Divisao: Garagem",
+            "Divisao: Escada de Emergência",
+            "Divisao: Escritório 1",
+            "Divisao: Corredor 1",
+            "Divisao: Escada 3",
+            "Divisao: Hall",
+            "Divisao: Segurança",
+            "Divisao: Corredor 2",
+            "Divisao: Escada 4",
+            "Divisao: Escritório 3",
+            "Divisao: Escada 5",
+            "Divisao: Laboratório",
+            "Divisao: Escada 5",
+            "Divisao: Camaratas",
+            "Divisao: Escada 6",
+            "Divisao: Heliporto"
+          ],
+          "codTentativa": "3",
+          "vida": 75
+        },
+        {
+          "trajetos": [
+            "Divisao: Porteiro",
+            "Divisao: Escada 2",
+            "Divisao: Corredor 1",
+            "Divisao: Escada 3",
+            "Divisao: Hall",
+            "Divisao: Segurança",
+            "Divisao: Corredor 2",
+            "Divisao: Escada 4",
+            "Divisao: Escritório 3",
+            "Divisao: Escada 5",
+            "Divisao: Laboratório",
+            "Divisao: Escada 5",
+            "Divisao: Camaratas",
+            "Divisao: Escada 5",
+            "Divisao: Escritório 3",
+            "Divisao: Escada 4",
+            "Divisao: Corredor 2",
+            "Divisao: WC",
+            "Divisao: Corredor 2",
+            "Divisao: Segurança",
+            "Divisao: Hall",
+            "Divisao: Escada 3",
+            "Divisao: Corredor 1",
+            "Divisao: Escritório 1",
+            "Divisao: Escada de Emergência"
+          ],
+          "codTentativa": "4",
+          "vida": 95
+        }
+      ],
+      "versao": 1
+    },
+    {
+      "dificuldade": "DIFICIL",
+      "codMissao": "pata de coelho",
+      "tentativas": [
+        {
+          "trajetos": [
+            "Divisao: Biblioteca",
+            "Divisao: Hall",
+            "Divisao: Cozinha",
+            "Divisao: Escada 2",
+            "Divisao: Porteiro",
+            "Divisao: Escada 2",
+            "Divisao: Porteiro",
+            "Divisao: Escada 1",
+            "Divisao: Garagem",
+            "Divisao: Escada de Emergência",
+            "Divisao: Auditório",
+            "Divisao: Escada de Emergência"
+          ],
+          "codTentativa": "1",
+          "vida": 0
+        }
+      ],
+      "versao": 4
+    }
+  ]
+}
